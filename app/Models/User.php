@@ -21,9 +21,44 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
-        'department',
+        'role_id',
+        'reporting_to',
+        'joining_date',
+        'status',
+        'leave_balance',
+        'last_accrued_month',
+        'telegram_chat_id',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'reporting_to');
+    }
+
+    public function subordinates()
+    {
+        return $this->hasMany(User::class, 'reporting_to');
+    }
+
+    public function isAdmin()
+    {
+        return $this->role_id == 3;
+    }
+
+    public function isSupervisor()
+    {
+        return $this->role_id == 2;
+    }
+
+    public function isEmployee()
+    {
+        return $this->role_id == 0;
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,6 +80,14 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role_id' => 'integer',
+            'leave_balance' => 'decimal:2',
+            'joining_date' => 'date',
         ];
+    }
+
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class);
     }
 }

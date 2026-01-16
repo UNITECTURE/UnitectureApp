@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['supervisor', 'admin', 'employee']);
             $table->enum('department', ['architecture', 'interior']);
+            $table->decimal('leave_balance', 5, 2)->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

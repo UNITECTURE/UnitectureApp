@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,13 +16,50 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $users = [
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@example.com',
+                'role_id' => 3,
+                'joining_date' => '2024-01-01',
+                'reporting_to' => null,
+            ],
+            [
+                'name' => 'Sarah Supervisor',
+                'email' => 'supervisor@example.com',
+                'role_id' => 2,
+                'joining_date' => '2024-01-15',
+                'reporting_to' => 1, // Will update after creation
+            ],
+            [
+                'name' => 'John Employee',
+                'email' => 'employee@example.com',
+                'role_id' => 0,
+                'joining_date' => '2024-02-01',
+                'reporting_to' => 2, // Will update after creation
+            ],
+        ];
 
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'role' => 'admin',
-            'department' => 'architecture',
-        ]);
+        $createdUsers = [];
+        foreach ($users as $userData) {
+            $joiningDate = \Carbon\Carbon::parse($userData['joining_date']);
+            $monthsSinceJoining = $joiningDate->diffInMonths(now());
+            
+            // Logic: 1.25 per month after 3 months probation
+            $accrualMonths = max(0, $monthsSinceJoining - 3);
+            $initialBalance = $accrualMonths * 1.25;
+
+            $user = User::create([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'password' => Hash::make('password'),
+                'role_id' => $userData['role_id'],
+                'joining_date' => $userData['joining_date'],
+                'status' => 'active',
+                'leave_balance' => $initialBalance,
+                'reporting_to' => $userData['reporting_to'],
+            ]);
+            $createdUsers[$user->id] = $user;
+        }
     }
 }

@@ -5,7 +5,7 @@
     <!-- Welcome Header -->
     <div>
         <h2 class="text-2xl font-bold text-slate-800">Welcome Back, {{ Auth::user()->name }}</h2>
-        <p class="text-slate-400 text-sm mt-1 font-medium">Logged In As {{ ucfirst(Auth::user()->role) }}</p>
+        <p class="text-slate-400 text-sm mt-1 font-medium">Logged In As {{ ucfirst(Auth::user()->role->name ?? 'Admin') }}</p>
     </div>
 
     <!-- Action Cards Section -->
@@ -29,9 +29,9 @@
             </div>
             <h3 class="font-bold text-slate-900 text-lg mb-3">Automate Leaves</h3>
              <p class="text-sm text-slate-500 mb-8 max-w-[220px] leading-relaxed font-medium">Manage your employee leaves and holidays.</p>
-            <button class="w-full py-3 px-4 bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-sm shadow-blue-200">
+            <a href="{{ route('leaves.index') }}" class="w-full py-3 px-4 bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-sm shadow-blue-200 text-center">
                 Open
-            </button>
+            </a>
         </div>
 
         <!-- Card 3: Automate Attendance -->
@@ -65,9 +65,15 @@
             </div>
             <h3 class="font-bold text-slate-900 text-lg mb-3">Settings</h3>
             <p class="text-sm text-slate-500 mb-8 max-w-[220px] leading-relaxed font-medium">Configure system and roles.</p>
+            @if(Auth::user()->isAdmin())
+            <a href="{{ route('users.create') }}" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg transition-all shadow-sm shadow-indigo-200 text-center">
+                Add New User
+            </a>
+            @else
             <button class="w-full py-3 px-4 bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-sm shadow-blue-200">
                 Open
             </button>
+            @endif
         </div>
     </div>
 
