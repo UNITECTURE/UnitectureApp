@@ -22,11 +22,7 @@ Route::post('/login', function (Request $request) {
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
         $user = Auth::user();
-        return match((int)$user->role_id) {
-            2 => redirect()->route('admin.attendance.all'),
-            1 => redirect()->route('supervisor.attendance.approvals'),
-            default => redirect()->route('employee.attendance'),
-        };
+        return redirect()->route('dashboard');
     }
 
     return back()->withErrors([
@@ -42,11 +38,7 @@ Route::get('/logout', function () {
 Route::get('/', function () {
     if (Auth::check()) {
         $user = Auth::user();
-        return match((int)$user->role_id) {
-            2 => redirect()->route('admin.attendance.all'),
-            1 => redirect()->route('supervisor.attendance.approvals'),
-            default => redirect()->route('employee.attendance'),
-        };
+        return redirect()->route('dashboard');
     }
     return redirect()->route('login');
 });

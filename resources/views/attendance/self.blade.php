@@ -13,9 +13,14 @@
     <main class="flex-1 flex flex-col h-full overflow-hidden relative z-0">
         {{-- Top Header --}}
         <div class="flex items-center justify-between px-8 py-6 bg-white shrink-0">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">{{ $role === 'admin' ? 'Attendance' : 'My Attendance' }}</h1>
-                <p class="text-slate-500 text-sm mt-1">{{ $role === 'admin' ? 'Track daily and cumulative attendance records.' : 'Track your daily and cumulative attendance records.' }}</p>
+            <div class="flex items-center gap-4">
+                <button onclick="history.back()" class="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-full hover:bg-slate-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </button>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">{{ $role === 'admin' ? 'Attendance' : 'My Attendance' }}</h1>
+                    <p class="text-slate-500 text-sm mt-1">{{ $role === 'admin' ? 'Track daily and cumulative attendance records.' : 'Track your daily and cumulative attendance records.' }}</p>
+                </div>
             </div>
             <div class="flex items-center gap-4">
                 <a href="{{ route('logout') }}" class="text-slate-500 hover:text-red-600 font-medium text-sm transition-colors">
@@ -124,8 +129,8 @@
                         </div>
                         
                         <div class="mt-auto absolute bottom-0 left-0 right-0 p-6 pt-0 bg-white rounded-b-xl">
-                            <a href="{{ route('attendance.export', ['type' => 'self', 'filter' => request('filter')]) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
-                                {{ 'Download Attendance' }}
+                            <a href="{{ route('attendance.export', ['type' => 'self_daily', 'date' => request('date') ?? now()->format('Y-m-d')]) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
+                                {{ 'Download Daily Report' }}
                             </a>
                         </div>
                     </div>

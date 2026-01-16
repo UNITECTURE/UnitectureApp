@@ -12,7 +12,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        $managers = User::whereIn('role_id', [2, 3])->get(); // Supervisors and Admins
+        $managers = User::whereIn('role_id', [1, 2])->get(); // Supervisors and Admins
         return view('users.create', compact('roles', 'managers'));
     }
 
@@ -20,17 +20,17 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:user',
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
-            'reporting_to' => 'nullable|exists:users,id',
+            'reporting_to' => 'nullable|exists:user,id',
             'joining_date' => 'required|date',
             'status' => 'required|in:active,inactive',
             'telegram_chat_id' => 'nullable|string|max:50',
         ]);
 
         User::create([
-            'name' => $request->name,
+            'full_name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => $request->role_id,

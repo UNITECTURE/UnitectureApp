@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Attendance;
 use Carbon\Carbon;
@@ -65,6 +66,12 @@ class AttendanceController extends Controller
         }
 
         $requests = $baseQuery->with('user')->orderBy('created_at', 'desc')->get();
+        Log::info('Attendance Approvals Page Accessed', [
+            'user_id' => $user->id,
+            'role' => $role,
+            'request_count' => $requests->count(),
+            'filters' => $request->all()
+        ]);
 
         return view('attendance.approvals', compact('role', 'requests', 'summary', 'status'));
     }
@@ -228,6 +235,13 @@ class AttendanceController extends Controller
         } else {
             $users = User::all();
         }
+        
+        Log::info('Attendance List Index Accessed', [
+            'user_id' => $authUser->id,
+            'role' => $role,
+            'fetched_users_count' => $users->count(),
+            'date_filter' => $date
+        ]);
 
         // --- Daily Report Logic ---
         $daily_summary = ['total' => $users->count(), 'present' => 0, 'leave' => 0, 'absent' => 0];
@@ -356,8 +370,8 @@ class AttendanceController extends Controller
                 // Team Cumulative Export
                 fputcsv($file, ['Name', 'Present Days', 'Leave Days', 'Absent Days', 'Total Month Days']);
                 
-                $start = \Carbon\Carbon::now()->startOfMonth();
-                $end = \Carbon\Carbon::now();
+                $start = Carbon::now()->startOfMonth();
+                $end = Carbon::now();
                 $monthDays = $start->daysInMonth;
                 $elapsed = $end->day;
                 
@@ -369,12 +383,12 @@ class AttendanceController extends Controller
                 if ($role === 'supervisor') {
                     $users = $user->subordinates()->get(); 
                 } else {
-                    $users = \App\Models\User::all();
+                    $users = User::all();
                 }
 
                 foreach ($users as $u) {
-                    $monthAtts = \App\Models\Attendance::where('user_id', $u->id)
-                                    ->whereBetween('date', [$start, \Carbon\Carbon::now()->endOfMonth()])
+                    $monthAtts = Attendance::where('user_id', $u->id)
+                                    ->whereBetween('date', [$start, Carbon::now()->endOfMonth()])
                                     ->get();
                     
                     $present = $monthAtts->where('status', 'present')->count();
@@ -383,6 +397,23 @@ class AttendanceController extends Controller
                     
                     fputcsv($file, [$u->full_name, $present, $leave, $absent, $monthDays]);
                 }
+
+            } elseif ($type === 'self_daily') {
+                // Self Daily Export
+                fputcsv($file, ['Date', 'Status', 'In Time', 'Out Time', 'Duration']);
+                
+                $date = $request->input('date', Carbon::today()->toDateString());
+                
+                $att = Attendance::where('user_id', $user->id)->where('date', $date)->first();
+                
+                $status = $att ? ucfirst($att->status) : 'Absent';
+                if ($att && $att->type === 'manual') $status .= ' (Manual)';
+                
+                $in = $att && $att->clock_in ? Carbon::parse($att->clock_in)->format('h:i A') : '-';
+                $out = $att && $att->clock_out ? Carbon::parse($att->clock_out)->format('h:i A') : '-';
+                $dur = $att ? $att->duration : '-';
+                
+                fputcsv($file, [$date, $status, $in, $out, $dur]);
 
             } else {
                 // Self Export (Monthly Report)

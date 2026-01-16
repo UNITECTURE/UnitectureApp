@@ -6,6 +6,7 @@ use App\Models\Leave;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 use App\Services\TelegramService;
@@ -77,8 +78,8 @@ class LeaveController extends Controller
             $this->telegramService->sendMessage($user->manager->telegram_chat_id, $message);
         }
 
-        // Also notify Admins
-        $admins = User::where('role_id', 3)->whereNotNull('telegram_chat_id')->get();
+        // Also notify Admins (Role ID 2)
+        $admins = User::where('role_id', 2)->whereNotNull('telegram_chat_id')->get();
         foreach ($admins as $admin) {
             $adminMessage = "<b>Alert: Leave requested</b>\n\n";
             $adminMessage .= "Employee: {$user->name}\n";
@@ -138,6 +139,13 @@ class LeaveController extends Controller
             'approved' => (clone $statsQuery)->where('status', 'approved')->count(),
             'rejected' => (clone $statsQuery)->where('status', 'rejected')->count(),
         ];
+
+        Log::info('Leave Approvals Accessed', [
+            'user_id' => $user->id,
+            'role_id' => $user->role_id,
+            'visible_records' => $leaves->total(),
+            'page' => $leaves->currentPage()
+        ]);
 
         return view('leaves.approvals', compact('leaves', 'counts'));
     }

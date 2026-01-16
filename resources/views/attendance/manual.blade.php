@@ -9,9 +9,14 @@
     <main class="flex-1 flex flex-col h-full overflow-hidden relative z-0">
         {{-- Top Header --}}
         <div class="flex items-center justify-between px-8 py-6 bg-white shrink-0">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Manual Attendance</h1>
-                <p class="text-slate-500 text-sm mt-1">View status and apply for missed attendance.</p>
+            <div class="flex items-center gap-4">
+                <button onclick="history.back()" class="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-full hover:bg-slate-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </button>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">Manual Attendance</h1>
+                    <p class="text-slate-500 text-sm mt-1">View status and apply for missed attendance.</p>
+                </div>
             </div>
             <div class="flex items-center gap-4">
                 <a href="{{ route('logout') }}" class="text-slate-500 hover:text-red-600 font-medium text-sm transition-colors">
