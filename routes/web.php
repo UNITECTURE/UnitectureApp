@@ -1,7 +1,91 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ManualAttendanceController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
+Route::get('/login', function () {
+    if (Auth::check()) {
+        return redirect('/');
+    }
+    return view('login');
+})->name('login');
+
+Route::post('/login', function (Request $request) {
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        $user = Auth::user();
+        return match((int)$user->role_id) {
+            2 => redirect()->route('admin.attendance.all'),
+            1 => redirect()->route('supervisor.attendance.approvals'),
+            default => redirect()->route('employee.attendance'),
+        };
+    }
+
+    return back()->withErrors([
+        'email' => 'The provided credentials do not match our records.',
+    ])->onlyInput('email');
+})->name('login.post');
+
+Route::get('/logout', function () {
+    Auth::logout();
+    return redirect('/login');
+})->name('logout');
 
 Route::get('/', function () {
-    return view('welcome');
+    if (Auth::check()) {
+        $user = Auth::user();
+        return match((int)$user->role_id) {
+            2 => redirect()->route('admin.attendance.all'),
+            1 => redirect()->route('supervisor.attendance.approvals'),
+            default => redirect()->route('employee.attendance'),
+        };
+    }
+    return redirect()->route('login');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/attendance/manual', [ManualAttendanceController::class, 'store'])->name('attendance.manual.store');
+    Route::post('/attendance/manual/{id}/approve', [ManualAttendanceController::class, 'approve'])->name('attendance.manual.approve');
+    Route::post('/attendance/manual/reject/{id}', [ManualAttendanceController::class, 'reject'])->name('attendance.manual.reject');
+    Route::get('/attendance/manual', [AttendanceController::class, 'manualAccess'])->name('attendance.manual');
+    Route::get('/attendance/export', [AttendanceController::class, 'export'])->name('attendance.export');
+
+    // Admin Routes
+    Route::get('/admin/attendance', [AttendanceController::class, 'myAttendance'])->name('admin.attendance.self');
+
+    Route::get('/admin/attendance/approvals', [AttendanceController::class, 'approvals'])->name('admin.attendance.approvals');
+    Route::get('/admin/attendance/all', [AttendanceController::class, 'index'])->name('admin.attendance.all');
+
+    // Supervisor Routes
+    Route::get('/supervisor/attendance', [AttendanceController::class, 'myAttendance'])->name('supervisor.attendance.self');
+
+    Route::get('/supervisor/attendance/approvals', [AttendanceController::class, 'approvals'])->name('supervisor.attendance.approvals');
+    Route::get('/supervisor/attendance/team', [AttendanceController::class, 'index'])->name('supervisor.attendance.team');
+
+    // Employee Routes
+    Route::get('/employee/attendance', [AttendanceController::class, 'myAttendance'])->name('employee.attendance');
+});
+
+// Test Telegram Route
+Route::get('/dev/test-telegram', function () {
+    $user = \Illuminate\Support\Facades\Auth::user();
+    if (!$user) return 'Please Login first';
+    if (!$user->telegram_chat_id) return 'Current User has no Telegram ID mapped in DB';
+    
+    $token = env('TELEGRAM_BOT_TOKEN');
+    $response = \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
+        'chat_id' => $user->telegram_chat_id,
+        'text' => "🔔 Test Message from Unitecture App",
+    ]);
+    
+    return "Telegram API Response: " . $response->body();
+});
+

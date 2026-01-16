@@ -1,0 +1,122 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\ManualAttendanceRequest;
+use App\Models\Attendance;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Notifications\NewManualAttendanceRequest;
+use App\Notifications\ManualAttendanceStatusUpdated;
+
+use Carbon\Carbon;
+
+class ManualAttendanceController extends Controller
+{
+    // Apply for manual attendance (Employee)
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:user,id',
+            'date' => 'required|date',
+            'duration' => 'required|string',
+            'reason' => 'nullable|string',
+        ]);
+
+        $manualRequest = ManualAttendanceRequest::create([
+            'user_id' => $request->user_id,
+            'date' => $request->date,
+            'duration' => $request->duration,
+            'reason' => $request->reason,
+            'status' => 'pending',
+        ]);
+
+        // Notify Supervisor
+        $employee = User::find($request->user_id);
+        if ($employee && $employee->reporting_to) {
+            $supervisor = User::find($employee->reporting_to);
+            if ($supervisor) {
+                $supervisor->notify(new NewManualAttendanceRequest($manualRequest));
+            }
+        }
+
+        return redirect()->back()->with('success', 'Manual attendance requested successfully.');
+    }
+
+    // Approve manual attendance (Supervisor)
+    public function approve(Request $request, $id)
+    {
+        $manualRequest = ManualAttendanceRequest::findOrFail($id);
+        
+        // Update request status
+        $manualRequest->update([
+            'status' => 'approved',
+            'approved_by' => Auth::id() ?? 1,
+        ]);
+
+        // Find existing attendance or create new
+        $attendance = Attendance::firstOrNew([
+            'user_id' => $manualRequest->user_id,
+            'date' => $manualRequest->date,
+        ]);
+
+        // Calculate Total Duration (Existing + Manual)
+        $existingMinutes = $this->parseDuration($attendance->duration);
+        $manualMinutes = $this->parseDuration($manualRequest->duration);
+        
+        $totalMinutes = $existingMinutes + $manualMinutes;
+        
+        $hours = floor($totalMinutes / 60);
+        $mins = $totalMinutes % 60;
+        $totalDurationString = "{$hours} Hrs {$mins} Mins";
+
+        // Update Record
+        $attendance->duration = $totalDurationString;
+        $attendance->status = 'present'; 
+        $attendance->type = 'manual';
+
+        
+        $attendance->save();
+
+        // Notify Employee
+        $employee = User::find($manualRequest->user_id);
+        if ($employee) {
+            $employee->notify(new ManualAttendanceStatusUpdated($manualRequest));
+        }
+
+        return redirect()->back()->with('success', 'Attendance approved and record updated.');
+    }
+
+    private function parseDuration(?string $durationStr)
+    {
+        if (!$durationStr) return 0;
+        // Robust regex for "8h", "8 hrs", "8 Hours" etc (Case insensitive)
+        preg_match('/(\d+)\s*[hH]/i', $durationStr, $hMatch);
+        preg_match('/(\d+)\s*[mM]/i', $durationStr, $mMatch);
+        
+        $h = isset($hMatch[1]) ? (int)$hMatch[1] : 0;
+        $m = isset($mMatch[1]) ? (int)$mMatch[1] : 0;
+        
+        return ($h * 60) + $m;
+    }
+
+    public function reject(Request $request, $id)
+    {
+        $manualRequest = ManualAttendanceRequest::findOrFail($id);
+        
+        $manualRequest->update([
+            'status' => 'rejected',
+            'approved_by' => Auth::id() ?? 1,
+            'rejection_reason' => $request->input('reason', 'Rejected by supervisor'), 
+        ]);
+
+        // Notify Employee
+        $employee = User::find($manualRequest->user_id);
+        if ($employee) {
+            $employee->notify(new ManualAttendanceStatusUpdated($manualRequest));
+        }
+
+        return redirect()->back()->with('success', 'Attendance request rejected.');
+    }
+}
