@@ -37,6 +37,8 @@
                     if (typeof flatpickr !== 'undefined') {
                         flatpickr(this.$refs.dateInput, {
                             dateFormat: 'Y-m-d',
+                            minDate: '{{ now()->subDays(4)->format("Y-m-d") }}',
+                            maxDate: '{{ now()->endOfMonth()->format("Y-m-d") }}',
                             onChange: (selectedDates, dateStr) => { this.date = dateStr; }
                         });
                     }

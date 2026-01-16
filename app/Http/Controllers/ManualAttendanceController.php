@@ -19,7 +19,23 @@ class ManualAttendanceController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:user,id',
-            'date' => 'required|date',
+            'date' => [
+                'required', 
+                'date', 
+                function ($attribute, $value, $fail) {
+                    $date = Carbon::parse($value);
+                    $today = Carbon::today();
+                    $minDate = $today->copy()->subDays(4);
+                    $maxDate = $today->copy()->endOfMonth();
+
+                    if ($date->lt($minDate)) {
+                        $fail("You can only apply for attendance for the past 4 days.");
+                    }
+                    if ($date->gt($maxDate)) {
+                         $fail("You cannot apply for dates beyond the current month (" . $maxDate->format('M d') . ").");
+                    }
+                },
+            ],
             'duration' => 'required|string',
             'reason' => 'nullable|string',
         ]);
