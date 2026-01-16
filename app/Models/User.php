@@ -21,6 +21,8 @@ class User extends Authenticatable
         'status',
         'biometric_id',
         'telegram_chat_id',
+        'leave_balance',
+        'last_accrued_month',
     ];
 
     protected $hidden = [
@@ -32,6 +34,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'joining_date' => 'date',
+        'role_id' => 'integer',
+        'leave_balance' => 'decimal:2',
     ];
 
     // Relationships
@@ -50,14 +54,35 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'reporting_to');
     }
 
+    public function manualRequests()
+    {
+        return $this->hasMany(ManualAttendanceRequest::class)->orderBy('created_at', 'desc');
+    }
+
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class);
+    }
+
     // Accessor for backward compatibility (reading $user->name)
     public function getNameAttribute()
     {
         return $this->full_name;
     }
 
-    public function manualRequests()
+    // Helper Methods
+    public function isAdmin()
     {
-        return $this->hasMany(ManualAttendanceRequest::class)->orderBy('created_at', 'desc');
+        return $this->role_id === 2;
+    }
+
+    public function isSupervisor()
+    {
+        return $this->role_id === 1;
+    }
+
+    public function isEmployee()
+    {
+        return !in_array($this->role_id, [1, 2]);
     }
 }

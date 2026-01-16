@@ -51,6 +51,23 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware('auth')->name('dashboard');
+
+// Leaves & Users (Merged Routes)
+Route::middleware('auth')->group(function () {
+    Route::get('/leaves', [App\Http\Controllers\LeaveController::class, 'index'])->name('leaves.index');
+    Route::post('/leaves', [App\Http\Controllers\LeaveController::class, 'store'])->name('leaves.store');
+    Route::get('/leave-approvals', [App\Http\Controllers\LeaveController::class, 'approvals'])->name('leaves.approvals');
+    Route::patch('/leaves/{leave}/status', [App\Http\Controllers\LeaveController::class, 'updateStatus'])->name('leaves.status');
+    
+    // User Management
+    Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
+});
+
+// Attendance Routes
 Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/manual', [ManualAttendanceController::class, 'store'])->name('attendance.manual.store');
     Route::post('/attendance/manual/{id}/approve', [ManualAttendanceController::class, 'approve'])->name('attendance.manual.approve');
@@ -60,13 +77,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Routes
     Route::get('/admin/attendance', [AttendanceController::class, 'myAttendance'])->name('admin.attendance.self');
-
     Route::get('/admin/attendance/approvals', [AttendanceController::class, 'approvals'])->name('admin.attendance.approvals');
     Route::get('/admin/attendance/all', [AttendanceController::class, 'index'])->name('admin.attendance.all');
 
     // Supervisor Routes
     Route::get('/supervisor/attendance', [AttendanceController::class, 'myAttendance'])->name('supervisor.attendance.self');
-
     Route::get('/supervisor/attendance/approvals', [AttendanceController::class, 'approvals'])->name('supervisor.attendance.approvals');
     Route::get('/supervisor/attendance/team', [AttendanceController::class, 'index'])->name('supervisor.attendance.team');
 
@@ -89,3 +104,13 @@ Route::get('/dev/test-telegram', function () {
     return "Telegram API Response: " . $response->body();
 });
 
+Route::get('/dev/check-schema', function() {
+    $results = [];
+    $results['user_exists'] = \Illuminate\Support\Facades\Schema::hasTable('user');
+    if ($results['user_exists']) {
+        $results['user_columns'] = \Illuminate\Support\Facades\Schema::getColumnListing('user');
+    }
+    $results['leaves_exists'] = \Illuminate\Support\Facades\Schema::hasTable('leaves');
+    $results['roles_exists'] = \Illuminate\Support\Facades\Schema::hasTable('roles');
+    return $results;
+});

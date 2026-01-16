@@ -2,11 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    // Specify that IDs are not auto-incrementing
-    public $incrementing = false;
+    use HasFactory;
+
     protected $fillable = ['id', 'name'];
+
+    public $incrementing = false;
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

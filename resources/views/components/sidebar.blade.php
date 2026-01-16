@@ -82,7 +82,7 @@
                 
                 {{-- Submenu - Only show when sidebar is open AND menu is expanded --}}
                 <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
-                    <a href="#" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'My Leaves' }}</a>
+                    <a href="{{ route('leaves.index') }}" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'My Leaves' }}</a>
                     
                     <div x-data="{ 
                         subOpen: localStorage.getItem('sidebar_attendance_sub_open') === 'true',
@@ -149,7 +149,7 @@
                             @endif
                         </a>
                     @endif
-                    <a href="#" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'Leave' }}</a>
+                    <a href="{{ route('leaves.approvals') }}" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'Leave' }}</a>
                 </div>
             </div>
             @endif
