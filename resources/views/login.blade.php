@@ -90,12 +90,6 @@
                 Sign In
             </button>
         </form>
-
-        <div class="mt-8 text-center text-xs text-slate-400">
-            <p>Demo Accounts:</p>
-            <p class="mt-1">admin@example.com / supervisor@example.com / employee@example.com</p>
-            <p>Password: password</p>
-        </div>
     </div>
 </body>
 </html>

@@ -10,3 +10,5 @@ Artisan::command('inspire', function () {
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('leaves:accrue')->monthly();
+Schedule::command('attendance:fetch')->dailyAt('23:00');
+

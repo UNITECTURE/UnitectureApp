@@ -294,6 +294,14 @@ class AttendanceController extends Controller
 
         $cumulative_records = [];
 
+        // Helper to parse duration string (e.g. "5 Hrs 30 Mins")
+        $parseDuration = function($str) {
+            if (!$str) return 0;
+            preg_match('/(\d+)\s*[hH]/i', $str, $hMatch);
+            preg_match('/(\d+)\s*[mM]/i', $str, $mMatch);
+            return (isset($hMatch[1]) ? (int)$hMatch[1] * 60 : 0) + (isset($mMatch[1]) ? (int)$mMatch[1] : 0);
+        };
+
         foreach ($users as $user) {
             $monthAtts = Attendance::where('user_id', $user->id)
                             ->whereBetween('date', [$startOfMonth, $endOfMonth])
@@ -305,12 +313,23 @@ class AttendanceController extends Controller
             $missing = $daysElapsed - ($presentCount + $leaveCount + $explicitAbsent);
             $totalAbsent = $explicitAbsent + max(0, $missing);
 
+            // Calculate Total Duration
+            $totalMinutes = 0;
+            foreach ($monthAtts as $att) {
+                if ($att->status === 'present') {
+                    $totalMinutes += $parseDuration($att->duration);
+                }
+            }
+            $h = floor($totalMinutes / 60);
+            $m = $totalMinutes % 60;
+            $totalDurationStr = "{$h} Hours" . ($m > 0 ? " {$m} Mins" : "");
+
             $cumulative_records[] = [
                 'name' => $user->name,
                 'present' => $presentCount,
                 'leave' => $leaveCount,
                 'absent' => $totalAbsent,
-                'duration' => '0 Hours' 
+                'duration' => $totalDurationStr
             ];
         }
 

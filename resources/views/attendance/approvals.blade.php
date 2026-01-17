@@ -183,22 +183,22 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     @if($request->status === 'pending')
-                                    <div class="flex items-center justify-end space-x-2">
+                                    <div class="flex items-center justify-end gap-2">
                                         <form action="{{ route('attendance.manual.approve', $request->id) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit" class="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 p-1.5 rounded-lg transition-colors border border-transparent hover:border-green-200" title="Approve">
-                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                            <button type="submit" class="px-3 py-1.5 bg-indigo-600 text-white hover:bg-indigo-700 rounded text-xs font-medium transition-colors shadow-sm">
+                                                Approve
                                             </button>
                                         </form>
                                         <form action="{{ route('attendance.manual.reject', $request->id) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-1.5 rounded-lg transition-colors border border-transparent hover:border-red-200" title="Reject">
-                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            <button type="submit" class="px-3 py-1.5 bg-white border border-red-500 text-red-600 hover:bg-red-50 rounded text-xs font-medium transition-colors">
+                                                Reject
                                             </button>
                                         </form>
                                     </div>
                                     @else
-                                        <span class="text-slate-400 text-xs italic">No actions</span>
+                                        <span class="text-slate-400 text-xs text-right block">Completed</span>
                                     @endif
                                 </td>
                             </tr>

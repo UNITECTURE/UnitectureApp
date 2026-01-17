@@ -2,15 +2,21 @@
 
 @php
     $pendingAttendanceCount = 0;
+    $pendingLeaveCount = 0;
+    
     if ($role === 'admin') {
         $pendingAttendanceCount = \App\Models\ManualAttendanceRequest::where('status', 'pending')->count();
+        $pendingLeaveCount = \App\Models\Leave::where('status', 'pending')->count();
     } elseif ($role === 'supervisor') {
         $user = \Illuminate\Support\Facades\Auth::user();
         if ($user) {
              $teamIds = \App\Models\User::where('reporting_to', $user->id)->pluck('id');
              $pendingAttendanceCount = \App\Models\ManualAttendanceRequest::whereIn('user_id', $teamIds)->where('status', 'pending')->count();
+             $pendingLeaveCount = \App\Models\Leave::whereIn('user_id', $teamIds)->where('status', 'pending')->count();
         }
     }
+    
+    $totalPending = $pendingAttendanceCount + $pendingLeaveCount;
 @endphp
 
 <aside :class="sidebarOpen ? 'w-64' : 'w-20'" class="shrink-0 h-full bg-[#0B1221] text-white transition-all duration-300 ease-in-out flex flex-col shadow-2xl z-50 overflow-hidden">
@@ -82,7 +88,11 @@
                 
                 {{-- Submenu - Only show when sidebar is open AND menu is expanded --}}
                 <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
-                    <a href="{{ route('leaves.index') }}" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'My Leaves' }}</a>
+                    <a href="{{ route('leaves.index') }}" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('leaves.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">{{ 'My Leaves' }}</a>
+                    
+                    @if($role === 'admin')
+                    <a href="{{ route('leaves.admin-report') }}" class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('leaves.admin-report') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Leave Report' }}</a>
+                    @endif
                     
                     <div x-data="{ 
                         subOpen: localStorage.getItem('sidebar_attendance_sub_open') === 'true',
@@ -122,7 +132,7 @@
                     <div class="flex items-center flex-1 min-w-0" :class="!sidebarOpen ? 'justify-center' : ''">
                         <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0" :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Approvals' }}</span>
-                        @if($pendingAttendanceCount > 0)
+                        @if($totalPending > 0)
                             <span x-show="sidebarOpen" x-transition class="ml-auto mr-1 w-2 h-2 rounded-full bg-red-500"></span>
                         @endif
                     </div>
@@ -149,7 +159,12 @@
                             @endif
                         </a>
                     @endif
-                    <a href="{{ route('leaves.approvals') }}" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'Leave' }}</a>
+                    <a href="{{ route('leaves.approvals') }}" class="flex items-center justify-between px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors {{ request()->routeIs('leaves.approvals') ? 'text-white bg-slate-800' : 'text-slate-400' }}">
+                        <span class="truncate">{{ 'Leave' }}</span>
+                         @if($pendingLeaveCount > 0)
+                            <span class="ml-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">{{ $pendingLeaveCount }}</span>
+                        @endif
+                    </a>
                 </div>
             </div>
             @endif

@@ -49,6 +49,7 @@ Route::get('/dashboard', function () {
 
 // Leaves & Users (Merged Routes)
 Route::middleware('auth')->group(function () {
+    Route::get('/leaves/admin-report', [App\Http\Controllers\LeaveController::class, 'adminReport'])->name('leaves.admin-report');
     Route::get('/leaves', [App\Http\Controllers\LeaveController::class, 'index'])->name('leaves.index');
     Route::post('/leaves', [App\Http\Controllers\LeaveController::class, 'store'])->name('leaves.store');
     Route::get('/leave-approvals', [App\Http\Controllers\LeaveController::class, 'approvals'])->name('leaves.approvals');

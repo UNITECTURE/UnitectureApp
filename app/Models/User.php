@@ -64,6 +64,11 @@ class User extends Authenticatable
         return $this->hasMany(Leave::class);
     }
 
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
     // Accessor for backward compatibility (reading $user->name)
     public function getNameAttribute()
     {

@@ -33,7 +33,7 @@
                             <div class="w-16 h-16 rounded-2xl bg-[#f0fdf4] text-[#22c55e] flex items-center justify-center mb-6">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-lg mb-3">Automate Leaves</h3>
+                            <h3 class="font-bold text-slate-900 text-lg mb-3">Leaves</h3>
                             <p class="text-sm text-slate-500 mb-8 max-w-[220px] leading-relaxed font-medium">Manage your employee leaves and holidays.</p>
                             <a href="{{ route('leaves.index') }}" class="w-full py-3 px-4 bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-sm shadow-blue-200 text-center">
                                 Open
@@ -45,7 +45,7 @@
                             <div class="w-16 h-16 rounded-2xl bg-[#f3e8ff] text-[#a855f7] flex items-center justify-center mb-6">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
-                            <h3 class="font-bold text-slate-900 text-lg mb-3">Automate Attendance</h3>
+                            <h3 class="font-bold text-slate-900 text-lg mb-3">Attendance</h3>
                             <p class="text-sm text-slate-500 mb-8 max-w-[220px] leading-relaxed font-medium">Track your teams Attendance and break.</p>
                             @php
                                 $attendanceRoute = '#';

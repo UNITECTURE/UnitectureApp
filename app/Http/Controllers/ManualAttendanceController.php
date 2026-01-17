@@ -31,6 +31,7 @@ class ManualAttendanceController extends Controller
                     if ($date->lt($minDate)) {
                         $fail("You can only apply for attendance for the past 4 days.");
                     }
+                // Future dates allowed within this month (checked by maxDate below)
                     if ($date->gt($maxDate)) {
                          $fail("You cannot apply for dates beyond the current month (" . $maxDate->format('M d') . ").");
                     }
@@ -77,11 +78,11 @@ class ManualAttendanceController extends Controller
             'date' => $manualRequest->date,
         ]);
 
-        // Calculate Total Duration (Existing + Manual)
-        $existingMinutes = $this->parseDuration($attendance->duration);
+        // Calculate Total Duration (Overwrite with Manual)
+        // $existingMinutes = $this->parseDuration($attendance->duration); // Removed to prevent double counting
         $manualMinutes = $this->parseDuration($manualRequest->duration);
         
-        $totalMinutes = $existingMinutes + $manualMinutes;
+        $totalMinutes = $manualMinutes;
         
         $hours = floor($totalMinutes / 60);
         $mins = $totalMinutes % 60;
