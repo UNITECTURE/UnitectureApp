@@ -12,7 +12,8 @@
                         <div>
                             <h2 class="text-2xl font-bold text-slate-800">Welcome Back, {{ Auth::user()->name }}</h2>
                             <p class="text-slate-400 text-sm mt-1 font-medium">Logged In As
-                                {{ ucfirst(Auth::user()->role->name ?? 'Admin') }}</p>
+                                {{ ucfirst(Auth::user()->role->name ?? 'Admin') }}
+                            </p>
                         </div>
 
                         <!-- Action Cards Section -->
@@ -32,10 +33,10 @@
                                 <h3 class="font-bold text-slate-900 text-lg mb-3">Task Dashboard</h3>
                                 <p class="text-sm text-slate-500 mb-8 max-w-[220px] leading-relaxed font-medium">Clear view
                                     of performance anytime.</p>
-                                <button
-                                    class="w-full py-3 px-4 bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-sm shadow-blue-200">
+                                <a href="{{ route('tasks.index') }}"
+                                    class="w-full py-3 px-4 bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-sm shadow-blue-200 block">
                                     Open
-                                </button>
+                                </a>
                             </div>
 
                             <!-- Card 2: Automate Leaves -->
