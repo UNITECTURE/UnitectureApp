@@ -5,6 +5,10 @@ use App\Http\Controllers\ManualAttendanceController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\BiometricPushController;
+
+// Biometric Device Push Listener (Bypassed CSRF in bootstrap/app.php)
+Route::any('/api/essl/attendance', [BiometricPushController::class, 'handlePush'])->name('api.biometric.push');
 
 Route::get('/login', function () {
     if (Auth::check()) {
@@ -53,6 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/leaves', [App\Http\Controllers\LeaveController::class, 'store'])->name('leaves.store');
     Route::get('/leave-approvals', [App\Http\Controllers\LeaveController::class, 'approvals'])->name('leaves.approvals');
     Route::patch('/leaves/{leave}/status', [App\Http\Controllers\LeaveController::class, 'updateStatus'])->name('leaves.status');
+    Route::get('/leaves/report', [App\Http\Controllers\LeaveController::class, 'report'])->name('leaves.report');
+    Route::get('/leaves/export', [App\Http\Controllers\LeaveController::class, 'exportReport'])->name('leaves.export');
 
     // User Management
     Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
@@ -86,6 +92,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', function () {
         return view('settings.index');
     })->name('settings.index');
+    
+
+    Route::resource('holidays', App\Http\Controllers\HolidayController::class)->only(['index', 'store', 'destroy']);
 
     // Project Management
     Route::get('/projects/create', [App\Http\Controllers\ProjectController::class, 'create'])->name('projects.create');

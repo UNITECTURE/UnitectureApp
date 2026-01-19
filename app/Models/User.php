@@ -9,7 +9,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $table = 'user';
+    protected $table = 'users';
 
     protected $fillable = [
         'full_name',
@@ -71,18 +71,25 @@ class User extends Authenticatable
     }
 
     // Helper Methods
+    public function isSuperAdmin()
+    {
+        return (int)$this->role_id === 3;
+    }
+
     public function isAdmin()
     {
-        return $this->role_id === 2;
+        // Admin or Super Admin
+        return in_array((int)$this->role_id, [2, 3]);
     }
 
     public function isSupervisor()
     {
-        return $this->role_id === 1;
+        return (int)$this->role_id === 1;
     }
 
     public function isEmployee()
     {
-        return !in_array($this->role_id, [1, 2]);
+        // Not Supervisor, Admin, or Super Admin
+        return !in_array((int)$this->role_id, [1, 2, 3]);
     }
 }

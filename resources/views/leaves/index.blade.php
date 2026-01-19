@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex h-screen bg-slate-50 overflow-hidden" x-data="{ sidebarOpen: true }">
-    <x-sidebar :role="Auth::user()->role_id == 2 ? 'admin' : (Auth::user()->role_id == 1 ? 'supervisor' : 'employee')" />
+    <x-sidebar :role="Auth::user()->isAdmin() ? 'admin' : (Auth::user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <main class="flex-1 overflow-y-auto p-4 lg:p-8">

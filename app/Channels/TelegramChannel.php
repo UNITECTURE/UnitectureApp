@@ -33,7 +33,7 @@ class TelegramChannel
             return;
         }
 
-        $token = env('TELEGRAM_BOT_TOKEN');
+        $token = config('services.telegram.bot_token');
         if (empty($token)) {
              Log::warning('Telegram Bot Token is missing in .env');
              return;

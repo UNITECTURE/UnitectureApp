@@ -18,7 +18,7 @@ class ManualAttendanceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:user,id',
+            'user_id' => 'required|exists:users,id',
             'date' => [
                 'required', 
                 'date', 

@@ -82,7 +82,11 @@
                 
                 {{-- Submenu - Only show when sidebar is open AND menu is expanded --}}
                 <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
-                    <a href="{{ route('leaves.index') }}" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'My Leaves' }}</a>
+                    <a href="{{ route('leaves.index') }}" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('leaves.index') ? 'text-white bg-slate-800' : '' }}">{{ 'My Leaves' }}</a>
+                    
+                    @if($role === 'admin')
+                        <a href="{{ route('leaves.report') }}" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('leaves.report') ? 'text-white bg-slate-800' : '' }}">{{ 'Leave Report' }}</a>
+                    @endif
                     
                     <div x-data="{ 
                         subOpen: localStorage.getItem('sidebar_attendance_sub_open') === 'true',
@@ -176,9 +180,11 @@
                 {{-- Submenu --}}
                 <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
                     @if($role === 'admin')
+                        <a href="{{ route('settings.index') }}" class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('settings.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'General Settings' }}</a>
                         <a href="{{ route('users.create') }}" class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('users.create') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Add New User' }}</a>
+                    @else 
+                        <a href="{{ route('settings.index') }}" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'General Settings' }}</a>
                     @endif
-                    <a href="#" class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'Profile Settings' }}</a>
                 </div>
             </div>
         </nav>

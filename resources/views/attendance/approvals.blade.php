@@ -38,28 +38,32 @@
             {{-- Summary Cards --}}
             <div class="flex w-full gap-6 mb-8">
                 {{-- All --}}
-                <div class="flex-1 bg-blue-50 rounded-xl border border-blue-100 p-4 flex flex-col items-center justify-center h-26 transition-transform hover:scale-105 cursor-default">
+                <a href="{{ request()->fullUrlWithQuery(['status' => 'all']) }}" 
+                   class="flex-1 bg-blue-50 rounded-xl border {{ request('status', 'all') == 'all' ? 'border-blue-400 ring-2 ring-blue-200 shadow-md' : 'border-blue-100' }} p-4 flex flex-col items-center justify-center h-26 transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-blue-100 hover:shadow-lg hover:border-blue-300">
                     <div class="text-2xl font-bold text-blue-600">{{ $summary['all'] }}</div>
                     <div class="text-xs font-medium text-blue-600 mt-1">All</div>
-                </div>
+                </a>
 
                 {{-- Pending --}}
-                <div class="flex-1 bg-yellow-50 rounded-xl border border-yellow-100 p-4 flex flex-col items-center justify-center h-26 transition-transform hover:scale-105 cursor-default">
+                <a href="{{ request()->fullUrlWithQuery(['status' => 'pending']) }}" 
+                   class="flex-1 bg-yellow-50 rounded-xl border {{ request('status') == 'pending' ? 'border-yellow-400 ring-2 ring-yellow-200 shadow-md' : 'border-yellow-100' }} p-4 flex flex-col items-center justify-center h-26 transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-yellow-100 hover:shadow-lg hover:border-yellow-300">
                     <div class="text-2xl font-bold text-yellow-600">{{ $summary['pending'] }}</div>
                     <div class="text-xs font-medium text-yellow-600 mt-1">Pending</div>
-                </div>
+                </a>
 
                 {{-- Approved --}}
-                <div class="flex-1 bg-green-50 rounded-xl border border-green-100 p-4 flex flex-col items-center justify-center h-26 transition-transform hover:scale-105 cursor-default">
+                <a href="{{ request()->fullUrlWithQuery(['status' => 'approved']) }}" 
+                   class="flex-1 bg-green-50 rounded-xl border {{ request('status') == 'approved' ? 'border-green-400 ring-2 ring-green-200 shadow-md' : 'border-green-100' }} p-4 flex flex-col items-center justify-center h-26 transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-green-100 hover:shadow-lg hover:border-green-300">
                     <div class="text-2xl font-bold text-green-600">{{ $summary['approved'] }}</div>
                     <div class="text-xs font-medium text-green-600 mt-1">Approved</div>
-                </div>
+                </a>
 
                 {{-- Rejected --}}
-                <div class="flex-1 bg-red-50 rounded-xl border border-red-100 p-4 flex flex-col items-center justify-center h-26 transition-transform hover:scale-105 cursor-default">
+                <a href="{{ request()->fullUrlWithQuery(['status' => 'rejected']) }}" 
+                   class="flex-1 bg-red-50 rounded-xl border {{ request('status') == 'rejected' ? 'border-red-400 ring-2 ring-red-200 shadow-md' : 'border-red-100' }} p-4 flex flex-col items-center justify-center h-26 transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-red-100 hover:shadow-lg hover:border-red-300">
                     <div class="text-2xl font-bold text-red-500">{{ $summary['rejected'] }}</div>
                     <div class="text-xs font-medium text-red-500 mt-1">Rejected</div>
-                </div>
+                </a>
             </div>
 
             {{-- Filter & Search Bar --}}
