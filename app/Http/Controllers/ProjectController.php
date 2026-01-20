@@ -36,7 +36,7 @@ class ProjectController extends Controller
             'project_custom_id' => 'required|string|max:255',
             'project_code' => 'required|string|max:255|unique:projects',
             'name' => 'required|string|max:255',
-            'start_date' => 'required|date',
+            'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'description' => 'required|string',
         ]);

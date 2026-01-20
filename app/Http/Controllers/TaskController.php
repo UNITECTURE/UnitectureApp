@@ -77,7 +77,18 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'start_date' => 'required|date',
+            'start_date' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->project_id) {
+                        $project = Project::find($request->project_id);
+                        if ($project && $value < $project->start_date) { // Valid comparison for standard Y-m-d dates
+                            $fail('The task start date cannot be before the project start date (' . $project->start_date->format('Y-m-d') . ').');
+                        }
+                    }
+                },
+            ],
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'time_estimate' => 'nullable|string|max:50',
             'priority' => 'required|in:high,medium,low,free',
