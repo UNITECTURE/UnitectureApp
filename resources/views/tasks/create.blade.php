@@ -26,7 +26,7 @@
                             class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-8">
                             @csrf
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" x-data="{ priority: '{{ old('priority', 'medium') }}' }">
                                 <!-- Project Selection -->
                                 <div class="md:col-span-2">
                                     <label for="project_id"
@@ -77,10 +77,11 @@
 
                                 <!-- End Date -->
                                 <div>
-                                    <label for="end_date" class="block text-sm font-bold text-slate-700 mb-2">Due Date
-                                        (Optional)</label>
-                                    <input type="date" name="end_date" id="end_date" value="{{ old('end_date') }}"
-                                        class="w-full rounded-lg border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                    <label for="end_date" class="block text-sm font-bold text-slate-700 mb-2">End Date & Time</label>
+                                    <input type="datetime-local" name="end_date" id="end_date" value="{{ old('end_date') }}"
+                                        class="w-full rounded-lg border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
+                                        :disabled="priority === 'free'"
+                                        :required="priority !== 'free'">
                                     @error('end_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
 
@@ -100,12 +101,12 @@
                                 <div>
                                     <label for="priority"
                                         class="block text-sm font-bold text-slate-700 mb-2">Priority</label>
-                                    <select name="priority" id="priority"
+                                    <select name="priority" id="priority" x-model="priority"
                                         class="w-full rounded-lg border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                        <option value="high" class="text-red-600 font-bold" {{ old('priority') == 'high' ? 'selected' : '' }}>High</option>
-                                        <option value="medium" class="text-orange-600 font-bold" {{ old('priority', 'medium') == 'medium' ? 'selected' : '' }}>Medium</option>
-                                        <option value="low" class="text-green-600 font-bold" {{ old('priority') == 'low' ? 'selected' : '' }}>Low</option>
-                                        <option value="free" class="text-slate-600 font-bold" {{ old('priority') == 'free' ? 'selected' : '' }}>Free</option>
+                                        <option value="high" class="text-red-600 font-bold">High</option>
+                                        <option value="medium" class="text-orange-600 font-bold">Medium</option>
+                                        <option value="low" class="text-green-600 font-bold">Low</option>
+                                        <option value="free" class="text-slate-600 font-bold">Free</option>
                                     </select>
                                     @error('priority') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>

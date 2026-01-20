@@ -23,6 +23,16 @@ class Task extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'datetime',
+    ];
+
+    /**
      * Get the project that holds the task.
      */
     public function project()
