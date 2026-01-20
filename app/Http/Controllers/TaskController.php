@@ -11,6 +11,22 @@ use Illuminate\Support\Facades\Auth;
 class TaskController extends Controller
 {
     /**
+     * All available task statuses.
+     */
+    const STATUSES = [
+        'not_assigned',
+        'wip',
+        'completed',
+        'revision',
+        'closed',
+        'hold',
+        'emailed_under_review',
+        'awaiting_resources',
+        'awaiting_consultancy',
+        'shop_drawings',
+    ];
+
+    /**
      * Display a listing of the tasks (Overview Dashboard).
      */
     public function index()
@@ -29,7 +45,8 @@ class TaskController extends Controller
             $tasks = Task::with(['project', 'assignees', 'creator'])->latest()->get();
         }
 
-        return view('tasks.index', compact('tasks'));
+        $statuses = self::STATUSES;
+        return view('tasks.index', compact('tasks', 'statuses'));
     }
 
     /**
@@ -71,7 +88,14 @@ class TaskController extends Controller
             'category_tags' => 'nullable|string',
         ]);
 
+        if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor']) && $request->has('status')) {
+            $request->validate(['status' => 'in:' . implode(',', self::STATUSES)]);
+        }
+
         $task = new Task($validated);
+        if ($request->has('status')) {
+            $task->status = $request->status;
+        }
         $task->created_by = Auth::id();
         $task->save();
 
@@ -84,5 +108,33 @@ class TaskController extends Controller
         }
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
+    }
+
+    /**
+     * Display the specified task.
+     */
+    public function show(Task $task)
+    {
+        // Check authorization if needed (can user view this task?)
+        // For now, assuming if they can list, they can view details.
+
+        return response()->json([
+            'task' => $task->load(['project', 'assignees', 'taggedUsers', 'creator'])
+        ]);
+    }
+
+    /**
+     * Update the task status.
+     */
+    public function updateStatus(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|in:' . implode(',', self::STATUSES),
+        ]);
+
+        $task->status = $validated['status'];
+        $task->save();
+
+        return response()->json(['message' => 'Status updated successfully', 'status' => $task->status]);
     }
 }
