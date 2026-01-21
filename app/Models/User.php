@@ -64,6 +64,16 @@ class User extends Authenticatable
         return $this->hasMany(Leave::class);
     }
 
+    /**
+     * The tasks assigned to the user.
+     */
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_user')
+            ->wherePivot('type', 'assignee')
+            ->withTimestamps();
+    }
+
     // Accessor for backward compatibility (reading $user->name)
     public function getNameAttribute()
     {
@@ -73,23 +83,23 @@ class User extends Authenticatable
     // Helper Methods
     public function isSuperAdmin()
     {
-        return (int)$this->role_id === 3;
+        return (int) $this->role_id === 3;
     }
 
     public function isAdmin()
     {
         // Admin or Super Admin
-        return in_array((int)$this->role_id, [2, 3]);
+        return in_array((int) $this->role_id, [2, 3]);
     }
 
     public function isSupervisor()
     {
-        return (int)$this->role_id === 1;
+        return (int) $this->role_id === 1;
     }
 
     public function isEmployee()
     {
         // Not Supervisor, Admin, or Super Admin
-        return !in_array((int)$this->role_id, [1, 2, 3]);
+        return !in_array((int) $this->role_id, [1, 2, 3]);
     }
 }

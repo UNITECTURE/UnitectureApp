@@ -35,14 +35,15 @@ class TaskController extends Controller
         $user = Auth::user();
 
         if ($user->isEmployee()) {
-            $tasks = $user->tasks()->with(['project', 'assignees'])->latest()->get(); // Assuming 'tasks' relationship exists or using query
-            // Note: I need to add 'tasks' relationship to User model or query manually. 
-            // Let's query manually for safety if User model isn't edited yet.
-            $tasks = Task::whereHas('assignees', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })->with(['project', 'assignees'])->latest()->get();
+            $tasks = $user->tasks()
+                ->with(['project', 'assignees'])
+                ->latest()
+                ->get();
         } else {
-            $tasks = Task::with(['project', 'assignees', 'creator'])->latest()->get();
+            // Supervisors and Admins see all tasks
+            $tasks = Task::with(['project', 'assignees', 'creator'])
+                ->latest()
+                ->get();
         }
 
         $statuses = self::STATUSES;
@@ -59,7 +60,17 @@ class TaskController extends Controller
         }
 
         $projects = Project::where('status', 'active')->get();
-        $users = User::all(); // load all users for assignment
+
+        $currentUser = Auth::user();
+        if ($currentUser->isAdmin()) {
+            $users = User::orderBy('full_name')->get();
+        } else {
+            // Supervisor: Show themselves + their subordinates
+            $users = User::where('id', $currentUser->id)
+                ->orWhere('reporting_to', $currentUser->id)
+                ->orderBy('full_name')
+                ->get();
+        }
 
         return view('tasks.create', compact('projects', 'users'));
     }
@@ -89,21 +100,33 @@ class TaskController extends Controller
                     }
                 },
             ],
-            'end_date' => 'nullable|date|after_or_equal:start_date',
+            // 'end_date' field in DB is datetime. We accept separate date and time inputs.
+            'end_date_input' => 'nullable|date|after_or_equal:start_date',
+            'end_time_input' => 'nullable|date_format:H:i',
             'time_estimate' => 'nullable|string|max:50',
             'priority' => 'required|in:high,medium,low,free',
-            'assignees' => 'required|array', // Array of user IDs
-            'assignees.*' => 'exists:users,id',
-            'tagged' => 'nullable|array', // Array of user IDs
-            'tagged.*' => 'exists:users,id',
-            'category_tags' => 'nullable|string',
         ]);
 
         if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor']) && $request->has('status')) {
             $request->validate(['status' => 'in:' . implode(',', self::STATUSES)]);
         }
 
-        $task = new Task($validated);
+        // Combine Date and Time for end_date
+        $endDate = null;
+        if ($request->filled('end_date_input')) {
+            $endDate = $request->end_date_input;
+            if ($request->filled('end_time_input') && $request->priority !== 'free') {
+                $endDate .= ' ' . $request->end_time_input . ':00';
+            } else {
+                $endDate .= ' 23:59:59'; // Default to end of day if no time
+            }
+        }
+
+        // Prepare data for saving
+        $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged']);
+        $data['end_date'] = $endDate;
+
+        $task = new Task($data);
         if ($request->has('status')) {
             $task->status = $request->status;
         }
