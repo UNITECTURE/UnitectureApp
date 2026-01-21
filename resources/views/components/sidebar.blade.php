@@ -265,8 +265,9 @@
             </a>
 
             {{-- Settings --}}
-            open: localStorage.getItem('sidebar_settings_open') === 'true',
-            init() { this.$watch('open', val => localStorage.setItem('sidebar_settings_open', val)) }
+            <div x-data="{ 
+                open: localStorage.getItem('sidebar_settings_open') === 'true', 
+                init() { this.$watch('open', val => localStorage.setItem('sidebar_settings_open', val)) } 
             }" class="space-y-1">
             <div @click="sidebarOpen ? (open = !open) : (sidebarOpen = true)"
                 class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
