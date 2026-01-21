@@ -141,13 +141,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Time Estimate (Visual Only for now as requested or string) -->
-                                     <div>
-                                        <label for="time_estimate" class="block text-sm font-bold text-slate-700 mb-2">Time Estimate</label>
-                                        <input type="text" name="time_estimate" id="time_estimate"
-                                            value="{{ old('time_estimate') }}"
-                                            class="w-full rounded-lg border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2.5"
-                                            placeholder="e.g. 4 Hours">
                                     </div>
                                 </div>
                                 
