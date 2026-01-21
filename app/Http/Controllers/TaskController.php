@@ -46,8 +46,18 @@ class TaskController extends Controller
                 ->get();
         }
 
+        $counts = [
+            'all' => $tasks->count(),
+            'pending' => $tasks->whereIn('status', ['not_assigned', 'hold'])->count(),
+            'in_progress' => $tasks->whereIn('status', ['wip', 'revision', 'emailed_under_review', 'awaiting_resources', 'awaiting_consultancy', 'shop_drawings'])->count(),
+            'completed' => $tasks->whereIn('status', ['completed', 'closed'])->count(),
+            'overdue' => $tasks->filter(function ($task) {
+                return $task->end_date && $task->end_date < now() && !in_array($task->status, ['completed', 'closed']);
+            })->count(),
+        ];
+
         $statuses = self::STATUSES;
-        return view('tasks.index', compact('tasks', 'statuses'));
+        return view('tasks.index', compact('tasks', 'statuses', 'counts'));
     }
 
     /**
@@ -56,13 +66,13 @@ class TaskController extends Controller
     public function assigned()
     {
         $user = Auth::user();
-        
+
         // Get tasks assigned to the user
         $tasks = $user->tasks()
             ->with(['project', 'assignees'])
             ->latest()
             ->get();
-        
+
         $statuses = self::STATUSES;
         return view('tasks.assigned', compact('tasks', 'statuses', 'user'));
     }
