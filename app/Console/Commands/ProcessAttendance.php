@@ -65,23 +65,31 @@ class ProcessAttendance extends Command
         $biometricDurationMinutes = 0;
 
         if ($user->biometric_id) {
+            // Get logs sorted by time
             $logs = AttendanceLog::where('biometric_id', $user->biometric_id)
                         ->whereDate('punch_time', $date)
-                        ->orderBy('punch_time')
+                        ->orderBy('punch_time', 'asc')
                         ->get();
             
             if ($logs->count() > 0) {
-                // First Punch is IN
+                // First Punch is Global IN
                 $clockIn = $logs->first()->punch_time;
                 
-                // If more than 1 punch, Last is OUT
+                // Last Punch is Global OUT (if multiple)
                 if ($logs->count() > 1) {
                     $clockOut = $logs->last()->punch_time;
-                    
-                    // Parse dates to calculate difference
-                    $in = Carbon::parse($clockIn);
-                    $out = Carbon::parse($clockOut);
-                    $biometricDurationMinutes = $out->diffInMinutes($in); 
+                }
+                
+                // Pair Calculation (In -> Out, In -> Out)
+                $count = $logs->count();
+                // Iterating in steps of 2: [0,1], [2,3], [4,5]
+                for ($i = 0; $i < $count - 1; $i += 2) {
+                     $inTime = Carbon::parse($logs[$i]->punch_time);
+                     $outTime = Carbon::parse($logs[$i+1]->punch_time);
+                     
+                     // Calculate difference in minutes (Absolute)
+                     $diff = $outTime->diffInMinutes($inTime);
+                     $biometricDurationMinutes += $diff;
                 }
             }
         }
@@ -98,7 +106,8 @@ class ProcessAttendance extends Command
         }
 
         // 3. Calculate Totals
-        $totalMinutes = $biometricDurationMinutes + $manualDurationMinutes;
+        // Ensure total is positive integer
+        $totalMinutes = abs((int)$biometricDurationMinutes + (int)$manualDurationMinutes);
         
         // Determine Type (Manual vs Biometric) for Color Coding
         // If Manual Request exists, prioritize 'manual' type so it shows in Purple/Distinct color
@@ -107,7 +116,6 @@ class ProcessAttendance extends Command
         // Determine Status
         // If total duration > 0 OR manual approved -> Present
         // Otherwise Absent
-        // (Note: Leaves are not handled here, assume handled by Leave system overlapping)
         $status = ($totalMinutes > 0 || $manualReq) ? 'present' : 'absent';
         
         // Format Total Duration
@@ -116,7 +124,6 @@ class ProcessAttendance extends Command
         $durationString = "{$hours} Hrs {$mins} Mins";
 
         // 4. Update or Create Attendance Record
-        // We look for existing record to avoid duplicate days
         Attendance::updateOrCreate(
             [
                 'user_id' => $user->id, 
@@ -135,8 +142,8 @@ class ProcessAttendance extends Command
     private function parseDuration($durationStr)
     {
         // Handles formats like "8 Hrs 30 Mins" produced by UI
-        preg_match('/(\d+)\s*Hrs/', $durationStr, $hMatch);
-        preg_match('/(\d+)\s*Mins/', $durationStr, $mMatch);
+        preg_match('/(\d+)\s*Hrs/i', $durationStr, $hMatch);
+        preg_match('/(\d+)\s*Mins/i', $durationStr, $mMatch);
         
         $h = isset($hMatch[1]) ? (int)$hMatch[1] : 0;
         $m = isset($mMatch[1]) ? (int)$mMatch[1] : 0;

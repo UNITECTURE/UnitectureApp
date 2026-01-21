@@ -20,10 +20,10 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:user',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
-            'reporting_to' => 'nullable|exists:user,id',
+            'reporting_to' => 'nullable|exists:users,id',
             'joining_date' => 'required|date',
             'status' => 'required|in:active,inactive',
             'telegram_chat_id' => 'nullable|string|max:50',

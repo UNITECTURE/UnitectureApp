@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\AutoAccrueLeaves::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'api/essl/attendance',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

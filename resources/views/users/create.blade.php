@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex h-screen bg-slate-50 overflow-hidden" x-data="{ sidebarOpen: true }">
-    <x-sidebar :role="Auth::user()->role_id == 2 ? 'admin' : (Auth::user()->role_id == 1 ? 'supervisor' : 'employee')" />
+    <x-sidebar :role="Auth::user()->isAdmin() ? 'admin' : (Auth::user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <main class="flex-1 overflow-y-auto p-4 lg:p-8">
@@ -53,7 +53,21 @@
                             <div class="space-y-2">
                                 <label for="password" class="text-sm font-semibold text-slate-700">Password</label>
                                 <input type="password" name="password" id="password" required
-                                    class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600">
+                                    class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                    oninput="checkPasswordStrength(this.value)">
+                                
+                                <!-- Strength Bars -->
+                                <div class="flex gap-1 mt-2 h-1">
+                                    <div class="h-full w-full rounded-full bg-slate-200 transition-colors duration-300" id="bar-1"></div>
+                                    <div class="h-full w-full rounded-full bg-slate-200 transition-colors duration-300" id="bar-2"></div>
+                                    <div class="h-full w-full rounded-full bg-slate-200 transition-colors duration-300" id="bar-3"></div>
+                                    <div class="h-full w-full rounded-full bg-slate-200 transition-colors duration-300" id="bar-4"></div>
+                                </div>
+
+                                <!-- Validation Text -->
+                                <p class="text-xs text-red-500 mt-2 transition-colors duration-300" id="password-hint">
+                                    Min. 8 characters, 1 lowercase, 1 uppercase and 1 number. ONLY the following special characters are allowed: !@#$%^
+                                </p>
                             </div>
 
                             <!-- Confirm Password -->
@@ -62,6 +76,53 @@
                                 <input type="password" name="password_confirmation" id="password_confirmation" required
                                     class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600">
                             </div>
+
+                            <script>
+                                function checkPasswordStrength(password) {
+                                    const bars = [
+                                        document.getElementById('bar-1'),
+                                        document.getElementById('bar-2'),
+                                        document.getElementById('bar-3'),
+                                        document.getElementById('bar-4')
+                                    ];
+                                    const hint = document.getElementById('password-hint');
+                                    
+                                    let strength = 0;
+
+                                    // Core requirements
+                                    const validChars = /^[a-zA-Z0-9!@#$%^]*$/.test(password);
+                                    const hasUpper = /[A-Z]/.test(password);
+                                    const hasLower = /[a-z]/.test(password);
+                                    const hasNumber = /[0-9]/.test(password);
+                                    const hasLength = password.length >= 8;
+
+                                    if (hasLength) strength++;
+                                    if (hasLower && hasUpper) strength++;
+                                    if (hasNumber) strength++;
+                                    if (password.length >= 12) strength++;
+
+                                    // Reset bars
+                                    bars.forEach(bar => bar.className = 'h-full w-full rounded-full bg-slate-200 transition-colors duration-300');
+
+                                    // Hint Color Logic
+                                    if (validChars && hasUpper && hasLower && hasNumber && hasLength) {
+                                        hint.classList.remove('text-red-500');
+                                        hint.classList.add('text-green-600');
+                                    } else {
+                                        hint.classList.add('text-red-500');
+                                        hint.classList.remove('text-green-600');
+                                    }
+
+                                    // Fill bars
+                                    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
+                                    for (let i = 0; i < strength; i++) {
+                                        if (i < 4) {
+                                            bars[i].classList.remove('bg-slate-200');
+                                            bars[i].classList.add(colors[Math.min(strength - 1, 3)]);
+                                        }
+                                    }
+                                }
+                            </script>
 
                             <!-- Role -->
                             <div class="space-y-2">

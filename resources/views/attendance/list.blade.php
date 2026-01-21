@@ -39,7 +39,18 @@
                             
                             {{-- Date Selector --}}
                             <div class="relative mb-6">
-                                <div x-data x-init="flatpickr($refs.picker, { dateFormat: 'D, M j', defaultDate: 'today' })" class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex items-center w-full cursor-pointer hover:bg-slate-100 transition-colors">
+                                <div x-data x-init="
+                                    $refs.picker.value = '{{ request('date', date('D, M j')) }}'; 
+                                    flatpickr($refs.picker, { 
+                                        dateFormat: 'D, M j', 
+                                        defaultDate: '{{ request('date', date('Y-m-d')) }}',
+                                        onChange: function(selectedDates, dateStr, instance) {
+                                            const date = instance.formatDate(selectedDates[0], 'Y-m-d');
+                                            const params = new URLSearchParams(window.location.search);
+                                            params.set('date', date);
+                                            window.location.search = params.toString();
+                                        }
+                                    })" class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex items-center w-full cursor-pointer hover:bg-slate-100 transition-colors">
                                     <svg class="h-4 w-4 text-slate-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     <input x-ref="picker" type="text" class="bg-transparent border-none text-slate-600 font-medium text-xs p-0 focus:ring-0 w-full cursor-pointer" readonly>
                                 </div>
@@ -84,7 +95,7 @@
                                         <td class="px-4 py-4 text-sm font-medium text-slate-900 whitespace-nowrap">{{ $rec['name'] }}</td>
                                         <td class="px-4 py-4 text-center whitespace-nowrap">
                                             <span class="inline-flex px-2.5 py-1 text-xs leading-5 font-semibold rounded-full {{ $rec['class'] }}">
-                                                {{ $rec['status'] }}
+                                                {{ strtolower($rec['status']) == 'leave' ? 'On Leave' : $rec['status'] }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-4 text-center text-sm text-slate-600 whitespace-nowrap">
@@ -126,24 +137,24 @@
                             {{-- Dropdown --}}
                             <div class="mb-6 w-40">
                                 <div class="relative">
-                                    <select class="block w-full pl-3 pr-10 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md text-slate-400">
-                                        <option>{{ 'This Month' }}</option>
-                                        <option>{{ 'Last Month' }}</option>
+                                    <select 
+                                        class="block w-full pl-3 pr-10 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md text-slate-600"
+                                        onchange="const params = new URLSearchParams(window.location.search); params.set('month', this.value); window.location.search = params.toString();"
+                                    >
+                                        <option value="this_month" {{ request('month') == 'this_month' ? 'selected' : '' }}>{{ 'This Month' }}</option>
+                                        <option value="last_month" {{ request('month') == 'last_month' ? 'selected' : '' }}>{{ 'Last Month' }}</option>
                                     </select>
                                 </div>
                             </div>
 
                             {{-- Summary Cards (3 Columns) --}}
+                            {{-- Summary Cards (2 Columns) --}}
                             <div class="flex flex-row items-stretch gap-3 mb-8 w-full">
-                                <div class="w-1/3 bg-blue-50 rounded-lg p-4 text-center border border-blue-100">
-                                    <div class="text-2xl font-bold text-blue-600">{{ $cumulative_summary['total_days'] }}</div>
-                                    <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Total Days' }}</div>
+                                <div class="w-1/2 bg-blue-50 rounded-lg p-4 text-center border border-blue-100">
+                                    <div class="text-2xl font-bold text-blue-600">{{ $cumulative_summary['working'] }}</div>
+                                    <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Total Working' }}</div>
                                 </div>
-                                <div class="w-1/3 bg-green-50 rounded-lg p-4 text-center border border-green-100">
-                                    <div class="text-2xl font-bold text-green-600">{{ $cumulative_summary['working'] }}</div>
-                                    <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Working' }}</div>
-                                </div>
-                                <div class="w-1/3 bg-white rounded-lg p-4 text-center border border-slate-200 shadow-sm">
+                                <div class="w-1/2 bg-white rounded-lg p-4 text-center border border-slate-200 shadow-sm">
                                     <div class="text-2xl font-bold text-slate-800">{{ $cumulative_summary['holidays'] }}</div>
                                     <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Holidays' }}</div>
                                 </div>

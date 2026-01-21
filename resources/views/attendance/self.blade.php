@@ -185,18 +185,23 @@
                             </form>
 
                             {{-- Summary Cards --}}
-                            <div class="grid grid-cols-3 gap-4 mb-8">
-                                <div class="bg-blue-50 rounded-lg p-4 text-center border border-blue-100">
-                                    <div class="text-2xl font-bold text-blue-600">{{ $cumulative_summary['total_days'] }}</div>
-                                    <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Total Days' }}</div>
+                            {{-- Summary Cards --}}
+                            <div class="flex gap-4 mb-8 overflow-x-auto pb-2">
+                                <div class="flex-1 min-w-[120px] bg-blue-50 rounded-lg p-3 text-center border border-blue-100 flex flex-col justify-center h-24">
+                                    <div class="text-xl font-bold text-blue-600">{{ $cumulative_summary['total_working'] }}</div>
+                                    <div class="text-[10px] uppercase font-bold text-blue-600 mt-1 leading-tight">Total Working<br>(Excl. Sun/Holidays)</div>
                                 </div>
-                                <div class="bg-green-50 rounded-lg p-4 text-center border border-green-100">
-                                    <div class="text-2xl font-bold text-green-600">{{ $cumulative_summary['working'] }}</div>
-                                    <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Working' }}</div>
+                                <div class="flex-1 min-w-[120px] bg-green-50 rounded-lg p-3 text-center border border-green-100 flex flex-col justify-center h-24">
+                                    <div class="text-xl font-bold text-green-600">{{ $cumulative_summary['my_working'] }}</div>
+                                    <div class="text-[10px] uppercase font-bold text-green-600 mt-1 leading-tight">My Working<br>(Present)</div>
                                 </div>
-                                <div class="bg-white rounded-lg p-4 text-center border border-slate-200 shadow-sm">
-                                    <div class="text-2xl font-bold text-slate-800">{{ $cumulative_summary['holidays'] }}</div>
-                                    <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Holidays' }}</div>
+                                <div class="flex-1 min-w-[120px] bg-yellow-50 rounded-lg p-3 text-center border border-yellow-100 flex flex-col justify-center h-24">
+                                    <div class="text-xl font-bold text-yellow-600">{{ $cumulative_summary['leaves'] }}</div>
+                                    <div class="text-[10px] uppercase font-bold text-yellow-600 mt-1 leading-tight">Leaves<br>(Approved)</div>
+                                </div>
+                                <div class="flex-1 min-w-[120px] bg-purple-50 rounded-lg p-3 text-center border border-slate-200 shadow-sm flex flex-col justify-center h-24">
+                                    <div class="text-xl font-bold text-slate-800">{{ $cumulative_summary['holidays'] }}</div>
+                                    <div class="text-[10px] uppercase font-bold text-slate-600 mt-1 leading-tight">Holidays<br>(+ Sundays)</div>
                                 </div>
                             </div>
 

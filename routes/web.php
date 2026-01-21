@@ -5,6 +5,16 @@ use App\Http\Controllers\ManualAttendanceController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\BiometricPushController;
+
+// Biometric Device Push Listener (Bypassed CSRF in bootstrap/app.php)
+Route::any('/api/essl/attendance', [BiometricPushController::class, 'handlePush'])->name('api.biometric.push');
+
+// Trigger Attendance Processing (Called by Bridge)
+Route::get('/api/attendance/process', function () {
+    \Illuminate\Support\Facades\Artisan::call('attendance:process');
+    return response()->json(['status' => 'processed', 'message' => 'Attendance calculations updated.']);
+});
 
 Route::get('/login', function () {
     if (Auth::check()) {
@@ -54,7 +64,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/leaves', [App\Http\Controllers\LeaveController::class, 'store'])->name('leaves.store');
     Route::get('/leave-approvals', [App\Http\Controllers\LeaveController::class, 'approvals'])->name('leaves.approvals');
     Route::patch('/leaves/{leave}/status', [App\Http\Controllers\LeaveController::class, 'updateStatus'])->name('leaves.status');
-    
+    Route::get('/leaves/report', [App\Http\Controllers\LeaveController::class, 'report'])->name('leaves.report');
+    Route::get('/leaves/export', [App\Http\Controllers\LeaveController::class, 'exportReport'])->name('leaves.export');
+
     // User Management
     Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
     Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
@@ -80,24 +92,47 @@ Route::middleware(['auth'])->group(function () {
 
     // Employee Routes
     Route::get('/employee/attendance', [AttendanceController::class, 'myAttendance'])->name('employee.attendance');
+    // Employee Routes
+    Route::get('/employee/attendance', [AttendanceController::class, 'myAttendance'])->name('employee.attendance');
+
+    // Settings
+    Route::get('/settings', function () {
+        return view('settings.index');
+    })->name('settings.index');
+
+
+    Route::resource('holidays', App\Http\Controllers\HolidayController::class)->only(['index', 'store', 'destroy']);
+
+    // Project Management
+    Route::get('/projects/create', [App\Http\Controllers\ProjectController::class, 'create'])->name('projects.create');
+    Route::post('/projects', [App\Http\Controllers\ProjectController::class, 'store'])->name('projects.store');
+
+    // Task Management
+    Route::get('/tasks', [App\Http\Controllers\TaskController::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/create', [App\Http\Controllers\TaskController::class, 'create'])->name('tasks.create');
+    Route::post('/tasks', [App\Http\Controllers\TaskController::class, 'store'])->name('tasks.store');
+    Route::patch('/tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
+    Route::get('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'show'])->name('tasks.show');
 });
 
 // Test Telegram Route
 Route::get('/dev/test-telegram', function () {
     $user = \Illuminate\Support\Facades\Auth::user();
-    if (!$user) return 'Please Login first';
-    if (!$user->telegram_chat_id) return 'Current User has no Telegram ID mapped in DB';
-    
+    if (!$user)
+        return 'Please Login first';
+    if (!$user->telegram_chat_id)
+        return 'Current User has no Telegram ID mapped in DB';
+
     $token = env('TELEGRAM_BOT_TOKEN');
     $response = \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
         'chat_id' => $user->telegram_chat_id,
         'text' => "🔔 Test Message from Unitecture App",
     ]);
-    
+
     return "Telegram API Response: " . $response->body();
 });
 
-Route::get('/dev/check-schema', function() {
+Route::get('/dev/check-schema', function () {
     $results = [];
     $results['user_exists'] = \Illuminate\Support\Facades\Schema::hasTable('user');
     if ($results['user_exists']) {
