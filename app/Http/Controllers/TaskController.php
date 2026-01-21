@@ -51,6 +51,23 @@ class TaskController extends Controller
     }
 
     /**
+     * Display tasks assigned to the current user (Vertical/Card View).
+     */
+    public function assigned()
+    {
+        $user = Auth::user();
+        
+        // Get tasks assigned to the user
+        $tasks = $user->tasks()
+            ->with(['project', 'assignees'])
+            ->latest()
+            ->get();
+        
+        $statuses = self::STATUSES;
+        return view('tasks.assigned', compact('tasks', 'statuses', 'user'));
+    }
+
+    /**
      * Show the form for creating a new task.
      */
     public function create()
