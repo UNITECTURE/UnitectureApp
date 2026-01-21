@@ -10,6 +10,12 @@ use App\Http\Controllers\BiometricPushController;
 // Biometric Device Push Listener (Bypassed CSRF in bootstrap/app.php)
 Route::any('/api/essl/attendance', [BiometricPushController::class, 'handlePush'])->name('api.biometric.push');
 
+// Trigger Attendance Processing (Called by Bridge)
+Route::get('/api/attendance/process', function () {
+    \Illuminate\Support\Facades\Artisan::call('attendance:process');
+    return response()->json(['status' => 'processed', 'message' => 'Attendance calculations updated.']);
+});
+
 Route::get('/login', function () {
     if (Auth::check()) {
         return redirect('/');

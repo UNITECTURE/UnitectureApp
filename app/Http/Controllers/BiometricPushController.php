@@ -18,23 +18,52 @@ class BiometricPushController extends Controller
         // 1. Log the incoming request for debugging
         Log::info('Biometric Push Received:', $request->all());
 
-        // 2. Handle Device Initialization / Handshake
+        // 2. Handle Custom Python Bridge (JSON)
+        if ($request->isJson()) {
+            return $this->processJsonPayload($request);
+        }
+
+        // 3. Handle Device Initialization / Handshake
         // The device often sends 'cdata' or just 'SN' to check connection
         if ($request->has('SN') && !$request->has('table')) {
             // Just a handshake or config check
             return response("OK", 200); 
         }
 
-        // 3. Handle Attendance Logs
+        // 4. Handle Attendance Logs (Legacy HTTP Push)
         // Check for 'table=ATTLOG' which indicates attendance data
         if ($request->input('table') === 'ATTLOG') {
-            return $this->processAttendanceLog($request);
+            return $this->processLegacyAttendanceLog($request);
         }
         
         return response("OK", 200);
     }
 
-    private function processAttendanceLog(Request $request)
+    private function processJsonPayload(Request $request)
+    {
+        try {
+            $data = $request->json()->all();
+            
+            if (isset($data['logs']) && is_array($data['logs'])) {
+                $count = 0;
+                foreach ($data['logs'] as $log) {
+                    if (isset($log['user_id']) && isset($log['timestamp'])) {
+                        $this->saveLog($log['user_id'], $log['timestamp']);
+                        $count++;
+                    }
+                }
+                return response()->json(['status' => 'success', 'count' => $count], 200);
+            }
+            
+            return response()->json(['status' => 'error', 'message' => 'Invalid format'], 400);
+
+        } catch (\Exception $e) {
+            Log::error("Biometric Bridge Error: " . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    private function processLegacyAttendanceLog(Request $request)
     {
         try {
             // Handling POST Body Content (Raw Lines)

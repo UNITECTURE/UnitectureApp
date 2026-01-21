@@ -80,6 +80,13 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         if (!$user) return redirect('/login');
+        
+        // AUTO-CALCULATION: Ensure data is fresh when user visits page
+        if ($user->biometric_id) {
+             \Illuminate\Support\Facades\Artisan::call('attendance:process', [
+                 'date' => \Carbon\Carbon::today()->toDateString()
+             ]);
+        }
 
         $role = match((int)$user->role_id) {
             2, 3 => 'admin',

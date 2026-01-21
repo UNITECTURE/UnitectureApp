@@ -76,7 +76,7 @@
                 <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
                 <input type="email" name="email" id="email" required 
                     class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors outline-none"
-                    placeholder="name@company.com" oninput="validateEmail(this)">
+                    placeholder="Enter your registered email" oninput="validateEmail(this)">
                 <p id="email-error" class="text-xs text-red-500 mt-1 hidden">Email must contain '@' symbol.</p>
             </div>
 
@@ -85,24 +85,11 @@
                 <div class="relative">
                     <input type="password" name="password" id="password" required 
                         class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors outline-none pr-12"
-                        placeholder="correct horse battery staple" oninput="checkPasswordStrength(this.value)">
+                        placeholder="Enter your password">
                     <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-500 hover:text-slate-700">
                         <span id="toggleText">show</span>
                     </button>
                 </div>
-
-                <!-- Strength Bars -->
-                <div class="flex gap-1 mt-2 h-1">
-                    <div class="h-full w-full rounded-full bg-slate-200 transition-colors duration-300" id="bar-1"></div>
-                    <div class="h-full w-full rounded-full bg-slate-200 transition-colors duration-300" id="bar-2"></div>
-                    <div class="h-full w-full rounded-full bg-slate-200 transition-colors duration-300" id="bar-3"></div>
-                    <div class="h-full w-full rounded-full bg-slate-200 transition-colors duration-300" id="bar-4"></div>
-                </div>
-
-                <!-- Validation Text -->
-                <p class="text-xs text-red-500 mt-2" id="password-hint">
-                    Min. 8 characters, 1 lowercase, 1 uppercase and 1 number. ONLY the following special characters are allowed: !@#$%^
-                </p>
             </div>
 
             <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-all shadow-sm hover:shadow-md active:scale-[0.98]">
