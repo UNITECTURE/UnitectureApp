@@ -11,6 +11,22 @@ use Illuminate\Support\Facades\Auth;
 class TaskController extends Controller
 {
     /**
+     * All available task statuses.
+     */
+    const STATUSES = [
+        'not_assigned',
+        'wip',
+        'completed',
+        'revision',
+        'closed',
+        'hold',
+        'emailed_under_review',
+        'awaiting_resources',
+        'awaiting_consultancy',
+        'shop_drawings',
+    ];
+
+    /**
      * Display a listing of the tasks (Overview Dashboard).
      */
     public function index()
@@ -29,7 +45,8 @@ class TaskController extends Controller
             $tasks = Task::with(['project', 'assignees', 'creator'])->latest()->get();
         }
 
-        return view('tasks.index', compact('tasks'));
+        $statuses = self::STATUSES;
+        return view('tasks.index', compact('tasks', 'statuses'));
     }
 
     /**
@@ -60,7 +77,18 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'start_date' => 'required|date',
+            'start_date' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->project_id) {
+                        $project = Project::find($request->project_id);
+                        if ($project && $value < $project->start_date) { // Valid comparison for standard Y-m-d dates
+                            $fail('The task start date cannot be before the project start date (' . $project->start_date->format('Y-m-d') . ').');
+                        }
+                    }
+                },
+            ],
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'time_estimate' => 'nullable|string|max:50',
             'priority' => 'required|in:high,medium,low,free',
@@ -71,7 +99,14 @@ class TaskController extends Controller
             'category_tags' => 'nullable|string',
         ]);
 
+        if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor']) && $request->has('status')) {
+            $request->validate(['status' => 'in:' . implode(',', self::STATUSES)]);
+        }
+
         $task = new Task($validated);
+        if ($request->has('status')) {
+            $task->status = $request->status;
+        }
         $task->created_by = Auth::id();
         $task->save();
 
@@ -84,5 +119,33 @@ class TaskController extends Controller
         }
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
+    }
+
+    /**
+     * Display the specified task.
+     */
+    public function show(Task $task)
+    {
+        // Check authorization if needed (can user view this task?)
+        // For now, assuming if they can list, they can view details.
+
+        return response()->json([
+            'task' => $task->load(['project', 'assignees', 'taggedUsers', 'creator'])
+        ]);
+    }
+
+    /**
+     * Update the task status.
+     */
+    public function updateStatus(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|in:' . implode(',', self::STATUSES),
+        ]);
+
+        $task->status = $validated['status'];
+        $task->save();
+
+        return response()->json(['message' => 'Status updated successfully', 'status' => $task->status]);
     }
 }

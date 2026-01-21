@@ -98,7 +98,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', function () {
         return view('settings.index');
     })->name('settings.index');
-    
+
 
     Route::resource('holidays', App\Http\Controllers\HolidayController::class)->only(['index', 'store', 'destroy']);
 
@@ -110,6 +110,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tasks', [App\Http\Controllers\TaskController::class, 'index'])->name('tasks.index');
     Route::get('/tasks/create', [App\Http\Controllers\TaskController::class, 'create'])->name('tasks.create');
     Route::post('/tasks', [App\Http\Controllers\TaskController::class, 'store'])->name('tasks.store');
+    Route::patch('/tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
+    Route::get('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'show'])->name('tasks.show');
 });
 
 // Test Telegram Route
