@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="h-screen flex flex-col bg-[#F8F9FB] overflow-hidden" x-data="assignedTasks(@json($tasks), @json($statuses))">
+    <div class="h-screen flex flex-col bg-[#F8F9FB] overflow-hidden" x-data="assignedTasks(@json($tasks), @json($statuses), @json($stages))">
         
         <!-- Header -->
         <header class="bg-white border-b border-slate-100 py-4 px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 z-10">
@@ -154,6 +154,7 @@
                                     <th class="px-6 py-3 text-left font-bold text-slate-700">Task Code</th>
                                     <th class="px-6 py-3 text-left font-bold text-slate-700">Title</th>
                                     <th class="px-6 py-3 text-left font-bold text-slate-700">Status</th>
+                                    <th class="px-6 py-3 text-left font-bold text-slate-700">Stage</th>
                                     <th class="px-6 py-3 text-left font-bold text-slate-700">Priority</th>
                                     <th class="px-6 py-3 text-left font-bold text-slate-700">Due Date</th>
                                     <th class="px-6 py-3 text-left font-bold text-slate-700">Assignees</th>
@@ -165,11 +166,25 @@
                                         @click="selectTask(task)">
                                         <td class="px-6 py-3 font-bold text-slate-900" x-text="task.code ?? 'N/A'"></td>
                                         <td class="px-6 py-3 text-slate-900 font-medium" x-text="task.title"></td>
-                                        <td class="px-6 py-3">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold"
-                                                :class="getStatusBadgeColor(task.status)"
-                                                x-text="formatStatus(task.status)">
-                                            </span>
+                                        <td class="px-6 py-3" @click.stop>
+                                            <select @change="updateStatus(task.id, $event.target.value)" 
+                                                class="text-xs font-bold px-2 py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                                :class="getStatusSelectColor(task.status)"
+                                                :value="task.status">
+                                                <template x-for="status in statuses" :key="status">
+                                                    <option :value="status" x-text="formatStatus(status)"></option>
+                                                </template>
+                                            </select>
+                                        </td>
+                                        <td class="px-6 py-3" @click.stop>
+                                            <select @change="updateStage(task.id, $event.target.value)" 
+                                                class="text-xs font-bold px-2 py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                                :class="getStageSelectColor(task.stage)"
+                                                :value="task.stage">
+                                                <template x-for="stage in stages" :key="stage">
+                                                    <option :value="stage" x-text="formatStage(stage)"></option>
+                                                </template>
+                                            </select>
                                         </td>
                                         <td class="px-6 py-3">
                                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold"
@@ -212,9 +227,10 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('assignedTasks', (initialTasks, statuses) => ({
+            Alpine.data('assignedTasks', (initialTasks, statuses, stages) => ({
                 tasks: initialTasks,
                 statuses: statuses,
+                stages: stages,
                 view: 'vertical',
                 selectedStatus: null,
 
@@ -269,6 +285,79 @@
                     if (!date) return 'N/A';
                     const d = new Date(date);
                     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                },
+
+                formatStage(stage) {
+                    return stage.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                },
+
+                getStatusSelectColor(status) {
+                    const colors = {
+                        'wip': 'bg-blue-100 text-blue-700',
+                        'completed': 'bg-green-100 text-green-700',
+                        'revision': 'bg-orange-100 text-orange-700',
+                        'closed': 'bg-slate-100 text-slate-700',
+                        'hold': 'bg-purple-100 text-purple-700',
+                        'under_review': 'bg-yellow-100 text-yellow-700',
+                        'awaiting_resources': 'bg-amber-100 text-amber-700',
+                    };
+                    return colors[status] || 'bg-slate-100 text-slate-700';
+                },
+
+                getStageSelectColor(stage) {
+                    const colors = {
+                        'overdue': 'bg-red-100 text-red-700',
+                        'pending': 'bg-yellow-100 text-yellow-700',
+                        'in_progress': 'bg-blue-100 text-blue-700',
+                        'completed': 'bg-green-100 text-green-700',
+                    };
+                    return colors[stage] || 'bg-slate-100 text-slate-700';
+                },
+
+                async updateStatus(taskId, newStatus) {
+                    const task = this.tasks.find(t => t.id === taskId);
+                    if (!task) return;
+                    const oldStatus = task.status;
+                    task.status = newStatus;
+
+                    try {
+                        const response = await fetch(`/tasks/${taskId}/status`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({ status: newStatus })
+                        });
+
+                        if (!response.ok) throw new Error();
+                    } catch (e) {
+                        task.status = oldStatus;
+                        alert('Failed to update status');
+                    }
+                },
+
+                async updateStage(taskId, newStage) {
+                    const task = this.tasks.find(t => t.id === taskId);
+                    if (!task) return;
+                    const oldStage = task.stage;
+                    task.stage = newStage;
+
+                    try {
+                        const response = await fetch(`/tasks/${taskId}/stage`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({ stage: newStage })
+                        });
+
+                        if (!response.ok) throw new Error();
+                    } catch (e) {
+                        task.stage = oldStage;
+                        alert('Failed to update stage');
+                    }
                 }
             }));
         });

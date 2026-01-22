@@ -19,6 +19,7 @@ class Task extends Model
         'priority',
         'category_tags',
         'status',
+        'stage',
         'created_by',
     ];
 

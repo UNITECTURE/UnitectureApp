@@ -14,16 +14,23 @@ class TaskController extends Controller
      * All available task statuses.
      */
     const STATUSES = [
-        'not_assigned',
         'wip',
         'completed',
         'revision',
         'closed',
         'hold',
-        'emailed_under_review',
+        'under_review',
         'awaiting_resources',
-        'awaiting_consultancy',
-        'shop_drawings',
+    ];
+
+    /**
+     * All available task stages.
+     */
+    const STAGES = [
+        'overdue',
+        'pending',
+        'in_progress',
+        'completed',
     ];
 
     /**
@@ -48,16 +55,15 @@ class TaskController extends Controller
 
         $counts = [
             'all' => $tasks->count(),
-            'pending' => $tasks->whereIn('status', ['not_assigned', 'hold'])->count(),
-            'in_progress' => $tasks->whereIn('status', ['wip', 'revision', 'emailed_under_review', 'awaiting_resources', 'awaiting_consultancy', 'shop_drawings'])->count(),
-            'completed' => $tasks->whereIn('status', ['completed', 'closed'])->count(),
-            'overdue' => $tasks->filter(function ($task) {
-                return $task->end_date && $task->end_date < now() && !in_array($task->status, ['completed', 'closed']);
-            })->count(),
+            'pending' => $tasks->where('stage', 'pending')->count(),
+            'in_progress' => $tasks->where('stage', 'in_progress')->count(),
+            'completed' => $tasks->where('stage', 'completed')->count(),
+            'overdue' => $tasks->where('stage', 'overdue')->count(),
         ];
 
         $statuses = self::STATUSES;
-        return view('tasks.index', compact('tasks', 'statuses', 'counts'));
+        $stages = self::STAGES;
+        return view('tasks.index', compact('tasks', 'statuses', 'stages', 'counts'));
     }
 
     /**
@@ -74,7 +80,8 @@ class TaskController extends Controller
             ->get();
 
         $statuses = self::STATUSES;
-        return view('tasks.assigned', compact('tasks', 'statuses', 'user'));
+        $stages = self::STAGES;
+        return view('tasks.assigned', compact('tasks', 'statuses', 'stages', 'user'));
     }
 
     /**
@@ -134,8 +141,13 @@ class TaskController extends Controller
             'priority' => 'required|in:high,medium,low,free',
         ]);
 
-        if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor']) && $request->has('status')) {
-            $request->validate(['status' => 'in:' . implode(',', self::STATUSES)]);
+        if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor'])) {
+            if ($request->has('status')) {
+                $request->validate(['status' => 'in:' . implode(',', self::STATUSES)]);
+            }
+            if ($request->has('stage')) {
+                $request->validate(['stage' => 'in:' . implode(',', self::STAGES)]);
+            }
         }
 
         // Combine Date and Time for end_date
@@ -156,6 +168,21 @@ class TaskController extends Controller
         $task = new Task($data);
         if ($request->has('status')) {
             $task->status = $request->status;
+        }
+        if ($request->has('stage')) {
+            $task->stage = $request->stage;
+        } else {
+            // Set default stage based on end_date
+            if ($endDate) {
+                $endDateTime = \Carbon\Carbon::parse($endDate);
+                if ($endDateTime->isPast()) {
+                    $task->stage = 'overdue';
+                } else {
+                    $task->stage = 'pending';
+                }
+            } else {
+                $task->stage = 'pending';
+            }
         }
         $task->created_by = Auth::id();
         $task->save();
@@ -197,5 +224,20 @@ class TaskController extends Controller
         $task->save();
 
         return response()->json(['message' => 'Status updated successfully', 'status' => $task->status]);
+    }
+
+    /**
+     * Update the task stage.
+     */
+    public function updateStage(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'stage' => 'required|string|in:' . implode(',', self::STAGES),
+        ]);
+
+        $task->stage = $validated['stage'];
+        $task->save();
+
+        return response()->json(['message' => 'Stage updated successfully', 'stage' => $task->stage]);
     }
 }

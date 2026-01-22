@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->string('stage')->default('pending')->after('status');
+            $table->enum('stage', ['overdue', 'pending', 'in_progress', 'completed'])->default('pending')->after('status');
         });
     }
 

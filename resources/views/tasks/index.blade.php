@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="h-screen flex flex-col bg-[#F8F9FB] overflow-hidden"
-        x-data="taskManager(@json($tasks), @json($statuses), @json($counts))">
+        x-data="taskManager(@json($tasks), @json($statuses), @json($stages ?? []), @json($counts))">
 
         <!-- Header -->
         <header class="bg-white border-b border-slate-100 py-6 px-8 flex items-center justify-between shrink-0 z-20">
@@ -125,14 +125,24 @@
                                 <span class="text-xs font-bold text-slate-600" x-text="formatDate(task.end_date)"></span>
                             </div>
 
-                            <!-- Detailed Status Badge -->
-                            <span class="text-xs font-bold capitalize px-2 py-1 rounded-lg" :class="{
-                                          'text-blue-600 bg-blue-50': ['wip', 'revision', 'shop_drawings'].includes(task.status),
-                                          'text-green-600 bg-green-50': ['completed', 'closed'].includes(task.status),
-                                          'text-amber-600 bg-amber-50': ['emailed_under_review', 'awaiting_resources', 'awaiting_consultancy'].includes(task.status),
-                                          'text-slate-500 bg-slate-50': ['not_assigned', 'hold'].includes(task.status),
-                                          'text-red-600 bg-red-50': isOverdue(task)
+                            <!-- Status and Stage Badges -->
+                            <div class="flex flex-col gap-1 items-end">
+                                <span class="text-xs font-bold capitalize px-2 py-1 rounded-lg" :class="{
+                                          'text-blue-600 bg-blue-50': task.status === 'wip',
+                                          'text-green-600 bg-green-50': task.status === 'completed',
+                                          'text-orange-600 bg-orange-50': task.status === 'revision',
+                                          'text-slate-500 bg-slate-50': task.status === 'closed',
+                                          'text-purple-600 bg-purple-50': task.status === 'hold',
+                                          'text-yellow-600 bg-yellow-50': task.status === 'under_review',
+                                          'text-amber-600 bg-amber-50': task.status === 'awaiting_resources'
                                        }" x-text="formatStatus(task.status)"></span>
+                                <span class="text-[10px] font-bold capitalize px-2 py-0.5 rounded" :class="{
+                                          'text-red-600 bg-red-50': task.stage === 'overdue',
+                                          'text-yellow-600 bg-yellow-50': task.stage === 'pending',
+                                          'text-blue-600 bg-blue-50': task.stage === 'in_progress',
+                                          'text-green-600 bg-green-50': task.stage === 'completed'
+                                       }" x-text="formatStage(task.stage)"></span>
+                            </div>
                         </div>
 
                         <!-- Assignee Avatars (Absolute on top right or overlapping?) - Design shows Clean cards. Let's add assignees if needed or keep clean. -->
@@ -268,15 +278,15 @@
                         );
                     }
 
-                    // Filter by Status/Tabs
+                    // Filter by Stage/Tabs
                     if (this.filterStatus === 'pending') {
-                        filtered = filtered.filter(t => ['not_assigned', 'hold'].includes(t.status));
+                        filtered = filtered.filter(t => t.stage === 'pending');
                     } else if (this.filterStatus === 'in_progress') {
-                        filtered = filtered.filter(t => ['wip', 'revision', 'emailed_under_review', 'awaiting_resources', 'awaiting_consultancy', 'shop_drawings'].includes(t.status));
+                        filtered = filtered.filter(t => t.stage === 'in_progress');
                     } else if (this.filterStatus === 'completed') {
-                        filtered = filtered.filter(t => ['completed', 'closed'].includes(t.status));
+                        filtered = filtered.filter(t => t.stage === 'completed');
                     } else if (this.filterStatus === 'overdue') {
-                        filtered = filtered.filter(t => this.isOverdue(t));
+                        filtered = filtered.filter(t => t.stage === 'overdue');
                     }
 
                     return filtered;
@@ -287,14 +297,15 @@
                 },
 
                 isOverdue(task) {
-                    if (!task.end_date) return false;
-                    const end = new Date(task.end_date);
-                    const now = new Date();
-                    return end < now && !['completed', 'closed'].includes(task.status);
+                    return task.stage === 'overdue';
                 },
 
                 formatStatus(status) {
                     return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                },
+
+                formatStage(stage) {
+                    return stage.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
                 },
 
                 formatDate(dateString, full = false) {
