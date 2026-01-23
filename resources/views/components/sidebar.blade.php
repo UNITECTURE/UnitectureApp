@@ -92,14 +92,25 @@
                         {{ 'All Tasks' }}
                     </a>
                     
-                    <a href="{{ route('tasks.index') }}"
-                        class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">
+                    <a href="{{ route('tasks.assigned') }}"
+                        class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.assigned') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         {{ 'Assigned to Me' }}
                     </a>
+
+                    @if($role === 'supervisor')
+                    <a href="{{ route('tasks.team') }}"
+                        class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.team') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
+                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                        {{ 'My Team Tasks' }}
+                    </a>
+                    @endif
                     
                 </div>
             </div>

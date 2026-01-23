@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="assignedTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="teamTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }})">
         <x-sidebar :role="auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isSupervisor() ? 'supervisor' : 'employee')" />
         
         <div class="flex-1 flex flex-col h-full overflow-hidden">
             <!-- Header -->
             <header class="bg-white border-b border-slate-100 py-4 px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 z-10">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-800">My Tasks</h1>
-                    <p class="text-slate-400 text-sm font-medium">Track, prioritize, and complete your assigned tasks</p>
+                    <h1 class="text-2xl font-bold text-slate-800">My Team Tasks</h1>
+                    <p class="text-slate-400 text-sm font-medium">Track and manage tasks assigned to your team members</p>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -360,7 +360,7 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('assignedTasks', (initialTasks, statuses, stages) => ({
+            Alpine.data('teamTasks', (initialTasks, statuses, stages) => ({
                 tasks: initialTasks,
                 statuses: statuses,
                 stages: stages,

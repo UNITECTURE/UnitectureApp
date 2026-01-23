@@ -53,6 +53,23 @@ class TaskController extends Controller
                 ->get();
         }
 
+        // Format assignees' profile images
+        $tasks = $tasks->map(function ($task) {
+            $task->assignees = $task->assignees->map(function ($assignee) {
+                if ($assignee->profile_image) {
+                    if (filter_var($assignee->profile_image, FILTER_VALIDATE_URL)) {
+                        $assignee->profile_image_url = $assignee->profile_image;
+                    } else {
+                        $assignee->profile_image_url = asset('storage/' . $assignee->profile_image);
+                    }
+                } else {
+                    $assignee->profile_image_url = null;
+                }
+                return $assignee;
+            });
+            return $task;
+        });
+
         $counts = [
             'all' => $tasks->count(),
             'pending' => $tasks->where('stage', 'pending')->count(),
@@ -79,9 +96,70 @@ class TaskController extends Controller
             ->latest()
             ->get();
 
+        // Format assignees' profile images
+        $tasks = $tasks->map(function ($task) {
+            $task->assignees = $task->assignees->map(function ($assignee) {
+                if ($assignee->profile_image) {
+                    if (filter_var($assignee->profile_image, FILTER_VALIDATE_URL)) {
+                        $assignee->profile_image_url = $assignee->profile_image;
+                    } else {
+                        $assignee->profile_image_url = asset('storage/' . $assignee->profile_image);
+                    }
+                } else {
+                    $assignee->profile_image_url = null;
+                }
+                return $assignee;
+            });
+            return $task;
+        });
+
         $statuses = self::STATUSES;
         $stages = self::STAGES;
         return view('tasks.assigned', compact('tasks', 'statuses', 'stages', 'user'));
+    }
+
+    /**
+     * Display tasks for supervisor's team.
+     */
+    public function teamTasks()
+    {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $user = Auth::user();
+        
+        // Get team member IDs (subordinates)
+        $teamIds = User::where('reporting_to', $user->id)->pluck('id');
+        
+        // Get tasks assigned to team members
+        $tasks = Task::whereHas('assignees', function ($query) use ($teamIds) {
+                $query->whereIn('users.id', $teamIds);
+            })
+            ->with(['project', 'assignees'])
+            ->latest()
+            ->get();
+
+        // Format assignees' profile images
+        $tasks = $tasks->map(function ($task) {
+            $task->assignees = $task->assignees->map(function ($assignee) {
+                if ($assignee->profile_image) {
+                    if (filter_var($assignee->profile_image, FILTER_VALIDATE_URL)) {
+                        $assignee->profile_image_url = $assignee->profile_image;
+                    } else {
+                        $assignee->profile_image_url = asset('storage/' . $assignee->profile_image);
+                    }
+                } else {
+                    $assignee->profile_image_url = null;
+                }
+                return $assignee;
+            });
+            return $task;
+        });
+
+        $statuses = self::STATUSES;
+        $stages = self::STAGES;
+        return view('tasks.team', compact('tasks', 'statuses', 'stages', 'user'));
     }
 
     /**
