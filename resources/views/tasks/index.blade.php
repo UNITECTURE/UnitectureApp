@@ -129,7 +129,7 @@
                                                     <template x-for="(assignee, index) in task.assignees.slice(0, 3)"
                                                         :key="assignee.id">
                                                         <div class="w-6 h-6 rounded-full border border-white bg-indigo-100 flex items-center justify-center text-[10px] font-bold text-indigo-700"
-                                                            :title="assignee.name" x-text="assignee.name.charAt(0)"></div>
+                                                            :title="assignee.name" x-text="assignee.name ? assignee.name.charAt(0) : '?'"></div>
                                                     </template>
                                                     <template x-if="task.assignees.length > 3">
                                                         <div class="w-6 h-6 rounded-full border border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500"
@@ -206,7 +206,7 @@
                                             <div class="flex -space-x-2">
                                                 <template x-for="assignee in task.assignees.slice(0,3)">
                                                     <div class="w-6 h-6 rounded-full bg-indigo-100 border border-white flex items-center justify-center text-[10px] font-bold text-indigo-600"
-                                                        :title="assignee.name" x-text="assignee.name.charAt(0)"></div>
+                                                        :title="assignee.name" x-text="assignee.name ? assignee.name.charAt(0) : '?'"></div>
                                                 </template>
                                                 <template x-if="task.assignees.length > 3">
                                                     <div class="w-6 h-6 rounded-full bg-slate-100 border border-white flex items-center justify-center text-[10px] font-bold text-slate-500"
@@ -290,7 +290,7 @@
                                             <template x-for="assignee in selectedTask.assignees" :key="assignee.id">
                                                 <div class="flex items-center gap-2 bg-indigo-50 px-2 py-1 rounded-lg">
                                                     <div class="w-5 h-5 rounded-full bg-indigo-200 flex items-center justify-center text-[10px] font-bold text-indigo-700"
-                                                        x-text="assignee.name.charAt(0)"></div>
+                                                        x-text="assignee.name ? assignee.name.charAt(0) : '?'"></div>
                                                     <span class="text-xs font-bold text-indigo-800"
                                                         x-text="assignee.name"></span>
                                                 </div>
@@ -333,6 +333,34 @@
                 sidebarOpen: true,
                 filterStatus: 'all', // 'all', 'pending', 'in_progress', 'completed', 'overdue'
                 selectedTask: null,
+                view: 'board',
+                dragOverStyle: null,
+
+                tasksByStatus(status) {
+                    return this.filteredTasks.filter(t => t.status === status);
+                },
+
+                dragStart(event, task) {
+                    event.dataTransfer.effectAllowed = 'move';
+                    event.dataTransfer.setData('text/plain', JSON.stringify(task));
+                    event.target.classList.add('opacity-50');
+                },
+
+                async drop(event, newStatus) {
+                    const data = event.dataTransfer.getData('text/plain');
+                    if (!data) return;
+                    
+                    const task = JSON.parse(data);
+                    // Find the actual task object in our array to update it
+                    const validTask = this.tasks.find(t => t.id === task.id);
+                    
+                    if (validTask && validTask.status !== newStatus) {
+                         await this.updateStatus(validTask.id, newStatus);
+                    }
+                    
+                    // Remove opacity from all dragged items
+                    document.querySelectorAll('.opacity-50').forEach(el => el.classList.remove('opacity-50'));
+                },
 
                 get filteredTasks() {
                     let filtered = this.tasks;
