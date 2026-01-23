@@ -1,59 +1,427 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Unitecture - Employee Management System
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/images/logo.png" alt="Unitecture Logo" width="200">
 </p>
 
-## About Laravel
+<p align="center">
+  A comprehensive HR and Employee Management System built with Laravel 11
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📋 Table of Contents
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [About](#about)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Biometric Integration](#biometric-integration)
+- [User Roles](#user-roles)
+- [API Endpoints](#api-endpoints)
+- [Contributing](#contributing)
+- [License](#license)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🎯 About
 
-## Learning Laravel
+Unitecture is a modern, feature-rich Employee Management System designed to streamline HR operations, attendance tracking, leave management, and project coordination. The system integrates with biometric devices for automated attendance tracking and provides a comprehensive dashboard for administrators, supervisors, and employees.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## ✨ Features
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 👥 User Management
+- Role-based access control (Super Admin, Admin, Supervisor, Employee)
+- User profile management with profile images
+- Hierarchical reporting structure
+- Telegram integration for notifications
 
-## Laravel Sponsors
+### ⏰ Attendance Management
+- **Biometric Integration**: Automatic attendance tracking via eSSL biometric devices
+- **Manual Attendance Requests**: Employees can request manual attendance entries
+- **Approval Workflow**: Supervisors and admins can approve/reject manual requests
+- **Attendance Reports**: Comprehensive attendance reports with export functionality
+- **Daily Processing**: Automated daily attendance calculation at 11:00 PM
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 🏖️ Leave Management
+- Leave request submission and tracking
+- Leave balance tracking with automatic accrual
+- Multi-level approval workflow (Supervisor → Admin)
+- Leave reports and analytics
+- Export functionality for leave data
 
-### Premium Partners
+### 📋 Task Management
+- Task creation and assignment
+- Task status tracking (Pending, In Progress, Completed)
+- Task assignment to multiple team members
+- Task filtering and search
+- Project-based task organization
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 🏗️ Project Management
+- Project creation and tracking
+- Project status management
+- Department-based project organization
+- Project timeline tracking
 
-## Contributing
+### 🎉 Holiday Management
+- Holiday calendar management
+- Holiday-based leave calculations
+- Admin-controlled holiday settings
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 📊 Reports & Analytics
+- Attendance reports with filtering
+- Leave reports and summaries
+- Export to various formats
+- Role-based report access
 
-## Code of Conduct
+### 🔔 Notifications
+- Telegram bot integration for real-time notifications
+- Manual attendance request notifications
+- Leave approval/rejection notifications
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🛠️ Technology Stack
 
-## Security Vulnerabilities
+- **Backend**: Laravel 11 (PHP 8.2+)
+- **Frontend**: Blade Templates, Tailwind CSS 4.0, Alpine.js
+- **Database**: MySQL/MariaDB
+- **Build Tool**: Vite
+- **Biometric Integration**: Python Bridge (for eSSL devices)
+- **Notifications**: Telegram Bot API
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 📦 Prerequisites
 
-## License
+Before you begin, ensure you have the following installed:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- PHP 8.2 or higher
+- Composer
+- Node.js and npm
+- MySQL/MariaDB
+- Python 3.x (for biometric bridge)
+- Git
+
+## 🚀 Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd Unitecture-App
+```
+
+### 2. Install PHP Dependencies
+
+```bash
+composer install
+```
+
+### 3. Install Node Dependencies
+
+```bash
+npm install
+```
+
+### 4. Environment Configuration
+
+Copy the `.env.example` file to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Generate application key:
+
+```bash
+php artisan key:generate
+```
+
+### 5. Database Setup
+
+Update your `.env` file with database credentials:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=unitecture_db
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+Run migrations:
+
+```bash
+php artisan migrate
+```
+
+### 6. Create Super Admin
+
+Run the super admin creation script:
+
+```bash
+php create_super_admin.php
+```
+
+Default credentials:
+- Email: `superadmin@unitecture.com`
+- Password: `Unitecture@2026`
+
+### 7. Build Assets
+
+```bash
+npm run build
+```
+
+Or for development:
+
+```bash
+npm run dev
+```
+
+### 8. Start Development Server
+
+```bash
+php artisan serve
+```
+
+The application will be available at `http://localhost:8000`
+
+## ⚙️ Configuration
+
+### Biometric Device Configuration
+
+Add your biometric device settings to `.env`:
+
+```env
+BIOMETRIC_DEVICE_IP=192.168.1.201
+BIOMETRIC_DEVICE_PORT=4370
+```
+
+For detailed biometric integration instructions, see [BIOMETRIC_INTEGRATION.md](BIOMETRIC_INTEGRATION.md)
+
+### Telegram Bot Configuration
+
+To enable Telegram notifications, add to `.env`:
+
+```env
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+```
+
+### Queue Configuration
+
+For background job processing, configure your queue driver in `.env`:
+
+```env
+QUEUE_CONNECTION=database
+```
+
+Run the queue worker:
+
+```bash
+php artisan queue:work
+```
+
+### Scheduler Configuration
+
+Add this to your crontab for scheduled tasks:
+
+```bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## 📖 Usage
+
+### Login
+
+1. Navigate to `/login`
+2. Enter your email and password
+3. You'll be redirected to the dashboard based on your role
+
+### Dashboard
+
+The dashboard provides role-specific views:
+- **Super Admin/Admin**: Full system overview
+- **Supervisor**: Team management and approvals
+- **Employee**: Personal attendance and leave tracking
+
+### Attendance
+
+- View your attendance records
+- Submit manual attendance requests
+- Approve/reject requests (Supervisor/Admin)
+- Export attendance reports
+
+### Leave Management
+
+- Submit leave requests
+- Track leave balance
+- Approve/reject leave requests (Supervisor/Admin)
+- View leave reports
+
+### Task Management
+
+- Create and assign tasks
+- Track task progress
+- Filter tasks by status or project
+- View assigned tasks
+
+## 📁 Project Structure
+
+```
+Unitecture-App/
+├── app/
+│   ├── Channels/          # Notification channels (Telegram)
+│   ├── Console/           # Artisan commands
+│   ├── Http/
+│   │   ├── Controllers/   # Application controllers
+│   │   └── Middleware/    # Custom middleware
+│   ├── Models/            # Eloquent models
+│   ├── Notifications/     # Notification classes
+│   └── Services/          # Business logic services
+├── database/
+│   ├── migrations/        # Database migrations
+│   └── seeders/           # Database seeders
+├── public/
+│   ├── images/            # Static images (logo, etc.)
+│   └── favicon.ico        # Application favicon
+├── resources/
+│   ├── css/               # Stylesheets
+│   ├── js/                # JavaScript files
+│   └── views/             # Blade templates
+├── routes/
+│   ├── web.php            # Web routes
+│   └── console.php        # Scheduled commands
+└── local_bridge/          # Python bridge for biometric devices
+```
+
+## 🔌 Biometric Integration
+
+The system supports integration with eSSL biometric devices through a Python bridge. The bridge runs on a local PC connected to the biometric device and syncs attendance data to the cloud application.
+
+### Setup Biometric Bridge
+
+1. Navigate to `local_bridge/` directory
+2. Install Python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Configure `bridge.py` with device IP and API URL
+4. Run the bridge:
+   ```bash
+   python bridge.py
+   ```
+
+For detailed setup instructions, see [local_bridge/README.md](local_bridge/README.md)
+
+## 👤 User Roles
+
+### Super Admin (Role ID: 3)
+- Full system access
+- User management
+- System configuration
+- All reports and analytics
+
+### Admin (Role ID: 2)
+- User management
+- Attendance and leave approvals
+- Project and task management
+- Reports and exports
+
+### Supervisor (Role ID: 1)
+- Team attendance and leave approvals
+- Team task assignment
+- Team reports
+- Personal dashboard
+
+### Employee (Role ID: 0)
+- Personal attendance tracking
+- Leave request submission
+- Task viewing and updates
+- Personal reports
+
+## 🔗 API Endpoints
+
+### Biometric Integration
+- `POST /api/essl/attendance` - Receive attendance data from biometric device
+- `GET /api/attendance/process` - Trigger attendance processing
+
+### Authentication
+- `GET /login` - Login page
+- `POST /login` - Authenticate user
+- `GET /logout` - Logout user
+
+### Attendance
+- `GET /employee/attendance` - Employee attendance view
+- `GET /supervisor/attendance/team` - Supervisor team attendance
+- `GET /admin/attendance/all` - Admin all attendance
+- `POST /attendance/manual` - Submit manual attendance request
+- `GET /attendance/export` - Export attendance data
+
+### Leave Management
+- `GET /leaves` - Leave requests
+- `POST /leaves` - Submit leave request
+- `PATCH /leaves/{id}/status` - Update leave status
+- `GET /leaves/report` - Leave reports
+- `GET /leaves/export` - Export leave data
+
+### Task Management
+- `GET /tasks` - All tasks
+- `GET /tasks/assigned` - Assigned tasks
+- `POST /tasks` - Create task
+- `PATCH /tasks/{id}/status` - Update task status
+
+## 🧪 Development
+
+### Running Tests
+
+```bash
+php artisan test
+```
+
+### Code Style
+
+The project uses Laravel Pint for code formatting:
+
+```bash
+./vendor/bin/pint
+```
+
+### Development Mode
+
+Run all services concurrently:
+
+```bash
+composer run dev
+```
+
+This starts:
+- Laravel development server
+- Queue worker
+- Log viewer (Pail)
+- Vite dev server
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+For support and questions, please contact the development team or create an issue in the repository.
+
+## 🙏 Acknowledgments
+
+- Laravel Framework
+- Tailwind CSS
+- Alpine.js
+- All contributors and team members
+
+---
+
+<p align="center">Built with ❤️ by the Unitecture Team</p>

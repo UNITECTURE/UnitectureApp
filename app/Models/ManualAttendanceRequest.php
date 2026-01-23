@@ -9,6 +9,8 @@ class ManualAttendanceRequest extends Model
     protected $fillable = [
         'user_id',
         'date',
+        'start_time',
+        'end_time',
         'duration',
         'reason',
         'status',

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('user', function (Blueprint $table) {
-            if (!Schema::hasColumn('user', 'leave_balance')) {
+        Schema::table('users', function (Blueprint $table) {
+            if (!Schema::hasColumn('users', 'leave_balance')) {
                 $table->decimal('leave_balance', 5, 2)->default(0.00)->after('status');
             }
-            if (!Schema::hasColumn('user', 'last_accrued_month')) {
+            if (!Schema::hasColumn('users', 'last_accrued_month')) {
                 $table->string('last_accrued_month', 7)->nullable()->after('leave_balance');
             }
         });
@@ -26,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('user', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn(['leave_balance', 'last_accrued_month']);
         });
     }

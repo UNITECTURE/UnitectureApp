@@ -39,7 +39,18 @@
                             
                             {{-- Date Selector --}}
                             <div class="relative mb-6">
-                                <div x-data x-init="flatpickr($refs.picker, { dateFormat: 'D, M j', defaultDate: 'today' })" class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex items-center w-full cursor-pointer hover:bg-slate-100 transition-colors">
+                                <div x-data x-init="
+                                    $refs.picker.value = '{{ request('date', date('D, M j')) }}'; 
+                                    flatpickr($refs.picker, { 
+                                        dateFormat: 'D, M j', 
+                                        defaultDate: '{{ request('date', date('Y-m-d')) }}',
+                                        onChange: function(selectedDates, dateStr, instance) {
+                                            const date = instance.formatDate(selectedDates[0], 'Y-m-d');
+                                            const params = new URLSearchParams(window.location.search);
+                                            params.set('date', date);
+                                            window.location.search = params.toString();
+                                        }
+                                    })" class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex items-center w-full cursor-pointer hover:bg-slate-100 transition-colors">
                                     <svg class="h-4 w-4 text-slate-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     <input x-ref="picker" type="text" class="bg-transparent border-none text-slate-600 font-medium text-xs p-0 focus:ring-0 w-full cursor-pointer" readonly>
                                 </div>
@@ -84,7 +95,7 @@
                                         <td class="px-4 py-4 text-sm font-medium text-slate-900 whitespace-nowrap">{{ $rec['name'] }}</td>
                                         <td class="px-4 py-4 text-center whitespace-nowrap">
                                             <span class="inline-flex px-2.5 py-1 text-xs leading-5 font-semibold rounded-full {{ $rec['class'] }}">
-                                                {{ $rec['status'] }}
+                                                {{ strtolower($rec['status']) == 'leave' ? 'On Leave' : $rec['status'] }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-4 text-center text-sm text-slate-600 whitespace-nowrap">
@@ -124,26 +135,44 @@
                             <h2 class="text-lg font-bold text-slate-800 mb-4">{{ 'Cumulative Report' }}</h2>
                             
                             {{-- Dropdown --}}
-                            <div class="mb-6 w-40">
-                                <div class="relative">
-                                    <select class="block w-full pl-3 pr-10 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md text-slate-400">
-                                        <option>{{ 'This Month' }}</option>
-                                        <option>{{ 'Last Month' }}</option>
+                            {{-- Dropdown --}}
+                            <form action="" method="GET" id="team-cumulative-filter-form" class="mb-6 flex gap-2">
+                                {{-- Preserve daily date --}}
+                                @if(request('date'))
+                                <input type="hidden" name="date" value="{{ request('date') }}">
+                                @endif
+
+                                <div class="relative w-32">
+                                    <select name="month" onchange="document.getElementById('team-cumulative-filter-form').submit()" 
+                                        class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
+                                        @foreach(range(1, 12) as $m)
+                                            <option value="{{ $m }}" {{ (request('month') == $m || (!request('month') && now()->month == $m)) ? 'selected' : '' }}>
+                                                {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
-                            </div>
+
+                                <div class="relative w-24">
+                                     <select name="year" onchange="document.getElementById('team-cumulative-filter-form').submit()" 
+                                        class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
+                                        @for($y = now()->year - 2; $y <= now()->year + 4; $y++)
+                                            <option value="{{ $y }}" {{ (request('year') == $y || (!request('year') && now()->year == $y)) ? 'selected' : '' }}>
+                                                {{ $y }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                </div>
+                            </form>
 
                             {{-- Summary Cards (3 Columns) --}}
+                            {{-- Summary Cards (2 Columns) --}}
                             <div class="flex flex-row items-stretch gap-3 mb-8 w-full">
-                                <div class="w-1/3 bg-blue-50 rounded-lg p-4 text-center border border-blue-100">
-                                    <div class="text-2xl font-bold text-blue-600">{{ $cumulative_summary['total_days'] }}</div>
-                                    <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Total Days' }}</div>
+                                <div class="w-1/2 bg-blue-50 rounded-lg p-4 text-center border border-blue-100">
+                                    <div class="text-2xl font-bold text-blue-600">{{ $cumulative_summary['working'] }}</div>
+                                    <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Total Working' }}</div>
                                 </div>
-                                <div class="w-1/3 bg-green-50 rounded-lg p-4 text-center border border-green-100">
-                                    <div class="text-2xl font-bold text-green-600">{{ $cumulative_summary['working'] }}</div>
-                                    <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Working' }}</div>
-                                </div>
-                                <div class="w-1/3 bg-white rounded-lg p-4 text-center border border-slate-200 shadow-sm">
+                                <div class="w-1/2 bg-white rounded-lg p-4 text-center border border-slate-200 shadow-sm">
                                     <div class="text-2xl font-bold text-slate-800">{{ $cumulative_summary['holidays'] }}</div>
                                     <div class="text-xs font-medium text-slate-600 mt-1">{{ 'Holidays' }}</div>
                                 </div>
@@ -178,7 +207,7 @@
                         
                         {{-- Fixed Footer --}}
                         <div class="p-6 pt-4 shrink-0 mt-auto border-t border-slate-50">
-                             <a href="{{ route('attendance.export', ['type' => 'team_cumulative']) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
+                             <a href="{{ route('attendance.export', ['type' => 'team_cumulative', 'month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
                                 {{ 'Download Attendance' }}
                             </a>
                         </div>
