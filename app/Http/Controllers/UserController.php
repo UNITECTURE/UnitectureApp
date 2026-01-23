@@ -34,10 +34,26 @@ class UserController extends Controller
         $imageUrl = null;
         if ($request->hasFile('profile_image')) {
             $uploadedFile = $request->file('profile_image');
-            $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($uploadedFile->getRealPath(), [
-                'folder' => 'unitecture_users'
-            ]);
-            $imageUrl = $uploadResult->getSecurePath();
+            
+            // Check if Cloudinary credentials are set because Cloudinary package crashes if config is missing
+            $hasCloudinary = !empty(env('CLOUDINARY_URL')) || (!empty(env('CLOUDINARY_CLOUD_NAME')) && !empty(env('CLOUDINARY_KEY')) && !empty(env('CLOUDINARY_SECRET')));
+
+            if ($hasCloudinary) {
+                try {
+                    $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($uploadedFile->getRealPath(), [
+                        'folder' => 'unitecture_users'
+                    ]);
+                    $imageUrl = $uploadResult->getSecurePath();
+                } catch (\Exception $e) {
+                    // Fallback to local if Cloudinary fails
+                     $path = $uploadedFile->store('profile_images', 'public');
+                    $imageUrl = asset('storage/' . $path);
+                }
+            } else {
+                // Fallback to local storage
+                $path = $uploadedFile->store('profile_images', 'public');
+                $imageUrl = asset('storage/' . $path);
+            }
         }
 
         User::create([
