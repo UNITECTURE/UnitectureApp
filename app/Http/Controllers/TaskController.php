@@ -115,6 +115,32 @@ class TaskController extends Controller
     }
 
     /**
+     * Get employees for task assignment (API endpoint).
+     */
+    public function getEmployees()
+    {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $currentUser = Auth::user();
+        if ($currentUser->isAdmin()) {
+            $users = User::select('id', 'full_name', 'email', 'profile_image')
+                ->orderBy('full_name')
+                ->get();
+        } else {
+            // Supervisor: Show themselves + their subordinates
+            $users = User::select('id', 'full_name', 'email', 'profile_image')
+                ->where('id', $currentUser->id)
+                ->orWhere('reporting_to', $currentUser->id)
+                ->orderBy('full_name')
+                ->get();
+        }
+
+        return response()->json($users);
+    }
+
+    /**
      * Store a newly created task in storage.
      */
     public function store(Request $request)
