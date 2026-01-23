@@ -20,14 +20,30 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:user',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
-            'reporting_to' => 'nullable|exists:user,id',
+            'reporting_to' => 'nullable|exists:users,id',
             'joining_date' => 'required|date',
             'status' => 'required|in:active,inactive',
             'telegram_chat_id' => 'nullable|string|max:50',
         ]);
+
+        // Calculate leave balance based on joining date
+        $joiningDate = \Carbon\Carbon::parse($request->joining_date);
+        $today = now();
+        
+        // Count complete calendar months (only months where the 1st has passed)
+        $completedMonths = 0;
+        $currentDate = $joiningDate->copy();
+        
+        while ($currentDate->addMonth() <= $today) {
+            $completedMonths++;
+        }
+        
+        // After 3 months probation, accrue 1.25 days per month
+        $accrualMonths = max(0, $completedMonths - 3);
+        $leaveBalance = $accrualMonths * 1.25;
 
         User::create([
             'full_name' => $request->name,
@@ -38,7 +54,7 @@ class UserController extends Controller
             'joining_date' => $request->joining_date,
             'status' => $request->status,
             'telegram_chat_id' => $request->telegram_chat_id,
-            'leave_balance' => 0, // Default balance for new users
+            'leave_balance' => $leaveBalance,
         ]);
 
         return redirect()->route('dashboard')->with('success', 'User created successfully.');

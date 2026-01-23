@@ -15,16 +15,16 @@ return new class extends Migration
         
         Schema::create('manual_attendance_requests', function (Blueprint $table) {
             $table->id();
-            // Reference 'user' table (singular)
-            $table->foreignId('user_id')->constrained('user')->onDelete('cascade');
+            // Reference 'users' table
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             
             $table->date('date');
             $table->string('duration');
             $table->text('reason')->nullable();
             $table->string('status')->default('pending'); // pending, approved, rejected
             
-            // Reference 'user' table (singular) for approver
-            $table->foreignId('approved_by')->nullable()->constrained('user');
+            // Reference 'users' table for approver
+            $table->foreignId('approved_by')->nullable()->constrained('users');
             
             $table->text('rejection_reason')->nullable();
             $table->timestamps();

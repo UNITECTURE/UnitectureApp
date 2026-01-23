@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::dropIfExists('leaves');
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('user')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('leave_type', ['paid', 'unpaid']);
             $table->text('reason');
             $table->date('start_date');

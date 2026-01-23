@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('telegram_chat_id')->nullable()->after('status')->comment('Unique Chat ID for Telegram Notifications');
+        Schema::table('leaves', function (Blueprint $table) {
+            $table->enum('leave_category', ['planned', 'emergency'])->default('planned')->after('leave_type')->comment('Planned: 7-day notice required, Emergency: Immediate');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('telegram_chat_id');
+        Schema::table('leaves', function (Blueprint $table) {
+            $table->dropColumn('leave_category');
         });
     }
 };
