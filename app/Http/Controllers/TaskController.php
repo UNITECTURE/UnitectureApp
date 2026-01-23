@@ -93,7 +93,12 @@ class TaskController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $projects = Project::where('status', 'active')->get();
+        // Get all projects created by supervisors/admins (visible to all supervisors)
+        $projects = Project::whereHas('creator', function ($query) {
+                $query->whereIn('role_id', [1, 2, 3]); // Supervisor, Admin, Super Admin
+            })
+            ->orderBy('name')
+            ->get();
 
         $currentUser = Auth::user();
         if ($currentUser->isAdmin()) {

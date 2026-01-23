@@ -104,6 +104,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('holidays', App\Http\Controllers\HolidayController::class)->only(['index', 'store', 'destroy']);
 
     // Project Management
+    Route::get('/projects', [App\Http\Controllers\ProjectController::class, 'index'])->name('projects.index');
     Route::get('/projects/create', [App\Http\Controllers\ProjectController::class, 'create'])->name('projects.create');
     Route::post('/projects', [App\Http\Controllers\ProjectController::class, 'store'])->name('projects.store');
 

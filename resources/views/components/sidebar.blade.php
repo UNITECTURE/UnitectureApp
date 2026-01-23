@@ -290,6 +290,10 @@
 
             {{-- Submenu --}}
             <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
+                @if($role === 'admin' || $role === 'supervisor')
+                    <a href="{{ route('projects.index') }}"
+                        class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('projects.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Projects' }}</a>
+                @endif
                 @if($role === 'admin')
                     <a href="{{ route('settings.index') }}"
                         class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('settings.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'General Settings' }}</a>

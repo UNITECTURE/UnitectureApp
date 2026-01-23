@@ -9,6 +9,27 @@ use Illuminate\Support\Facades\Auth;
 class ProjectController extends Controller
 {
     /**
+     * Display a listing of all projects (visible to all supervisors).
+     */
+    public function index()
+    {
+        // Only supervisors and admins can view projects
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Get all projects created by supervisors (or admins)
+        $projects = Project::with('creator')
+            ->whereHas('creator', function ($query) {
+                $query->whereIn('role_id', [1, 2, 3]); // Supervisor, Admin, Super Admin
+            })
+            ->latest()
+            ->get();
+
+        return view('projects.index', compact('projects'));
+    }
+
+    /**
      * Show the form for creating a new project.
      */
     public function create()
@@ -45,6 +66,6 @@ class ProjectController extends Controller
         $project->created_by = Auth::id();
         $project->save();
 
-        return redirect()->route('dashboard')->with('success', 'Project created successfully!');
+        return redirect()->route('projects.index')->with('success', 'Project created successfully!');
     }
 }

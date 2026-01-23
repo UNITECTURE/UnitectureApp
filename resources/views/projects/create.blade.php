@@ -12,12 +12,12 @@
                             <h2 class="text-2xl font-bold text-slate-800">Create Project</h2>
                             <p class="text-slate-400 text-sm mt-1 font-medium">Add a new project to the system</p>
                         </div>
-                        <a href="{{ route('settings.index') }}"
+                        <a href="{{ route('projects.index') }}"
                             class="text-slate-500 hover:text-slate-700 font-medium text-sm flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
-                            Back to Settings
+                            Back to Projects
                         </a>
                     </div>
 
