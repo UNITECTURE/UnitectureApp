@@ -56,6 +56,7 @@
             </a>
 
             {{-- Tasks --}}
+            @if($role !== 'admin')
             <div x-data="{ 
                 open: localStorage.getItem('sidebar_tasks_open') === 'true', 
                 init() { this.$watch('open', val => localStorage.setItem('sidebar_tasks_open', val)) } 
@@ -95,6 +96,7 @@
                         </svg>
                         {{ 'All Tasks' }}
                     </a>
+                    
                     <a href="{{ route('tasks.index') }}"
                         class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -103,8 +105,10 @@
                         </svg>
                         {{ 'Assigned to Me' }}
                     </a>
+                    
                 </div>
             </div>
+            @endif
 
             {{-- Attendance & Leave --}}
             <div x-data="{ 
@@ -138,8 +142,10 @@
 
                 {{-- Submenu - Only show when sidebar is open AND menu is expanded --}}
                 <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
-                    <a href="{{ route('leaves.index') }}"
-                        class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('leaves.index') ? 'text-white bg-slate-800' : '' }}">{{ 'My Leaves' }}</a>
+                    @if(Auth::user()->role_id !== 3)
+                        <a href="{{ route('leaves.index') }}"
+                            class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('leaves.index') ? 'text-white bg-slate-800' : '' }}">{{ 'My Leaves' }}</a>
+                    @endif
 
                     @if($role === 'admin')
                         <a href="{{ route('leaves.report') }}"
@@ -163,8 +169,10 @@
                         <div x-show="subOpen" x-transition class="mt-1 ml-4 space-y-1 border-l border-slate-700"
                             style="display: none;">
                             @if($role === 'admin')
-                                <a href="{{ route('admin.attendance.self') }}"
-                                    class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('admin.attendance.self') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'Self Attendance' }}</a>
+                                @if(Auth::user()->role_id !== 3)
+                                    <a href="{{ route('admin.attendance.self') }}"
+                                        class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('admin.attendance.self') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'Self Attendance' }}</a>
+                                @endif
                                 <a href="{{ route('admin.attendance.all') }}"
                                     class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('admin.attendance.all') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'All Attendance' }}</a>
                             @elseif($role === 'supervisor')
@@ -247,6 +255,7 @@
             @endif
 
             {{-- My Team --}}
+            @if($role !== 'admin')
             <a href="#"
                 class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative"
                 :class="!sidebarOpen ? 'justify-center' : ''">
@@ -263,50 +272,52 @@
                     class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
                     My Team</div>
             </a>
+            @endif
 
             {{-- Settings --}}
             <div x-data="{ 
                 open: localStorage.getItem('sidebar_settings_open') === 'true', 
                 init() { this.$watch('open', val => localStorage.setItem('sidebar_settings_open', val)) } 
             }" class="space-y-1">
-            <div @click="sidebarOpen ? (open = !open) : (sidebarOpen = true)"
-                class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
-                :class="!sidebarOpen ? 'justify-center' : ''">
-                <div class="flex items-center flex-1 min-w-0" :class="!sidebarOpen ? 'justify-center' : ''">
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
-                        :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
-                        </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <div @click="sidebarOpen ? (open = !open) : (sidebarOpen = true)"
+                    class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
+                    :class="!sidebarOpen ? 'justify-center' : ''">
+                    <div class="flex items-center flex-1 min-w-0" :class="!sidebarOpen ? 'justify-center' : ''">
+                        <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
+                            :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Settings' }}</span>
+                    </div>
+                    <svg x-show="sidebarOpen"
+                        class="w-4 h-4 text-slate-500 transition-transform duration-200 ml-auto flex-shrink-0"
+                        :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                    <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Settings' }}</span>
+
+                    {{-- Tooltip for collapsed state --}}
+                    <div x-show="!sidebarOpen"
+                        class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
+                        Settings</div>
                 </div>
-                <svg x-show="sidebarOpen"
-                    class="w-4 h-4 text-slate-500 transition-transform duration-200 ml-auto flex-shrink-0"
-                    :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
 
-                {{-- Tooltip for collapsed state --}}
-                <div x-show="!sidebarOpen"
-                    class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
-                    Settings</div>
-            </div>
+                {{-- Submenu --}}
+                <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
+                    @if($role === 'admin')
+                        <a href="{{ route('settings.index') }}"
+                            class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('settings.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'General Settings' }}</a>
+                        <a href="{{ route('users.create') }}"
+                            class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('users.create') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Add New User' }}</a>
+                    @else
+                        <a href="{{ route('settings.index') }}"
+                            class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'General Settings' }}</a>
+                    @endif
+                </div>
 
-            {{-- Submenu --}}
-            <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
-                @if($role === 'admin')
-                    <a href="{{ route('settings.index') }}"
-                        class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('settings.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'General Settings' }}</a>
-                    <a href="{{ route('users.create') }}"
-                        class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('users.create') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Add New User' }}</a>
-                @else
-                    <a href="{{ route('settings.index') }}"
-                        class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'General Settings' }}</a>
-                @endif
-            </div>
     </div>
     </nav>
     </div>

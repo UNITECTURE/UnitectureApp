@@ -100,7 +100,7 @@ class AttendanceController extends Controller
         
         // Default Date: Today for everyone (Restriction removed)
         if (!$dateInput) {
-            $date = $today;
+            $date = ($role === 'employee') ? Carbon::yesterday() : $today;
         } else {
             $date = Carbon::parse($dateInput);
         }
@@ -126,26 +126,50 @@ class AttendanceController extends Controller
              }
         }
 
+        if ($role === 'employee' && $date->isToday()) {
+             // Hide specific details for today
+             $status = 'processing';
+             $att = null; 
+        }
+
         // Update Summary
         if ($status === 'present') $daily_summary['present'] = 1;
         elseif ($status === 'leave') $daily_summary['leave'] = 1;
+        elseif ($status === 'processing') { /* No count change or maybe distinct? User didn't specify, just hidden */ }
         else $daily_summary['absent'] = 1;
 
-        $isManual = $att && $att->type === 'manual';
+        $attType = $att ? $att->type : 'biometric';
         
         $login = $att && $att->clock_in ? Carbon::parse($att->clock_in)->format('h:i A') : '-';
         $logout = $att && $att->clock_out ? Carbon::parse($att->clock_out)->format('h:i A') : '-';
         
             $class = match($status) {
-                'present' => $isManual ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800',
+                'present' => match($attType) {
+                    'manual' => 'bg-blue-100 text-blue-800',
+                    'hybrid' => 'bg-purple-100 text-purple-800', 
+                    default => 'bg-green-100 text-green-800', // Biometric
+                },
                 'absent' => 'bg-red-100 text-red-800',
                 'leave' => 'bg-yellow-100 text-yellow-800',
+                'processing' => 'bg-gray-100 text-gray-500',
                 default => 'bg-gray-100 text-gray-800',
+            };
+            
+            $statusText = match($status) {
+                'present' => match($attType) {
+                    'manual' => 'Manual Attendance',
+                    'hybrid' => 'Present (Hybrid)',
+                    default => 'Present',
+                },
+                'absent' => 'Absent',
+                'leave' => 'On Leave',
+                'processing' => 'Processing (Viewable Tomorrow)',
+                default => ucfirst($status),
             };
 
         $daily_records[] = [
             'name' => $user->full_name, // Using accessor
-            'status' => ucfirst($status) . ($isManual ? ' (Manual)' : ''),
+            'status' => $statusText,
             'login_time' => $login,
             'logout_time' => $logout,
             'duration' => $att ? $att->duration : '-',
@@ -153,28 +177,36 @@ class AttendanceController extends Controller
         ];
 
         // --- Cumulative Logic ---
-        $filter = $request->input('filter', 'this_month');
-        if ($filter === 'last_month') {
-            $start = Carbon::now()->subMonth()->startOfMonth();
-            $end = Carbon::now()->subMonth()->endOfMonth();
-            $todayLimit = $end; // For absent calc
-        } else {
-            $start = Carbon::now()->startOfMonth();
-            $end = Carbon::now()->endOfMonth(); // Full month for Holiday/Sunday/Total Working Calculation
-            $todayLimit = Carbon::now(); // For absent calc
-        }
+        $reqMonth = $request->input('month', Carbon::now()->month);
+        $reqYear = $request->input('year', Carbon::now()->year);
+
+        $start = Carbon::createFromDate($reqYear, $reqMonth, 1)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+        
+        // For absent calculation, we shouldn't count future days as absent
+        $todayLimit = Carbon::now(); 
 
         // Fetch Attendance Records
-        $monthAtts = Attendance::where('user_id', $user->id)
-                        ->whereBetween('date', [$start, $end])
-                        ->get();
+        $query = Attendance::where('user_id', $user->id)
+                        ->whereBetween('date', [$start, $end]);
+        
+        // Hide today's data from cumulative sum for employees
+        if ($role === 'employee') {
+            $query->where('date', '<', Carbon::today()->toDateString());
+        }
+
+        $monthAtts = $query->get();
 
         // Fetch Approved Leaves in Range
         $monthLeaves = \App\Models\Leave::where('user_id', $user->id)
             ->where('status', 'approved')
             ->where('start_date', '<=', $end)
             ->where('end_date', '>=', $start)
-            ->get();
+            ->get();        
+            
+        // 1. Calculate Holidays in range (Full Month)
+        // ... (rest of logic uses $start and $end which are now correct)
+
 
         // 1. Calculate Holidays in range (Full Month)
         $holidays = \App\Models\Holiday::whereBetween('date', [$start, $end])->pluck('date')->toArray();
@@ -285,6 +317,7 @@ class AttendanceController extends Controller
         ]];
 
         $myRequests = $user->manualRequests()->latest()->get();
+        $currentViewDate = $date->toDateString();
 
         return view('attendance.self', compact(
             'role', 
@@ -293,7 +326,8 @@ class AttendanceController extends Controller
             'daily_summary', 
             'daily_records', 
             'cumulative_summary', 
-            'cumulative_records'
+            'cumulative_records',
+            'currentViewDate'
         ));
     }
 
@@ -367,21 +401,36 @@ class AttendanceController extends Controller
             elseif ($status === 'leave') $daily_summary['leave']++;
             else $daily_summary['absent']++;
 
-            $isManual = $att && $att->type === 'manual';
+            $attType = $att ? $att->type : 'biometric';
             
-            $login = $att && $att->clock_in ? Carbon::parse($att->clock_in)->format('h:i A') : ($isManual ? '-' : '-');
-            $logout = $att && $att->clock_out ? Carbon::parse($att->clock_out)->format('h:i A') : ($isManual ? '-' : '-');
+            $login = $att && $att->clock_in ? Carbon::parse($att->clock_in)->format('h:i A') : ($attType === 'manual' ? '-' : '-');
+            $logout = $att && $att->clock_out ? Carbon::parse($att->clock_out)->format('h:i A') : ($attType === 'manual' ? '-' : '-');
 
             $class = match($status) {
-                'present' => $isManual ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800',
+                'present' => match($attType) {
+                    'manual' => 'bg-blue-100 text-blue-800',
+                    'hybrid' => 'bg-purple-100 text-purple-800', // Distinct color
+                    default => 'bg-green-100 text-green-800',
+                },
                 'absent' => 'bg-red-100 text-red-800',
                 'leave' => 'bg-yellow-100 text-yellow-800',
                 default => 'bg-gray-100 text-gray-800',
             };
+            
+            $statusText = match($status) {
+                'present' => match($attType) {
+                    'manual' => 'Manual Attendance',
+                    'hybrid' => 'Present (Hybrid)',
+                    default => 'Present',
+                },
+                'absent' => 'Absent',
+                'leave' => 'On Leave',
+                default => ucfirst($status),
+            };
 
             $daily_records[] = [
                 'name' => $user->name,
-                'status' => ucfirst($status) . ($isManual ? ' (Manual)' : ''),
+                'status' => $statusText,
                 'login' => $login,
                 'logout' => $logout,
                 'duration' => $att ? $att->duration : '-',
@@ -390,15 +439,11 @@ class AttendanceController extends Controller
         }
 
         // --- Cumulative Report Logic ---
-        $monthFilter = $request->input('month', 'this_month');
-        
-        if ($monthFilter === 'last_month') {
-            $startOfMonth = Carbon::now()->subMonth()->startOfMonth();
-            $endOfMonth = Carbon::now()->subMonth()->endOfMonth();
-        } else {
-            $startOfMonth = Carbon::now()->startOfMonth();
-            $endOfMonth = Carbon::now()->endOfMonth();
-        }
+        $reqMonth = $request->input('month', Carbon::now()->month);
+        $reqYear = $request->input('year', Carbon::now()->year);
+
+        $startOfMonth = Carbon::createFromDate($reqYear, $reqMonth, 1)->startOfMonth();
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
         // Calculate Holidays in range (Full Month)
         $holidays = \App\Models\Holiday::whereBetween('date', [$startOfMonth, $endOfMonth])->pluck('date')->toArray();
         $holidayCount = count($holidays);
@@ -472,7 +517,7 @@ class AttendanceController extends Controller
             // Absent calculation (Consistent with My Attendance)
             // Calculate potential working days passed SO FAR to determine absent
             $potentialWorkingDaysElapsed = 0;
-            $limitDate = ($monthFilter === 'last_month') ? $endOfMonth : (Carbon::now()->gt($endOfMonth) ? $endOfMonth : Carbon::now());
+            $limitDate = Carbon::now()->gt($endOfMonth) ? $endOfMonth : Carbon::now();
 
             $tempElapsed = $startOfMonth->copy();
             while ($tempElapsed->lte($limitDate)) {
@@ -569,10 +614,27 @@ class AttendanceController extends Controller
                 // Team Cumulative Export
                 fputcsv($file, ['Name', 'Present Days', 'Leave Days', 'Absent Days', 'Total Month Days']);
                 
-                $start = Carbon::now()->startOfMonth();
-                $end = Carbon::now();
+                $reqMonth = $request->input('month', Carbon::now()->month);
+                $reqYear = $request->input('year', Carbon::now()->year);
+
+                $start = Carbon::createFromDate($reqYear, $reqMonth, 1)->startOfMonth();
+                $end = $start->copy()->endOfMonth();
                 $monthDays = $start->daysInMonth;
-                $elapsed = $end->day;
+                
+                // For elapsed/absent calc, if selected month is in past, entire month elapsed.
+                // If current month, only up to today. 
+                // If future, 0 elapsed (or logic handles it).
+                if ($start->isPast() && !$start->isCurrentMonth()) {
+                    $limitDate = $end;
+                    $elapsed = $monthDays;
+                } elseif ($start->isCurrentMonth()) {
+                    $limitDate = Carbon::now();
+                    $elapsed = $limitDate->day;
+                } else {
+                    // Future
+                    $limitDate = $start->copy()->subDay(); // Before start
+                    $elapsed = 0;
+                }
                 
                  $role = match((int)$user->role_id) {
                     2, 3 => 'admin',
@@ -587,7 +649,7 @@ class AttendanceController extends Controller
 
                 foreach ($users as $u) {
                     $monthAtts = Attendance::where('user_id', $u->id)
-                                    ->whereBetween('date', [$start, Carbon::now()->endOfMonth()])
+                                    ->whereBetween('date', [$start, $end])
                                     ->get();
                     
                     $present = $monthAtts->where('status', 'present')->count();
@@ -616,32 +678,68 @@ class AttendanceController extends Controller
 
             } else {
                 // Self Export (Monthly Report)
-                // DEBUG: Show type received
-                fputcsv($file, ['Date (Type: ' . $type . ')', 'Status', 'In Time', 'Out Time', 'Duration']);
+                fputcsv($file, ['Date', 'Status', 'In Time', 'Out Time', 'Duration']);
                 
-                $filter = $request->input('filter', 'this_month'); // Default to this month
+                $reqMonth = $request->input('month', Carbon::now()->month);
+                $reqYear = $request->input('year', Carbon::now()->year);
+
+                $start = Carbon::createFromDate($reqYear, $reqMonth, 1)->startOfMonth();
+                $end = $start->copy()->endOfMonth();
                 
-                if ($filter === 'last_month') {
-                    $start = \Carbon\Carbon::now()->subMonth()->startOfMonth();
-                    $end = \Carbon\Carbon::now()->subMonth()->endOfMonth();
-                } else {
-                    $start = \Carbon\Carbon::now()->startOfMonth();
-                    $end = \Carbon\Carbon::now();
-                }
-                
+                // Fetch Data
                 $atts = \App\Models\Attendance::where('user_id', $user->id)
                             ->whereBetween('date', [$start, $end])
-                            ->orderBy('date', 'desc')
-                            ->get();
+                            ->get()
+                            ->keyBy('date');
                             
-                foreach ($atts as $att) {
-                    $status = ucfirst($att->status);
-                    if ($att->type === 'manual') $status .= ' (Manual)';
+                $holidays = \App\Models\Holiday::whereBetween('date', [$start, $end])->pluck('date')->toArray();
+                
+                // Loop through EVERY day
+                $curr = $start->copy();
+                $today = \Carbon\Carbon::today();
+
+                while ($curr->lte($end)) {
+                    $dateStr = $curr->toDateString();
+                    $att = $atts->get($dateStr);
                     
-                    $in = $att->clock_in ? \Carbon\Carbon::parse($att->clock_in)->format('h:i A') : '-';
-                    $out = $att->clock_out ? \Carbon\Carbon::parse($att->clock_out)->format('h:i A') : '-';
+                    // Defaults
+                    $status = 'Absent';
+                    $in = '-';
+                    $out = '-';
+                    $dur = '-';
                     
-                    fputcsv($file, [$att->date, $status, $in, $out, $att->duration]);
+                    if ($att) {
+                        // Record Exists
+                        $status = ucfirst($att->status);
+                        if ($att->type === 'manual') $status .= ' (Manual)';
+                        
+                        $in = $att->clock_in ? \Carbon\Carbon::parse($att->clock_in)->format('h:i A') : '-';
+                        $out = $att->clock_out ? \Carbon\Carbon::parse($att->clock_out)->format('h:i A') : '-';
+                        $dur = $att->duration ?? '-';
+                        
+                        // If record says Absent, keep it (or let logic below override if we want "Holiday" text etc)
+                    } else {
+                        // No Record Logic
+                        if (in_array($dateStr, $holidays)) {
+                            $status = 'Holiday';
+                        } elseif ($curr->isSunday()) {
+                            $status = 'Sunday (Weekly Off)';
+                        } elseif ($curr->gt($today)) {
+                            $status = '-'; // Future
+                        } else {
+                            // Check for Approved Leave
+                            $leave = \App\Models\Leave::where('user_id', $user->id)
+                                ->where('status', 'approved')
+                                ->whereDate('start_date', '<=', $dateStr)
+                                ->whereDate('end_date', '>=', $dateStr)
+                                ->exists();
+                                
+                            if ($leave) $status = 'Leave';
+                        }
+                    }
+                    
+                    fputcsv($file, [$dateStr, $status, $in, $out, $dur]);
+                    $curr->addDay();
                 }
             }
             

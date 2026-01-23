@@ -44,14 +44,15 @@
                             <!-- Backend Ready: Ensure 'name="date"' allows this to be submitted as a form filter -->
                             <form action="" method="GET" id="daily-date-form">
                                 <div class="relative mb-6" x-data="{ 
-                                    date: new Date('{{ request('date') ? request('date').'T00:00:00' : now()->format('Y-m-d').'T00:00:00' }}'),
+                                    date: new Date('{{ $currentViewDate }}' + 'T00:00:00'),
                                     formattedDate: '',
-                                    inputDate: '{{ request('date') ?? now()->format('Y-m-d') }}',
+                                    inputDate: '{{ $currentViewDate }}',
                                     init() {
                                         this.updateFormattedDate(this.date);
                                         const picker = flatpickr(this.$refs.pickerTrigger, {
                                             defaultDate: this.date,
                                             dateFormat: 'Y-m-d',
+                                            maxDate: '{{ $role === 'employee' ? now()->subDay()->format('Y-m-d') : now()->format('Y-m-d') }}',
                                             onChange: (selectedDates, dateStr) => {
                                                 this.date = selectedDates[0];
                                                 this.inputDate = dateStr;
@@ -144,43 +145,34 @@
                             
                             {{-- Dropdown --}}
                             <!-- Backend Ready: 'name="filter"' for selection -->
-                            <form action="" method="GET" id="cumulative-filter-form">
-                                <input type="hidden" name="filter" id="cumulative-filter-input" value="this_month">
-                                <div class="mb-6 relative w-40" x-data="{ 
-                                    open: false, 
-                                    selected: 'This Month',
-                                    init() {
-                                        const urlParams = new URLSearchParams(window.location.search);
-                                        const filter = urlParams.get('filter');
-                                        if(filter === 'last_month') { 
-                                            this.selected = 'Last Month'; 
-                                            document.getElementById('cumulative-filter-input').value = 'last_month'; 
-                                        }
-                                    },
-                                    select(value, label) {
-                                        this.selected = label;
-                                        this.open = false;
-                                        document.getElementById('cumulative-filter-input').value = value;
-                                        document.getElementById('cumulative-filter-form').submit();
-                                    }
-                                }">
-                                    <button @click="open = !open" @click.outside="open = false" type="button" class="flex items-center justify-between w-full text-slate-700 border border-slate-300 hover:border-slate-400 px-4 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm bg-white transition-all duration-200">
-                                        <span x-text="selected">This Month</span>
-                                        <svg class="h-4 w-4 text-slate-500 ml-2 transform transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </button>
-                                    
-                                    <div x-show="open" 
-                                         x-transition:enter="transition ease-out duration-100"
-                                         x-transition:enter-start="transform opacity-0 scale-95"
-                                         x-transition:enter-end="transform opacity-100 scale-100"
-                                         x-transition:leave="transition ease-in duration-75"
-                                         x-transition:leave-start="transform opacity-100 scale-100"
-                                         x-transition:leave-end="transform opacity-0 scale-95"
-                                         class="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg py-1" style="display: none;">
-                                        
-                                        <div @click="select('this_month', 'This Month')" class="px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors">{{ 'This Month' }}</div>
-                                        <div @click="select('last_month', 'Last Month')" class="px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors">{{ 'Last Month' }}</div>
-                                    </div>
+                            {{-- Dropdown --}}
+                            <!-- Month/Year Filter -->
+                            <form action="" method="GET" id="cumulative-filter-form" class="mb-6 flex gap-2">
+                                {{-- Preserve daily date if needed or let it reset --}}
+                                @if(request('date'))
+                                <input type="hidden" name="date" value="{{ request('date') }}">
+                                @endif
+
+                                <div class="relative w-32">
+                                    <select name="month" onchange="document.getElementById('cumulative-filter-form').submit()" 
+                                        class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
+                                        @foreach(range(1, 12) as $m)
+                                            <option value="{{ $m }}" {{ (request('month') == $m || (!request('month') && now()->month == $m)) ? 'selected' : '' }}>
+                                                {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="relative w-24">
+                                     <select name="year" onchange="document.getElementById('cumulative-filter-form').submit()" 
+                                        class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
+                                        @for($y = now()->year - 2; $y <= now()->year + 4; $y++)
+                                            <option value="{{ $y }}" {{ (request('year') == $y || (!request('year') && now()->year == $y)) ? 'selected' : '' }}>
+                                                {{ $y }}
+                                            </option>
+                                        @endfor
+                                    </select>
                                 </div>
                             </form>
 
@@ -237,7 +229,7 @@
                         {{-- Footer Action --}}
                         <div class="absolute bottom-0 left-0 right-0 p-6 pt-0 bg-white rounded-b-xl">
                             <hr class="border-slate-300 w-full mb-6">
-                            <a href="{{ route('attendance.export', ['type' => 'self', 'filter' => request('filter')]) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
+                            <a href="{{ route('attendance.export', ['type' => 'self', 'month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
                                 {{ 'Download Attendance' }}
                             </a>
                         </div>

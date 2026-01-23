@@ -27,6 +27,7 @@ class UserController extends Controller
             'joining_date' => 'required|date',
             'status' => 'required|in:active,inactive',
             'telegram_chat_id' => 'nullable|string|max:50',
+            'biometric_id' => 'nullable|integer|unique:users,biometric_id',
         ]);
 
         User::create([
@@ -38,6 +39,7 @@ class UserController extends Controller
             'joining_date' => $request->joining_date,
             'status' => $request->status,
             'telegram_chat_id' => $request->telegram_chat_id,
+            'biometric_id' => $request->biometric_id,
             'leave_balance' => 0, // Default balance for new users
         ]);
 

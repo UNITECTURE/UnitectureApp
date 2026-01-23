@@ -8,7 +8,7 @@ from zk import ZK, const
 from datetime import datetime
 
 # ================= CONFIGURATION =================
-DEVICE_IP = '192.168.0.201'  # IP of your eSSL K30 Device
+DEVICE_IP = '192.168.1.201'  # IP of your eSSL K30 Device
 DEVICE_PORT = 4370           # Default Port
 API_URL = 'http://127.0.0.1:8000/api/essl/attendance' # Localhost URL
 PROCESS_URL = 'http://127.0.0.1:8000/api/attendance/process' # Trigger Calculation
@@ -83,14 +83,6 @@ def sync_data():
             except Exception as api_error:
                 print(f"Failed to connect to Cloud API: {api_error}")
 
-        # ALWAYS Trigger Calculation (Unconditional)
-        print("Triggering Attendance Calculation...")
-        try:
-            proc_res = requests.get(PROCESS_URL, timeout=10)
-            print(f"Server Calculation: {proc_res.status_code}")
-        except:
-            print("Note: Calculation trigger timed out (Job running in background)")
-
     except Exception as e:
         print(f"Device Connection Error: {e}")
     finally:
@@ -98,16 +90,43 @@ def sync_data():
             conn.disconnect() 
             print("Device Disconnected.")
 
+    # --- Trigger Processing Logic (Running after connection closed) ---
+    print("Triggering Attendance Calculation on Server...")
+    
+    # 1. Process Yesterday (To catch up if PC was off at 7 AM)
+    try:
+        # Note: Ensure API_URL base is correct for processing
+        # API_URL is .../attendance
+        # PROCESS_URL is .../attendance/process
+        
+        requests.get(PROCESS_URL + '/yesterday', timeout=10)
+        print(" -> Triggered 'Yesterday' Processing (Catch-up)")
+    except Exception as e:
+        print(f"Trigger Yesterday Error: {e}")
+
+    # 2. Process Today (For live status)
+    try:
+        requests.get(PROCESS_URL + '/today', timeout=10)
+        print(" -> Triggered 'Today' Processing")
+    except Exception as e:
+        print(f"Trigger Today Error: {e}")
+
 def main():
     print("--- Unitecture Biometric Bridge Started ---")
     print(f"Target API: {API_URL}")
-    print(f"Sync Interval: {SYNC_INTERVAL} minutes")
     
-    # Run once immediately
+    # 1. Run ONCE immediately on Startup
+    # This covers cases where the PC was OFF at 10 AM.
+    # As soon as it turns on, this runs and "catches up" all missing data.
+    print(">> Startup Sync Initiated (Catching up on any missed data)...")
     sync_data()
     
-    # Schedule
-    schedule.every(SYNC_INTERVAL).minutes.do(sync_data)
+    # 2. Schedule
+    # FOR TESTING: Run every 1 minute
+    # FOR PRODUCTION: Uncomment 'day.at("10:00")' and comment out 'every(1).minutes'
+    print(">> Scheduling Sync every 1 minute (TESTING MODE)...")
+    schedule.every(1).minutes.do(sync_data)
+    # schedule.every().day.at("10:00").do(sync_data)
     
     while True:
         schedule.run_pending()

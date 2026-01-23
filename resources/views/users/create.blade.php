@@ -164,6 +164,14 @@
                                 </select>
                             </div>
 
+                            <!-- Biometric ID -->
+                            <div class="space-y-2">
+                                <label for="biometric_id" class="text-sm font-semibold text-slate-700">Biometric ID</label>
+                                <input type="number" name="biometric_id" id="biometric_id"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                    placeholder="e.g. 101">
+                            </div>
+
                             <!-- Telegram Chat ID -->
                             <div class="space-y-2">
                                 <label for="telegram_chat_id" class="text-sm font-semibold text-slate-700">Telegram Chat ID</label>
