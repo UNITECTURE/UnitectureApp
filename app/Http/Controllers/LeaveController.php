@@ -54,21 +54,26 @@ class LeaveController extends Controller
 
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
-        $leaveCategory = $request->leave_category;
-        $daysUntilLeave = now()->diffInDays($startDate);
         
-        // Validate 7-day prior notice for PLANNED leaves only
-        if ($leaveCategory === 'planned' && $daysUntilLeave < 7) {
-            return back()->withErrors(['error' => "Planned leave must be applied at least 7 days in advance. Days remaining: {$daysUntilLeave}. Consider applying as Emergency leave if urgent."]);
-        }
-        
-        // Emergency leaves can only be applied for same day or next day
-        if ($leaveCategory === 'emergency' && $daysUntilLeave > 1) {
-            return back()->withErrors(['error' => 'Emergency leave can only be applied for today or tomorrow. Use Planned leave for future dates.']);
-        }
-        
-        $days = $startDate->diffInDays($endDate) + 1;
+        // Calculate actual leave days (Excluding Sundays and Holidays)
+        $holidays = \App\Models\Holiday::whereBetween('date', [$startDate, $endDate])->get()->map(function($holiday) {
+            return $holiday->date->format('Y-m-d');
+        })->toArray();
 
+        $days = 0;
+        $tempDate = $startDate->copy();
+        
+        while ($tempDate->lte($endDate)) {
+            // Check if Sunday OR Holiday
+            if (!$tempDate->isSunday() && !in_array($tempDate->format('Y-m-d'), $holidays)) {
+                $days++;
+            }
+            $tempDate->addDay();
+        }
+        
+        // Prevent 0 days leave if user selects only holidays/Sundays (Optional: validate or just allow 0)
+        // If days is 0, it means they applied for holidays. We can still record it but it consumes 0 balance.
+        
         $user = Auth::user();
         $leaveType = ($user->leave_balance >= $days) ? 'paid' : 'unpaid';
 
@@ -171,6 +176,7 @@ class LeaveController extends Controller
         $counts = [
             'all' => $statsQuery->count(),
             'pending' => (clone $statsQuery)->where('status', 'pending')->count(),
+            'partially_approved' => (clone $statsQuery)->where('status', 'approved_by_supervisor')->count(),
             'approved' => (clone $statsQuery)->where('status', 'approved')->count(),
             'rejected' => (clone $statsQuery)->where('status', 'rejected')->count(),
         ];
@@ -316,6 +322,26 @@ class LeaveController extends Controller
                 if ($leave->leave_type === 'paid') {
                     $leave->user->decrement('leave_balance', $leave->days);
                 }
+
+                // Sync with Attendance Table
+                $currentDate = $leave->start_date->copy();
+                $endDate = $leave->end_date->copy();
+
+                while ($currentDate->lte($endDate)) {
+                    \App\Models\Attendance::updateOrCreate(
+                        [
+                            'user_id' => $leave->user_id,
+                            'date' => $currentDate->toDateString()
+                        ],
+                        [
+                            'status' => 'leave',
+                            'clock_in' => null,
+                            'clock_out' => null,
+                            'duration' => null,
+                        ]
+                    );
+                    $currentDate->addDay();
+                }
             } else {
                 $leave->update(['status' => 'rejected']);
             }
@@ -330,6 +356,173 @@ class LeaveController extends Controller
             $this->telegramService->sendMessage($leave->user->telegram_chat_id, $message);
         }
 
-        return back()->with('success', 'Leave status updated.');
+    }
+
+    private function getReportData($selectedYear, $selectedMonth, $selectedUserId)
+    {
+        $selectedUser = $selectedUserId ? User::find($selectedUserId) : null;
+        $monthlyData = [];
+        $totals = ['working_days' => 0, 'present' => 0, 'paid_leave' => 0, 'unpaid_leave' => 0];
+
+        if ($selectedUser) {
+             $currentYear = Carbon::now()->year;
+             $currentMonth = Carbon::now()->month;
+             
+             $startM = ($selectedMonth === 'all') ? 1 : (int)$selectedMonth;
+             $endM = ($selectedMonth === 'all') ? 12 : (int)$selectedMonth;
+
+             if ($selectedMonth === 'all' && (int)$selectedYear === $currentYear) {
+                 $endM = $currentMonth;
+             }
+
+             for ($m = $startM; $m <= $endM; $m++) {
+                 if ($m > 12) break;
+                 
+                 $startOfMonth = Carbon::create($selectedYear, $m, 1);
+                 $endOfMonth = $startOfMonth->copy()->endOfMonth();
+                 
+                 // 1. Calculate Working Days (Potential)
+                 $holidays = \App\Models\Holiday::whereBetween('date', [$startOfMonth, $endOfMonth])->get()->map(function($h){ return $h->date->format('Y-m-d'); })->toArray();
+                 $holidayCount = count($holidays);
+                 
+                 $sundays = 0;
+                 $temp = $startOfMonth->copy();
+                 while ($temp->lte($endOfMonth)) {
+                     if ($temp->isSunday() && !in_array($temp->format('Y-m-d'), $holidays)) {
+                         $sundays++;
+                     }
+                     $temp->addDay();
+                 }
+                 
+                 $daysInMonth = $startOfMonth->daysInMonth;
+                 $workingDays = max(0, $daysInMonth - $holidayCount - $sundays);
+                 
+                 // 2. Present Days
+                 $present = \App\Models\Attendance::where('user_id', $selectedUserId)
+                             ->whereBetween('date', [$startOfMonth, $endOfMonth])
+                             ->where('status', 'present')
+                             ->count();
+                             
+                 // 3. Leaves (Paid/Unpaid)
+                 $leaves = Leave::where('user_id', $selectedUserId)
+                           ->where('status', 'approved')
+                           ->where(function($q) use ($startOfMonth, $endOfMonth) {
+                               $q->whereBetween('start_date', [$startOfMonth, $endOfMonth])
+                                 ->orWhereBetween('end_date', [$startOfMonth, $endOfMonth])
+                                 ->orWhere(function($q2) use ($startOfMonth, $endOfMonth) {
+                                     $q2->where('start_date', '<', $startOfMonth)
+                                        ->where('end_date', '>', $endOfMonth);
+                                 });
+                           })
+                           ->get();
+                 
+                 $paid = 0; 
+                 $unpaid = 0;
+                 foreach ($leaves as $leave) {
+                     $lStart = Carbon::parse($leave->start_date);
+                     $lEnd = Carbon::parse($leave->end_date);
+                     
+                     $overlapStart = $lStart->lt($startOfMonth) ? $startOfMonth : $lStart;
+                     $overlapEnd = $lEnd->gt($endOfMonth) ? $endOfMonth : $lEnd;
+                     
+                     if ($overlapStart->lte($overlapEnd)) {
+                         $days = $overlapStart->diffInDays($overlapEnd) + 1;
+                         if ($leave->leave_type === 'paid') $paid += $days;
+                         else $unpaid += $days;
+                     }
+                 }
+                 
+                 $monthlyData[] = [
+                     'month' => $startOfMonth->format('F'),
+                     'working_days' => $workingDays,
+                     'present' => $present,
+                     'paid_leave' => $paid,
+                     'unpaid_leave' => $unpaid
+                 ];
+                 
+                 $totals['working_days'] += $workingDays;
+                 $totals['present'] += $present;
+                 $totals['paid_leave'] += $paid;
+                 $totals['unpaid_leave'] += $unpaid;
+             }
+        }
+        
+        return ['monthlyData' => $monthlyData, 'totals' => $totals, 'user' => $selectedUser];
+    }
+
+    public function report(Request $request)
+    {
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized access');
+        }
+
+        $users = User::orderBy('full_name')->get();
+        $years = range(Carbon::now()->year, Carbon::now()->year - 4);
+        
+        $selectedYear = $request->input('year', Carbon::now()->year);
+        $selectedMonth = $request->input('month', 'all'); 
+        $selectedUserId = $request->input('user_id');
+        
+        $data = $this->getReportData($selectedYear, $selectedMonth, $selectedUserId);
+        $monthlyData = $data['monthlyData'];
+        $totals = $data['totals'];
+        $selectedUser = $data['user'];
+
+        return view('leaves.report', compact('users', 'years', 'selectedYear', 'selectedMonth', 'selectedUser', 'monthlyData', 'totals'));
+    }
+
+    public function exportReport(Request $request)
+    {
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized access');
+        }
+
+        $selectedYear = $request->input('year', Carbon::now()->year);
+        $selectedMonth = $request->input('month', 'all');
+        $selectedUserId = $request->input('user_id');
+
+        if (!$selectedUserId) {
+            return back()->with('error', 'Please select an employee to export.');
+        }
+
+        $data = $this->getReportData($selectedYear, $selectedMonth, $selectedUserId);
+        $monthlyData = $data['monthlyData'];
+        $totals = $data['totals'];
+        $user = $data['user'];
+
+        $fileName = 'leave_report_' . $user->id . '_' . $selectedYear . '.csv';
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['Month', 'Total Working Days', 'Present Days', 'Paid Leave', 'Unpaid Leave'];
+
+        $callback = function() use($monthlyData, $columns, $totals) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($monthlyData as $row) {
+                fputcsv($file, [
+                    $row['month'],
+                    $row['working_days'],
+                    $row['present'],
+                    $row['paid_leave'],
+                    $row['unpaid_leave']
+                ]);
+            }
+            
+            // Add Totals Row
+            fputcsv($file, []);
+            fputcsv($file, ['TOTALS', $totals['working_days'], $totals['present'], $totals['paid_leave'], $totals['unpaid_leave']]);
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
         
         Schema::create('manual_attendance_requests', function (Blueprint $table) {
             $table->id();
-            // Reference 'users' table
+            // Reference 'user' table (singular)
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             
             $table->date('date');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->text('reason')->nullable();
             $table->string('status')->default('pending'); // pending, approved, rejected
             
-            // Reference 'users' table for approver
+            // Reference 'user' table (singular) for approver
             $table->foreignId('approved_by')->nullable()->constrained('users');
             
             $table->text('rejection_reason')->nullable();

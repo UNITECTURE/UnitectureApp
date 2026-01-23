@@ -16,7 +16,7 @@ class ProcessAttendance extends Command
      *
      * @var string
      */
-    protected $signature = 'attendance:process {date? : The date to process (YYYY-MM-DD). Defaults to today.}';
+    protected $signature = 'attendance:process {date? : The date to process (YYYY-MM-DD or "yesterday"/"today"). Defaults to today.}';
 
     /**
      * The console command description.
@@ -31,7 +31,14 @@ class ProcessAttendance extends Command
     public function handle()
     {
         $dateInput = $this->argument('date');
-        $date = $dateInput ? Carbon::parse($dateInput) : Carbon::today();
+        
+        if ($dateInput === 'yesterday') {
+            $date = Carbon::yesterday();
+        } elseif ($dateInput === 'today') {
+            $date = Carbon::today();
+        } else {
+            $date = $dateInput ? Carbon::parse($dateInput) : Carbon::today();
+        }
         
         $this->info("Processing attendance for: " . $date->toDateString());
 
@@ -65,49 +72,103 @@ class ProcessAttendance extends Command
         $biometricDurationMinutes = 0;
 
         if ($user->biometric_id) {
+            // Get logs sorted by time
+            // Shift Logic: 5 AM to 5 AM next day
+            $shiftStart = $date->copy()->setTime(5, 0, 0);
+            $shiftEnd = $date->copy()->addDay()->setTime(5, 0, 0);
+
+            // Get logs within the shift window
             $logs = AttendanceLog::where('biometric_id', $user->biometric_id)
-                        ->whereDate('punch_time', $date)
-                        ->orderBy('punch_time')
+                        ->whereBetween('punch_time', [$shiftStart, $shiftEnd])
+                        ->orderBy('punch_time', 'asc')
                         ->get();
             
-            if ($logs->count() > 0) {
-                // First Punch is IN
+            $rawCount = $logs->count(); // Capture Raw Count
+            
+            if ($rawCount > 0) {
+                // 1. Debounce / Deduplicate Logs
+                // Filter logs that are too close to each other (e.g. within 60 seconds)
+                $filteredLogs = collect([]);
+                $lastLogTime = null;
+                
+                foreach ($logs as $log) {
+                    if (!$lastLogTime) {
+                        $filteredLogs->push($log);
+                        $lastLogTime = Carbon::parse($log->punch_time);
+                    } else {
+                        $currentLogTime = Carbon::parse($log->punch_time);
+                        // Ensure absolute difference to handle any sorting/timezone quirks
+                        $diff = abs($currentLogTime->diffInSeconds($lastLogTime));
+                        
+                        if ($diff > 60) {
+                            $filteredLogs->push($log);
+                            $lastLogTime = $currentLogTime;
+                        }
+                    }
+                }
+                
+                $logs = $filteredLogs; // Use filtered list
+                
+                // First Punch is Global IN
                 $clockIn = $logs->first()->punch_time;
                 
-                // If more than 1 punch, Last is OUT
+                // Last Punch is Global OUT (if multiple)
                 if ($logs->count() > 1) {
                     $clockOut = $logs->last()->punch_time;
-                    
-                    // Parse dates to calculate difference
-                    $in = Carbon::parse($clockIn);
-                    $out = Carbon::parse($clockOut);
-                    $biometricDurationMinutes = $out->diffInMinutes($in); 
+                }
+                
+                // Pair Calculation (In -> Out, In -> Out)
+                $count = $logs->count();
+                // Iterating in steps of 2: [0,1], [2,3], [4,5]
+                for ($i = 0; $i < $count - 1; $i += 2) {
+                     $inTime = Carbon::parse($logs[$i]->punch_time);
+                     $outTime = Carbon::parse($logs[$i+1]->punch_time);
+                     
+                     // Calculate difference in minutes (Absolute)
+                     $diff = $outTime->diffInMinutes($inTime);
+                     $biometricDurationMinutes += abs($diff);
                 }
             }
         }
 
         // 2. Check Approved Manual Attendance
-        $manualReq = ManualAttendanceRequest::where('user_id', $user->id)
+        // Fetch ALL requests for this user/date first to verify content
+        $rawReqs = ManualAttendanceRequest::where('user_id', $user->id)
                         ->where('date', $date->toDateString())
-                        ->where('status', 'approved')
-                        ->first();
+                        ->get();
         
         $manualDurationMinutes = 0;
-        if ($manualReq) {
-            $manualDurationMinutes = $this->parseDuration($manualReq->duration);
+        $approvedReqs = collect([]);
+
+        foreach ($rawReqs as $req) {
+             $st = strtolower(trim($req->status));
+             if ($st === 'approved') {
+                 $parsed = $this->parseDuration($req->duration);
+                 $manualDurationMinutes += $parsed;
+                 $approvedReqs->push($req);
+             }
         }
+        
+        // Use first approved request for type determination, or just first request?
+        // Logic uses $manualReq to set type='manual'.
+        $manualReq = $approvedReqs->first();
 
         // 3. Calculate Totals
-        $totalMinutes = $biometricDurationMinutes + $manualDurationMinutes;
+        // Sum biometric and manual minutes
+        $totalMinutes = (int)$biometricDurationMinutes + (int)$manualDurationMinutes;
         
-        // Determine Type (Manual vs Biometric) for Color Coding
-        // If Manual Request exists, prioritize 'manual' type so it shows in Purple/Distinct color
-        $type = $manualReq ? 'manual' : 'biometric';
+        // Determine Type
+        if ($biometricDurationMinutes > 0 && $manualDurationMinutes > 0) {
+            $type = 'hybrid';
+        } elseif ($manualReq) {
+            $type = 'manual';
+        } else {
+            $type = 'biometric';
+        }
         
         // Determine Status
         // If total duration > 0 OR manual approved -> Present
         // Otherwise Absent
-        // (Note: Leaves are not handled here, assume handled by Leave system overlapping)
         $status = ($totalMinutes > 0 || $manualReq) ? 'present' : 'absent';
         
         // Format Total Duration
@@ -116,7 +177,6 @@ class ProcessAttendance extends Command
         $durationString = "{$hours} Hrs {$mins} Mins";
 
         // 4. Update or Create Attendance Record
-        // We look for existing record to avoid duplicate days
         Attendance::updateOrCreate(
             [
                 'user_id' => $user->id, 
@@ -130,17 +190,44 @@ class ProcessAttendance extends Command
                 'type' => $type
             ]
         );
+        
+        $this->info("Processed User {$user->id}: Bio={$biometricDurationMinutes}m, Manual={$manualDurationMinutes}m, Total={$durationString}");
+        
     }
     
     private function parseDuration($durationStr)
     {
-        // Handles formats like "8 Hrs 30 Mins" produced by UI
-        preg_match('/(\d+)\s*Hrs/', $durationStr, $hMatch);
-        preg_match('/(\d+)\s*Mins/', $durationStr, $mMatch);
+        if (empty($durationStr)) return 0;
         
-        $h = isset($hMatch[1]) ? (int)$hMatch[1] : 0;
-        $m = isset($mMatch[1]) ? (int)$mMatch[1] : 0;
-        
-        return ($h * 60) + $m;
+        $durationStr = strtolower($durationStr);
+        $totalMinutes = 0;
+
+        // Try "X Hrs Y Mins" or "X Hours Y Minutes"
+        if (str_contains($durationStr, 'hrs') || str_contains($durationStr, 'mins') || str_contains($durationStr, 'hour')) {
+             preg_match('/(\d+)\s*(?:hr|hour)/i', $durationStr, $hMatch);
+             preg_match('/(\d+)\s*(?:min)/i', $durationStr, $mMatch);
+             
+             $h = isset($hMatch[1]) ? (int)$hMatch[1] : 0;
+             $m = isset($mMatch[1]) ? (int)$mMatch[1] : 0;
+             $totalMinutes = ($h * 60) + $m;
+        } 
+        // Try "2h 15m" or "2h" or "15m"
+        else {
+             preg_match('/(\d+)\s*h/i', $durationStr, $hMatch);
+             preg_match('/(\d+)\s*m/i', $durationStr, $mMatch);
+             
+             $h = isset($hMatch[1]) ? (int)$hMatch[1] : 0;
+             // Ensure 'm' isn't part of 'message' or 'month' if strict format used, but for "2h 15m" usually safe.
+             // We check strictly for number followed by optional space then 'm' (end of string or space next)
+             preg_match('/(\d+)\s*m(?![a-z])/i', $durationStr, $m2Match);
+             
+             // Fallback for just 'm' if previous regex failed
+             $m = isset($mMatch[1]) ? (int)$mMatch[1] : 0;
+             if ($m == 0 && isset($m2Match[1])) $m = (int)$m2Match[1];
+
+             $totalMinutes = ($h * 60) + $m;
+        }
+
+        return $totalMinutes;
     }
 }

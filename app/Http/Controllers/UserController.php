@@ -27,23 +27,18 @@ class UserController extends Controller
             'joining_date' => 'required|date',
             'status' => 'required|in:active,inactive',
             'telegram_chat_id' => 'nullable|string|max:50',
+            'biometric_id' => 'nullable|integer|unique:users,biometric_id',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Calculate leave balance based on joining date
-        $joiningDate = \Carbon\Carbon::parse($request->joining_date);
-        $today = now();
-        
-        // Count complete calendar months (only months where the 1st has passed)
-        $completedMonths = 0;
-        $currentDate = $joiningDate->copy();
-        
-        while ($currentDate->addMonth() <= $today) {
-            $completedMonths++;
+        $imageUrl = null;
+        if ($request->hasFile('profile_image')) {
+            $uploadedFile = $request->file('profile_image');
+            $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($uploadedFile->getRealPath(), [
+                'folder' => 'unitecture_users'
+            ]);
+            $imageUrl = $uploadResult->getSecurePath();
         }
-        
-        // After 3 months probation, accrue 1.25 days per month
-        $accrualMonths = max(0, $completedMonths - 3);
-        $leaveBalance = $accrualMonths * 1.25;
 
         User::create([
             'full_name' => $request->name,
@@ -54,7 +49,9 @@ class UserController extends Controller
             'joining_date' => $request->joining_date,
             'status' => $request->status,
             'telegram_chat_id' => $request->telegram_chat_id,
-            'leave_balance' => $leaveBalance,
+            'biometric_id' => $request->biometric_id,
+            'leave_balance' => 0, // Default balance for new users
+            'profile_image' => $imageUrl,
         ]);
 
         return redirect()->route('dashboard')->with('success', 'User created successfully.');

@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Column 'id' already exists in users table from creation migration
+        Schema::table('users', function (Blueprint $table) {
+            // $table->id()->first(); // Users table already has ID
+        });
     }
 
     /**

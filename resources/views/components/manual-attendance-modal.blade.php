@@ -175,7 +175,7 @@
                         {{-- From --}}
                         <div>
                             <label class="block text-sm font-semibold text-slate-800 mb-1.5">From</label>
-                            <input type="time" x-model="startTime"
+                            <input name="start_time" type="time" x-model="startTime"
                                 class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 text-slate-800 bg-slate-50 transition-all duration-200"
                                 required>
                         </div>
@@ -183,7 +183,7 @@
                         {{-- To --}}
                         <div>
                             <label class="block text-sm font-semibold text-slate-800 mb-1.5">To</label>
-                            <input type="time" x-model="endTime"
+                            <input name="end_time" type="time" x-model="endTime"
                                 class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 text-slate-800 bg-slate-50 transition-all duration-200"
                                 required>
                         </div>
