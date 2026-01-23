@@ -190,7 +190,7 @@
                                         <!-- Selected Employees (Profile Photos) -->
                                         <template x-for="employee in selectedEmployees" :key="employee.id">
                                             <div class="relative group">
-                                                <img :src="employee.profile_image ? '/storage/' + employee.profile_image : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(employee.full_name) + '&background=6366f1&color=fff&size=128'"
+                                                <img :src="getProfileImageUrl(employee)"
                                                     :alt="employee.full_name"
                                                     class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
                                                     :title="employee.full_name">
@@ -254,7 +254,7 @@
                                                             @change="toggleEmployee(employee)"
                                                             :disabled="isEmployeeSelected(employee.id)"
                                                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
-                                                        <img :src="employee.profile_image ? '/storage/' + employee.profile_image : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(employee.full_name) + '&background=6366f1&color=fff&size=128'"
+                                                        <img :src="getProfileImageUrl(employee)"
                                                             :alt="employee.full_name"
                                                             class="w-10 h-10 rounded-full object-cover">
                                                         <span class="text-sm font-medium text-slate-700 flex-1" 
@@ -373,6 +373,23 @@
 
                 isEmployeeSelected(employeeId) {
                     return this.selectedEmployees.some(e => e.id === employeeId);
+                },
+
+                getProfileImageUrl(employee) {
+                    // Use profile_image_url if available (from API), otherwise construct it
+                    if (employee.profile_image_url) {
+                        return employee.profile_image_url;
+                    }
+                    if (employee.profile_image) {
+                        // Check if it's already a full URL
+                        if (employee.profile_image.startsWith('http://') || employee.profile_image.startsWith('https://')) {
+                            return employee.profile_image;
+                        }
+                        // Otherwise, it's a relative path
+                        return '/storage/' + employee.profile_image;
+                    }
+                    // Fallback to avatar generator
+                    return 'https://ui-avatars.com/api/?name=' + encodeURIComponent(employee.full_name) + '&background=6366f1&color=fff&size=128';
                 }
             }));
         });

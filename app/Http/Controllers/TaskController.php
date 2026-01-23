@@ -137,6 +137,22 @@ class TaskController extends Controller
                 ->get();
         }
 
+        // Format profile image URLs
+        $users = $users->map(function ($user) {
+            if ($user->profile_image) {
+                // If it's already a full URL (Cloudinary or absolute URL), use it as is
+                if (filter_var($user->profile_image, FILTER_VALIDATE_URL)) {
+                    $user->profile_image_url = $user->profile_image;
+                } else {
+                    // If it's a relative path, construct the full URL
+                    $user->profile_image_url = asset('storage/' . $user->profile_image);
+                }
+            } else {
+                $user->profile_image_url = null;
+            }
+            return $user;
+        });
+
         return response()->json($users);
     }
 

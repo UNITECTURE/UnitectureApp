@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@extends('layouts.app')
-
 @section('content')
 
     <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }})">
@@ -332,6 +330,7 @@
                 statuses: allStatuses,
                 counts: initialCounts,
                 search: '',
+                sidebarOpen: true,
                 filterStatus: 'all', // 'all', 'pending', 'in_progress', 'completed', 'overdue'
                 selectedTask: null,
 

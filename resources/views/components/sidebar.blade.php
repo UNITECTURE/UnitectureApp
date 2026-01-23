@@ -249,7 +249,7 @@
                 </div>
             @endif
 
-            @if($role !== 'admin')
+            @if($role === 'supervisor')
             <a href="{{ route('team.index') }}"
                 class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative {{ request()->routeIs('team.index') ? 'bg-slate-800 text-white' : '' }}"
                 :class="!sidebarOpen ? 'justify-center' : ''">

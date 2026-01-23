@@ -53,7 +53,7 @@
                                         </path>
                                     </svg>
                                 </div>
-                                <h3 class="font-bold text-slate-900 text-lg mb-3">Automate Leaves</h3>
+                                <h3 class="font-bold text-slate-900 text-lg mb-3">Leaves</h3>
                                 <p class="text-sm text-slate-500 mb-8 max-w-[220px] leading-relaxed font-medium">Manage your
                                     employee leaves and holidays.</p>
                                 <a href="{{ route('leaves.index') }}"
@@ -73,7 +73,7 @@
                                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                 </div>
-                                <h3 class="font-bold text-slate-900 text-lg mb-3">Automate Attendance</h3>
+                                <h3 class="font-bold text-slate-900 text-lg mb-3">Attendance</h3>
                                 <p class="text-sm text-slate-500 mb-8 max-w-[220px] leading-relaxed font-medium">Track your
                                     teams Attendance and break.</p>
                                 @php
@@ -145,31 +145,7 @@
                             @endif
                         </div>
 
-                        <!-- Stats Row -->
-                        @if(!Auth::user()->isEmployee())
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-8">
-                                <div
-                                    class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-6 flex flex-col justify-between h-32 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.05)] transition-shadow duration-300">
-                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Pending Approvals</p>
-                                    <p class="text-4xl font-extrabold text-[#F97316]">5</p>
-                                </div>
-                                <div
-                                    class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-6 flex flex-col justify-between h-32 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.05)] transition-shadow duration-300">
-                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Present Today</p>
-                                    <p class="text-4xl font-extrabold text-[#22C55E]">24</p>
-                                </div>
-                                <div
-                                    class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-6 flex flex-col justify-between h-32 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.05)] transition-shadow duration-300">
-                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">On Leave</p>
-                                    <p class="text-4xl font-extrabold text-[#3B82F6]">3</p>
-                                </div>
-                                <div
-                                    class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-6 flex flex-col justify-between h-32 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.05)] transition-shadow duration-300">
-                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Active Tasks</p>
-                                    <p class="text-4xl font-extrabold text-[#2563EB]">12</p>
-                                </div>
-                            </div>
-                        @endif
+
                     </div>
                 </div>
             </main>
