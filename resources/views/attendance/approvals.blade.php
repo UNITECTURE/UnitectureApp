@@ -147,6 +147,7 @@
                             <tr>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Time Range</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Duration</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/4">Reason</th>
                                 <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
@@ -169,6 +170,9 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                     {{ \Carbon\Carbon::parse($request->date)->format('M d, Y') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                    {{ $request->start_time ? \Carbon\Carbon::parse($request->start_time)->format('h:i A') . ' - ' . \Carbon\Carbon::parse($request->end_time)->format('h:i A') : '-' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">
                                     {{ $request->duration }}

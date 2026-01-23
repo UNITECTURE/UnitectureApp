@@ -10,5 +10,9 @@ Artisan::command('inspire', function () {
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('leaves:accrue')->monthly();
-Schedule::command('attendance:fetch')->dailyAt('23:00');
 
+// 7 AM: Update yesterday's attendance (Finalize for employees)
+Schedule::command('attendance:process yesterday')->dailyAt('07:00');
+
+// 10 AM: Update today's attendance (For supervisors to check status)
+Schedule::command('attendance:process today')->dailyAt('10:00');

@@ -19,6 +19,7 @@
                         <!-- Action Cards Section -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             <!-- Card 1: Task Dashboard -->
+                            @if(!Auth::user()->isAdmin())
                             <div
                                 class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-8 flex flex-col items-center text-center hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.05)] transition-shadow duration-300">
                                 <div
@@ -38,6 +39,7 @@
                                     Open
                                 </a>
                             </div>
+                            @endif
 
                             <!-- Card 2: Automate Leaves -->
                             <div

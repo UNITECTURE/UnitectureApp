@@ -13,6 +13,7 @@ class Attendance extends Model
         'clock_out',
         'status',
         'duration',
+        'type',
     ];
 
     public function user()

@@ -11,9 +11,9 @@ use App\Http\Controllers\BiometricPushController;
 Route::any('/api/essl/attendance', [BiometricPushController::class, 'handlePush'])->name('api.biometric.push');
 
 // Trigger Attendance Processing (Called by Bridge)
-Route::get('/api/attendance/process', function () {
-    \Illuminate\Support\Facades\Artisan::call('attendance:process');
-    return response()->json(['status' => 'processed', 'message' => 'Attendance calculations updated.']);
+Route::get('/api/attendance/process/{date?}', function ($date = null) {
+    \Illuminate\Support\Facades\Artisan::call('attendance:process', ['date' => $date]);
+    return response()->json(['status' => 'processed', 'message' => 'Attendance calculations updated for ' . ($date ?? 'default')]);
 });
 
 Route::get('/login', function () {

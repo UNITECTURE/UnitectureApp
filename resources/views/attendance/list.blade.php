@@ -135,17 +135,35 @@
                             <h2 class="text-lg font-bold text-slate-800 mb-4">{{ 'Cumulative Report' }}</h2>
                             
                             {{-- Dropdown --}}
-                            <div class="mb-6 w-40">
-                                <div class="relative">
-                                    <select 
-                                        class="block w-full pl-3 pr-10 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md text-slate-600"
-                                        onchange="const params = new URLSearchParams(window.location.search); params.set('month', this.value); window.location.search = params.toString();"
-                                    >
-                                        <option value="this_month" {{ request('month') == 'this_month' ? 'selected' : '' }}>{{ 'This Month' }}</option>
-                                        <option value="last_month" {{ request('month') == 'last_month' ? 'selected' : '' }}>{{ 'Last Month' }}</option>
+                            {{-- Dropdown --}}
+                            <form action="" method="GET" id="team-cumulative-filter-form" class="mb-6 flex gap-2">
+                                {{-- Preserve daily date --}}
+                                @if(request('date'))
+                                <input type="hidden" name="date" value="{{ request('date') }}">
+                                @endif
+
+                                <div class="relative w-32">
+                                    <select name="month" onchange="document.getElementById('team-cumulative-filter-form').submit()" 
+                                        class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
+                                        @foreach(range(1, 12) as $m)
+                                            <option value="{{ $m }}" {{ (request('month') == $m || (!request('month') && now()->month == $m)) ? 'selected' : '' }}>
+                                                {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
-                            </div>
+
+                                <div class="relative w-24">
+                                     <select name="year" onchange="document.getElementById('team-cumulative-filter-form').submit()" 
+                                        class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
+                                        @for($y = now()->year - 2; $y <= now()->year + 4; $y++)
+                                            <option value="{{ $y }}" {{ (request('year') == $y || (!request('year') && now()->year == $y)) ? 'selected' : '' }}>
+                                                {{ $y }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                </div>
+                            </form>
 
                             {{-- Summary Cards (3 Columns) --}}
                             {{-- Summary Cards (2 Columns) --}}
@@ -189,7 +207,7 @@
                         
                         {{-- Fixed Footer --}}
                         <div class="p-6 pt-4 shrink-0 mt-auto border-t border-slate-50">
-                             <a href="{{ route('attendance.export', ['type' => 'team_cumulative']) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
+                             <a href="{{ route('attendance.export', ['type' => 'team_cumulative', 'month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
                                 {{ 'Download Attendance' }}
                             </a>
                         </div>

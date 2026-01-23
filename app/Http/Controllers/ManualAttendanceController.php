@@ -39,11 +39,15 @@ class ManualAttendanceController extends Controller
             ],
             'duration' => 'required|string',
             'reason' => 'nullable|string',
+            'start_time' => 'nullable|string',
+            'end_time' => 'nullable|string',
         ]);
 
         $manualRequest = ManualAttendanceRequest::create([
             'user_id' => $request->user_id,
             'date' => $request->date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'duration' => $request->duration,
             'reason' => $request->reason,
             'status' => 'pending',
