@@ -215,6 +215,11 @@
                                         <input type="hidden" name="assignees[]" :value="employeeId">
                                     </template>
 
+                                    <!-- Hidden Input for Tagged Employees -->
+                                    <template x-for="employeeId in taggedEmployeeIds" :key="'tagged-' + employeeId">
+                                        <input type="hidden" name="tagged[]" :value="employeeId">
+                                    </template>
+
                                     @error('assignees') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
 
@@ -282,21 +287,80 @@
                                 <!-- Comments Section -->
                                 <div>
                                     <label for="comments" class="block text-sm font-semibold text-slate-700 mb-2">Comments</label>
-                                    <textarea name="comments" id="comments" rows="4"
+                                    <textarea name="comments" id="comments" rows="4" x-model="comments"
                                         class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 text-slate-800 bg-slate-50 placeholder:text-slate-400 transition-all duration-200"
                                         placeholder="Start writing here..."></textarea>
                                     <div class="flex items-center gap-2 mt-2">
-                                        <button type="button" class="text-blue-500 hover:text-blue-600 text-sm font-medium flex items-center gap-1">
+                                        <button type="button" @click="showTagModal = true"
+                                            class="text-blue-500 hover:text-blue-600 text-sm font-medium flex items-center gap-1 transition-colors">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                             </svg>
-                                            +
-                                        </button>
-                                        <button type="button" class="text-blue-500 hover:text-blue-600 text-sm font-medium">
-                                            @ Tag
+                                            @
                                         </button>
                                     </div>
                                 </div>
+
+                                <!-- Tag People Modal -->
+                                <template x-teleport="body">
+                                    <div x-show="showTagModal" 
+                                        x-transition:enter="transition ease-out duration-200"
+                                        x-transition:enter-start="opacity-0"
+                                        x-transition:enter-end="opacity-100"
+                                        x-transition:leave="transition ease-in duration-150"
+                                        x-transition:leave-start="opacity-100"
+                                        x-transition:leave-end="opacity-0"
+                                        class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                                        style="display: none;"
+                                        @click.self="showTagModal = false">
+                                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col"
+                                            @click.stop>
+                                            <!-- Modal Header -->
+                                            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-center relative">
+                                                <h3 class="text-lg font-bold text-slate-800">Tag People</h3>
+                                                <button type="button" @click="showTagModal = false"
+                                                    class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+
+                                            <!-- Employee List -->
+                                            <div class="flex-1 overflow-y-auto p-4 space-y-2">
+                                                <template x-for="employee in availableEmployees" :key="employee.id">
+                                                    <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors"
+                                                        :class="isTaggedEmployee(employee.id) ? 'bg-slate-100 opacity-50' : 'hover:bg-slate-50'">
+                                                        <input type="checkbox" 
+                                                            :value="employee.id"
+                                                            :checked="isTaggedEmployee(employee.id)"
+                                                            @change="toggleTaggedEmployee(employee)"
+                                                            :disabled="isTaggedEmployee(employee.id)"
+                                                            class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
+                                                        <img :src="getProfileImageUrl(employee)"
+                                                            :alt="employee.full_name"
+                                                            class="w-10 h-10 rounded-full object-cover">
+                                                        <span class="text-sm font-medium text-slate-700 flex-1" 
+                                                            :class="isTaggedEmployee(employee.id) ? 'text-slate-400' : ''"
+                                                            x-text="employee.full_name"></span>
+                                                    </label>
+                                                </template>
+                                            </div>
+
+                                            <!-- Modal Footer -->
+                                            <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                                                <button type="button" @click="showTagModal = false"
+                                                    class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+                                                    Cancel
+                                                </button>
+                                                <button type="button" @click="showTagModal = false"
+                                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
+                                                    Done
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
 
                             <!-- Modal Footer -->
@@ -323,8 +387,11 @@
                 endDate: '{{ old('end_date_input') }}',
                 todayDate: todayDate,
                 selectedEmployees: [],
+                taggedEmployees: [],
                 availableEmployees: [],
                 showEmployeeModal: false,
+                showTagModal: false,
+                comments: '',
 
                 get selectedProject() {
                     return this.projects.find(p => p.id == this.selectedProjectId);
@@ -339,11 +406,36 @@
                     return this.selectedEmployees.map(e => e.id);
                 },
 
+                get taggedEmployeeIds() {
+                    return this.taggedEmployees.map(e => e.id);
+                },
+
                 async init() {
                     // Load employees when modal opens
                     this.$watch('showEmployeeModal', async (value) => {
                         if (value && this.availableEmployees.length === 0) {
                             await this.loadEmployees();
+                        }
+                    });
+
+                    // Load employees when tag modal opens
+                    this.$watch('showTagModal', async (value) => {
+                        if (value && this.availableEmployees.length === 0) {
+                            await this.loadEmployees();
+                        }
+                    });
+
+                    // Reset end date if it becomes invalid when start date changes
+                    this.$watch('startDate', (newStartDate) => {
+                        if (this.endDate && newStartDate && this.endDate < newStartDate) {
+                            this.endDate = '';
+                        }
+                    });
+
+                    // Reset end date if project changes and end date exceeds project end date
+                    this.$watch('selectedProjectId', () => {
+                        if (this.endDate && this.maxDate && this.endDate > this.maxDate) {
+                            this.endDate = '';
                         }
                     });
                 },
@@ -373,6 +465,19 @@
 
                 isEmployeeSelected(employeeId) {
                     return this.selectedEmployees.some(e => e.id === employeeId);
+                },
+
+                toggleTaggedEmployee(employee) {
+                    const index = this.taggedEmployees.findIndex(e => e.id === employee.id);
+                    if (index > -1) {
+                        this.taggedEmployees.splice(index, 1);
+                    } else {
+                        this.taggedEmployees.push(employee);
+                    }
+                },
+
+                isTaggedEmployee(employeeId) {
+                    return this.taggedEmployees.some(e => e.id === employeeId);
                 },
 
                 getProfileImageUrl(employee) {

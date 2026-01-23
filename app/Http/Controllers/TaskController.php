@@ -167,7 +167,6 @@ class TaskController extends Controller
 
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
-            'title' => 'required|string|max:255',
             'description' => 'required|string',
             'start_date' => [
                 'required',
@@ -211,6 +210,8 @@ class TaskController extends Controller
         // Prepare data for saving
         $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged']);
         $data['end_date'] = $endDate;
+        // Use description as title if title is not provided
+        $data['title'] = $request->input('title', substr($request->description, 0, 255));
 
         $task = new Task($data);
         if ($request->has('status')) {
