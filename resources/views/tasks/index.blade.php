@@ -3,6 +3,7 @@
 @extends('layouts.app')
 
 @section('content')
+
     <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager(@json($tasks), @json($statuses))">
         <!-- Sidebar -->
         @php
@@ -320,30 +321,67 @@
                     </template>
                 </div>
             </div>
+
         </div>
     </div>
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('taskManager', (initialTasks, allStatuses) => ({
+            Alpine.data('taskManager', (initialTasks, allStatuses, initialCounts) => ({
                 tasks: initialTasks,
                 statuses: allStatuses,
-                view: 'board', // 'board' or 'table'
+                counts: initialCounts,
+                search: '',
+                filterStatus: 'all', // 'all', 'pending', 'in_progress', 'completed', 'overdue'
                 selectedTask: null,
-                dragOverStyle: null,
 
-                tasksByStatus(status) {
-                    return this.tasks.filter(t => t.status === status);
+                get filteredTasks() {
+                    let filtered = this.tasks;
+
+                    // Filter by Search
+                    if (this.search) {
+                        const q = this.search.toLowerCase();
+                        filtered = filtered.filter(t =>
+                            t.title.toLowerCase().includes(q) ||
+                            (t.description && t.description.toLowerCase().includes(q)) ||
+                            (t.project && t.project.name.toLowerCase().includes(q))
+                        );
+                    }
+
+                    // Filter by Stage/Tabs
+                    if (this.filterStatus === 'pending') {
+                        filtered = filtered.filter(t => t.stage === 'pending');
+                    } else if (this.filterStatus === 'in_progress') {
+                        filtered = filtered.filter(t => t.stage === 'in_progress');
+                    } else if (this.filterStatus === 'completed') {
+                        filtered = filtered.filter(t => t.stage === 'completed');
+                    } else if (this.filterStatus === 'overdue') {
+                        filtered = filtered.filter(t => t.stage === 'overdue');
+                    }
+
+                    return filtered;
+                },
+
+                setFilter(status) {
+                    this.filterStatus = status;
+                },
+
+                isOverdue(task) {
+                    return task.stage === 'overdue';
                 },
 
                 formatStatus(status) {
                     return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
                 },
 
+                formatStage(stage) {
+                    return stage.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                },
+
                 formatDate(dateString, full = false) {
                     if (!dateString) return '-';
                     const date = new Date(dateString);
-                    return full ? date.toLocaleString() : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+                    return full ? date.toLocaleString() : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
                 },
 
                 async updateStatus(taskId, newStatus) {
@@ -352,7 +390,6 @@
                     const oldStatus = task.status;
                     task.status = newStatus;
 
-                    // Sync selected task if open
                     if (this.selectedTask && this.selectedTask.id === taskId) {
                         this.selectedTask.status = newStatus;
                     }
@@ -368,26 +405,15 @@
                         });
 
                         if (!response.ok) throw new Error();
+
+                        // Note: To really update the 'counts' accurately we'd need to re-fetch or adjust locally.
+                        // For this iteration, we accept counts might be slightly stale until refresh.
                     } catch (e) {
-                        // Revert on failure
                         task.status = oldStatus;
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask.status = oldStatus;
                         }
                         console.error('Failed to update status');
-                    }
-                },
-
-                dragStart(event, task) {
-                    event.dataTransfer.effectAllowed = 'move';
-                    event.dataTransfer.setData('text/plain', task.id);
-                    // Optional: set custom drag image
-                },
-
-                drop(event, newStatus) {
-                    const taskId = parseInt(event.dataTransfer.getData('text/plain'));
-                    if (taskId) {
-                        this.updateStatus(taskId, newStatus);
                     }
                 },
 
@@ -398,9 +424,8 @@
         });
     </script>
     <style>
-        /* Custom Scrollbar for columns */
         .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
+            width: 6px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
@@ -408,12 +433,12 @@
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
+            background: #cbd5e1;
             border-radius: 4px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
+            background: #94a3b8;
         }
     </style>
 @endsection

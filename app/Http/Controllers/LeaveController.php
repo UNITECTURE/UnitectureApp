@@ -169,6 +169,108 @@ class LeaveController extends Controller
         return view('leaves.approvals', compact('leaves', 'counts'));
     }
 
+    public function adminReport(Request $request)
+    {
+        // 1. Check permissions
+        if (!Auth::user()->isAdmin()) {
+            abort(403);
+        }
+
+        // 2. Data Preparation
+        $users = User::orderBy('full_name')->get();
+        
+        $selectedUserId = $request->user_id ?? ($users->first()->id ?? null);
+        $selectedYear = $request->year ?? now()->year;
+        
+        $selectedUser = $users->find($selectedUserId);
+        
+        if (!$selectedUser) {
+            return view('leaves.admin-report', [
+                'users' => $users,
+                'summary' => [],
+                'chartData' => [],
+                'selectedUser' => null,
+                'selectedYear' => $selectedYear
+            ]);
+        }
+
+        // 3. Logic for Report
+        // We'll iterate months Jan-Dec
+        $monthlyStats = [];
+        $totalWorked = 0;
+        $totalPresent = 0;
+        $totalPaidLeave = 0;
+        $totalUnpaidLeave = 0;
+
+        for ($month = 1; $month <= 12; $month++) {
+            $monthStart = Carbon::createFromDate($selectedYear, $month, 1)->startOfMonth();
+            $monthEnd = Carbon::createFromDate($selectedYear, $month, 1)->endOfMonth();
+            
+            // Standard Working Days (M-F)
+            // Or simplified: Days in month minus weekends.
+            $workingDays = 0;
+            $current = $monthStart->copy();
+            while ($current <= $monthEnd) {
+                if ($current->isWeekday()) {
+                    $workingDays++;
+                }
+                $current->addDay();
+            }
+
+            // Actual Present Days (from Attendance)
+            $presentDays = \App\Models\Attendance::where('user_id', $selectedUserId)
+                ->whereYear('date', $selectedYear)
+                ->whereMonth('date', $month)
+                ->where(function($q) {
+                    $q->where('status', 'present')->orWhereNotNull('clock_in');
+                })
+                ->count();
+
+            // Paid Leaves (Approved)
+            // Leave duration can span months, but for simplicity we rely on start_date month
+            // A more robust solution would split days across months. 
+            // For this quick implementation, we sum days for leaves STARTING in this month.
+            $paidLeaves = Leave::where('user_id', $selectedUserId)
+                ->where('leave_type', 'paid')
+                ->where('status', 'approved')
+                ->whereYear('start_date', $selectedYear)
+                ->whereMonth('start_date', $month)
+                ->sum('days');
+
+            $unpaidLeaves = Leave::where('user_id', $selectedUserId)
+                ->where('leave_type', 'unpaid')
+                ->where('status', 'approved')
+                ->whereYear('start_date', $selectedYear)
+                ->whereMonth('start_date', $month)
+                ->sum('days');
+
+            $monthlyStats[] = [
+                'month_name' => $monthStart->format('F'),
+                'working_days' => $workingDays, 
+                'present_days' => $presentDays,
+                'paid_leave' => $paidLeaves,
+                'unpaid_leave' => $unpaidLeaves
+            ];
+
+            // Aggregates
+            $totalWorked += $workingDays; // Using theoretical working days for "Total Working Days" card
+            $totalPresent += $presentDays;
+            $totalPaidLeave += $paidLeaves;
+            $totalUnpaidLeave += $unpaidLeaves;
+        }
+
+        return view('leaves.admin-report', compact(
+            'users', 
+            'selectedUserId', 
+            'selectedYear',
+            'monthlyStats',
+            'totalWorked',
+            'totalPresent',
+            'totalPaidLeave',
+            'totalUnpaidLeave'
+        ));
+    }
+
     public function updateStatus(Request $request, Leave $leave)
     {
         $request->validate([

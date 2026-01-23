@@ -28,7 +28,17 @@ class UserController extends Controller
             'status' => 'required|in:active,inactive',
             'telegram_chat_id' => 'nullable|string|max:50',
             'biometric_id' => 'nullable|integer|unique:users,biometric_id',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $imageUrl = null;
+        if ($request->hasFile('profile_image')) {
+            $uploadedFile = $request->file('profile_image');
+            $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($uploadedFile->getRealPath(), [
+                'folder' => 'unitecture_users'
+            ]);
+            $imageUrl = $uploadResult->getSecurePath();
+        }
 
         User::create([
             'full_name' => $request->name,
@@ -41,6 +51,7 @@ class UserController extends Controller
             'telegram_chat_id' => $request->telegram_chat_id,
             'biometric_id' => $request->biometric_id,
             'leave_balance' => 0, // Default balance for new users
+            'profile_image' => $imageUrl,
         ]);
 
         return redirect()->route('dashboard')->with('success', 'User created successfully.');

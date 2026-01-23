@@ -59,6 +59,7 @@ Route::get('/dashboard', function () {
 
 // Leaves & Users (Merged Routes)
 Route::middleware('auth')->group(function () {
+    Route::get('/leaves/admin-report', [App\Http\Controllers\LeaveController::class, 'adminReport'])->name('leaves.admin-report');
     Route::get('/leaves', [App\Http\Controllers\LeaveController::class, 'index'])->name('leaves.index');
     Route::post('/leaves', [App\Http\Controllers\LeaveController::class, 'store'])->name('leaves.store');
     Route::get('/leave-approvals', [App\Http\Controllers\LeaveController::class, 'approvals'])->name('leaves.approvals');
@@ -108,9 +109,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Task Management
     Route::get('/tasks', [App\Http\Controllers\TaskController::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/assigned', [App\Http\Controllers\TaskController::class, 'assigned'])->name('tasks.assigned');
     Route::get('/tasks/create', [App\Http\Controllers\TaskController::class, 'create'])->name('tasks.create');
     Route::post('/tasks', [App\Http\Controllers\TaskController::class, 'store'])->name('tasks.store');
     Route::patch('/tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
+    Route::patch('/tasks/{task}/stage', [App\Http\Controllers\TaskController::class, 'updateStage'])->name('tasks.updateStage');
     Route::get('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'show'])->name('tasks.show');
 });
 

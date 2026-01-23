@@ -23,6 +23,7 @@ class User extends Authenticatable
         'telegram_chat_id',
         'leave_balance',
         'last_accrued_month',
+        'profile_image',
     ];
 
     protected $hidden = [
