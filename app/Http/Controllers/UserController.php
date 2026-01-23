@@ -72,4 +72,14 @@ class UserController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'User created successfully.');
     }
+    public function team()
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        // Fetch users reporting to the current user
+        $team = User::where('reporting_to', $user->id)
+                    ->with('role') 
+                    ->get();
+        
+        return view('team.index', compact('team'));
+    }
 }

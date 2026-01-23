@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
     // User Management
     Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
     Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
+    Route::get('/my-team', [App\Http\Controllers\UserController::class, 'team'])->name('team.index');
 });
 
 // Attendance Routes

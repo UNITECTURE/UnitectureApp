@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="h-screen flex flex-col bg-[#F8F9FB] overflow-hidden" x-data="assignedTasks(@json($tasks), @json($statuses), @json($stages))">
+    <div class="h-screen flex flex-col bg-[#F8F9FB] overflow-hidden" x-data="assignedTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }})">
         
         <!-- Header -->
         <header class="bg-white border-b border-slate-100 py-4 px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 z-10">

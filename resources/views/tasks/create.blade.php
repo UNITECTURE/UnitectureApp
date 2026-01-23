@@ -23,7 +23,7 @@
                     </div>
 
                     <div class="max-w-4xl mx-auto" 
-                         x-data="taskForm(@json($projects), '{{ now()->format('Y-m-d') }}')">
+                         x-data="taskForm({{ json_encode($projects) }}, '{{ now()->format('Y-m-d') }}')">
                         
                         <form action="{{ route('tasks.store') }}" method="POST"
                             class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
@@ -135,8 +135,11 @@
                                             <input type="radio" name="priority" value="high" x-model="priority" 
                                                 class="sr-only peer">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-4 h-4 rounded-full border-2 transition-all"
-                                                    :class="priority === 'high' ? 'bg-red-500 border-red-500' : 'border-slate-300 bg-white group-hover:border-red-300'"></div>
+                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                                                    :class="priority === 'high' ? 'border-red-500' : 'border-slate-300 group-hover:border-red-300'">
+                                                    <div class="w-2.5 h-2.5 rounded-full bg-red-500 transition-transform duration-200"
+                                                        :class="priority === 'high' ? 'scale-100' : 'scale-0'"></div>
+                                                </div>
                                                 <span class="text-sm font-medium text-slate-700">High</span>
                                             </div>
                                         </label>
@@ -144,8 +147,11 @@
                                             <input type="radio" name="priority" value="medium" x-model="priority"
                                                 class="sr-only peer">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-4 h-4 rounded-full border-2 transition-all"
-                                                    :class="priority === 'medium' ? 'bg-blue-500 border-blue-500' : 'border-slate-300 bg-white group-hover:border-blue-300'"></div>
+                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                                                    :class="priority === 'medium' ? 'border-blue-500' : 'border-slate-300 group-hover:border-blue-300'">
+                                                    <div class="w-2.5 h-2.5 rounded-full bg-blue-500 transition-transform duration-200"
+                                                        :class="priority === 'medium' ? 'scale-100' : 'scale-0'"></div>
+                                                </div>
                                                 <span class="text-sm font-medium text-slate-700">Moderate</span>
                                             </div>
                                         </label>
@@ -153,8 +159,11 @@
                                             <input type="radio" name="priority" value="low" x-model="priority"
                                                 class="sr-only peer">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-4 h-4 rounded-full border-2 transition-all"
-                                                    :class="priority === 'low' ? 'bg-green-500 border-green-500' : 'border-slate-300 bg-white group-hover:border-green-300'"></div>
+                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                                                    :class="priority === 'low' ? 'border-green-500' : 'border-slate-300 group-hover:border-green-300'">
+                                                    <div class="w-2.5 h-2.5 rounded-full bg-green-500 transition-transform duration-200"
+                                                        :class="priority === 'low' ? 'scale-100' : 'scale-0'"></div>
+                                                </div>
                                                 <span class="text-sm font-medium text-slate-700">Low</span>
                                             </div>
                                         </label>
@@ -162,8 +171,11 @@
                                             <input type="radio" name="priority" value="free" x-model="priority"
                                                 class="sr-only peer">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-4 h-4 rounded-full border-2 transition-all"
-                                                    :class="priority === 'free' ? 'bg-slate-500 border-slate-500' : 'border-slate-300 bg-white group-hover:border-slate-400'"></div>
+                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                                                    :class="priority === 'free' ? 'border-slate-500' : 'border-slate-300 group-hover:border-slate-400'">
+                                                    <div class="w-2.5 h-2.5 rounded-full bg-slate-500 transition-transform duration-200"
+                                                        :class="priority === 'free' ? 'scale-100' : 'scale-0'"></div>
+                                                </div>
                                                 <span class="text-sm font-medium text-slate-700">Free</span>
                                             </div>
                                         </label>
@@ -207,63 +219,65 @@
                                 </div>
 
                                 <!-- Employee Selection Modal -->
-                                <div x-show="showEmployeeModal" 
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0"
-                                    x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100"
-                                    x-transition:leave-end="opacity-0"
-                                    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-                                    style="display: none;"
-                                    @click.self="showEmployeeModal = false">
-                                    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col"
-                                        @click.stop>
-                                        <!-- Modal Header -->
-                                        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                                            <h3 class="text-lg font-bold text-slate-800">Select Employees</h3>
-                                            <button type="button" @click="showEmployeeModal = false"
-                                                class="text-slate-400 hover:text-slate-600 transition-colors">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                </svg>
-                                            </button>
-                                        </div>
+                                <template x-teleport="body">
+                                    <div x-show="showEmployeeModal" 
+                                        x-transition:enter="transition ease-out duration-200"
+                                        x-transition:enter-start="opacity-0"
+                                        x-transition:enter-end="opacity-100"
+                                        x-transition:leave="transition ease-in duration-150"
+                                        x-transition:leave-start="opacity-100"
+                                        x-transition:leave-end="opacity-0"
+                                        class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                                        style="display: none;"
+                                        @click.self="showEmployeeModal = false">
+                                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col"
+                                            @click.stop>
+                                            <!-- Modal Header -->
+                                            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-center relative">
+                                                <h3 class="text-lg font-bold text-slate-800">Select Employees</h3>
+                                                <button type="button" @click="showEmployeeModal = false"
+                                                    class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
 
-                                        <!-- Employee List -->
-                                        <div class="flex-1 overflow-y-auto p-4 space-y-2">
-                                            <template x-for="employee in availableEmployees" :key="employee.id">
-                                                <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors"
-                                                    :class="isEmployeeSelected(employee.id) ? 'bg-slate-100 opacity-50' : 'hover:bg-slate-50'">
-                                                    <input type="checkbox" 
-                                                        :value="employee.id"
-                                                        :checked="isEmployeeSelected(employee.id)"
-                                                        @change="toggleEmployee(employee)"
-                                                        :disabled="isEmployeeSelected(employee.id)"
-                                                        class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
-                                                    <img :src="employee.profile_image ? '/storage/' + employee.profile_image : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(employee.full_name) + '&background=6366f1&color=fff&size=128'"
-                                                        :alt="employee.full_name"
-                                                        class="w-10 h-10 rounded-full object-cover">
-                                                    <span class="text-sm font-medium text-slate-700 flex-1" 
-                                                        :class="isEmployeeSelected(employee.id) ? 'text-slate-400' : ''"
-                                                        x-text="employee.full_name"></span>
-                                                </label>
-                                            </template>
-                                        </div>
+                                            <!-- Employee List -->
+                                            <div class="flex-1 overflow-y-auto p-4 space-y-2">
+                                                <template x-for="employee in availableEmployees" :key="employee.id">
+                                                    <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors"
+                                                        :class="isEmployeeSelected(employee.id) ? 'bg-slate-100 opacity-50' : 'hover:bg-slate-50'">
+                                                        <input type="checkbox" 
+                                                            :value="employee.id"
+                                                            :checked="isEmployeeSelected(employee.id)"
+                                                            @change="toggleEmployee(employee)"
+                                                            :disabled="isEmployeeSelected(employee.id)"
+                                                            class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
+                                                        <img :src="employee.profile_image ? '/storage/' + employee.profile_image : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(employee.full_name) + '&background=6366f1&color=fff&size=128'"
+                                                            :alt="employee.full_name"
+                                                            class="w-10 h-10 rounded-full object-cover">
+                                                        <span class="text-sm font-medium text-slate-700 flex-1" 
+                                                            :class="isEmployeeSelected(employee.id) ? 'text-slate-400' : ''"
+                                                            x-text="employee.full_name"></span>
+                                                    </label>
+                                                </template>
+                                            </div>
 
-                                        <!-- Modal Footer -->
-                                        <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
-                                            <button type="button" @click="showEmployeeModal = false"
-                                                class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
-                                                Cancel
-                                            </button>
-                                            <button type="button" @click="showEmployeeModal = false"
-                                                class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
-                                                Done
-                                            </button>
+                                            <!-- Modal Footer -->
+                                            <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                                                <button type="button" @click="showEmployeeModal = false"
+                                                    class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+                                                    Cancel
+                                                </button>
+                                                <button type="button" @click="showEmployeeModal = false"
+                                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
+                                                    Done
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </template>
 
                                 <!-- Comments Section -->
                                 <div>

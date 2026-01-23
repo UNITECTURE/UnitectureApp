@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager(@json($tasks), @json($statuses))">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }})">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';

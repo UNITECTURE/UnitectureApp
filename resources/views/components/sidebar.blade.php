@@ -249,10 +249,9 @@
                 </div>
             @endif
 
-            {{-- My Team --}}
             @if($role !== 'admin')
-            <a href="#"
-                class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative"
+            <a href="{{ route('team.index') }}"
+                class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative {{ request()->routeIs('team.index') ? 'bg-slate-800 text-white' : '' }}"
                 :class="!sidebarOpen ? 'justify-center' : ''">
                 <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
                     :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
