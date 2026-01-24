@@ -49,10 +49,23 @@ class LeaveController extends Controller
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reason' => 'required|string|max:255',
+            'leave_category' => 'required|in:planned,emergency',
         ]);
 
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
+        $leaveCategory = $request->leave_category;
+        $daysUntilLeave = now()->diffInDays($startDate);
+        
+        // Validate 7-day prior notice for PLANNED leaves only
+        if ($leaveCategory === 'planned' && $daysUntilLeave < 7) {
+            return back()->withErrors(['error' => "Planned leave must be applied at least 7 days in advance. Days remaining: {$daysUntilLeave}. Consider applying as Emergency leave if urgent."]);
+        }
+        
+        // Emergency leaves can only be applied for same day or next day
+        if ($leaveCategory === 'emergency' && $daysUntilLeave > 1) {
+            return back()->withErrors(['error' => 'Emergency leave can only be applied for today or tomorrow. Use Planned leave for future dates.']);
+        }
         
         // Calculate actual leave days (Excluding Sundays and Holidays)
         $holidays = \App\Models\Holiday::whereBetween('date', [$startDate, $endDate])->get()->map(function($holiday) {
@@ -79,6 +92,7 @@ class LeaveController extends Controller
         $leave = Leave::create([
             'user_id' => $user->id,
             'leave_type' => $leaveType,
+            'leave_category' => $leaveCategory,
             'reason' => $request->reason,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
@@ -86,12 +100,24 @@ class LeaveController extends Controller
             'status' => 'pending',
         ]);
 
+        // Determine if urgent
+        $isUrgent = $leaveCategory === 'emergency';
+        $urgentTag = $isUrgent ? '🚨 <b>URGENT</b> ' : '';
+
         // Send Telegram Notification to Supervisor
         if ($user->manager && $user->manager->telegram_chat_id) {
-            $message = "<b>New Leave Request</b>\n\n";
+            $message = "{$urgentTag}<b>New Leave Request</b>\n\n";
             $message .= "Employee: {$user->name}\n";
-            $message .= "Duration: {$days} days ({$request->start_date} to {$request->end_date})\n";
-            $message .= "Reason: {$request->reason}";
+            $message .= "<b>Date Applied:</b> " . now()->format('Y-m-d H:i A') . "\n";
+            $message .= "<b>Leave Category:</b> " . ucfirst($leaveCategory) . "\n";
+            $message .= "<b>Leave Type:</b> " . ucfirst($leaveType) . "\n";
+            $message .= "<b>Duration:</b> {$days} day(s)\n";
+            $message .= "<b>Dates:</b> {$request->start_date} to {$request->end_date}\n";
+            $message .= "<b>Reason:</b> {$request->reason}\n\n";
+            
+            if ($isUrgent) {
+                $message .= "<b>⚠️ ACTION REQUIRED: This is an emergency leave and needs immediate approval!</b>";
+            }
             
             $this->telegramService->sendMessage($user->manager->telegram_chat_id, $message);
         }
@@ -99,15 +125,23 @@ class LeaveController extends Controller
         // Also notify Admins (Role ID 2)
         $admins = User::where('role_id', 2)->whereNotNull('telegram_chat_id')->get();
         foreach ($admins as $admin) {
-            $adminMessage = "<b>Alert: Leave requested</b>\n\n";
+            $adminMessage = "{$urgentTag}<b>Alert: Leave Request Received</b>\n\n";
             $adminMessage .= "Employee: {$user->name}\n";
-            $adminMessage .= "Status: Pending Supervisor\n";
-            $adminMessage .= "Dates: {$request->start_date} to {$request->end_date}";
+            $adminMessage .= "<b>Date Applied:</b> " . now()->format('Y-m-d H:i A') . "\n";
+            $adminMessage .= "<b>Leave Category:</b> " . ucfirst($leaveCategory) . "\n";
+            $adminMessage .= "<b>Leave Type:</b> " . ucfirst($leaveType) . "\n";
+            $adminMessage .= "<b>Status:</b> " . ($isUrgent ? 'Pending Supervisor (URGENT)' : 'Pending Supervisor Approval') . "\n";
+            $adminMessage .= "<b>Dates:</b> {$request->start_date} to {$request->end_date}";
             
             $this->telegramService->sendMessage($admin->telegram_chat_id, $adminMessage);
         }
 
-        return redirect()->route('leaves.index')->with('success', 'Leave requested successfully. System assigned type: ' . ucfirst($leaveType));
+        $message = "Leave requested successfully as <b>" . ucfirst($leaveCategory) . "</b>. System assigned type: <b>" . ucfirst($leaveType) . "</b>";
+        if ($isUrgent) {
+            $message .= ". ⚠️ Awaiting immediate supervisor approval.";
+        }
+        
+        return redirect()->route('leaves.index')->with('success', $message);
     }
 
     public function approvals(Request $request)
@@ -334,6 +368,7 @@ class LeaveController extends Controller
             $this->telegramService->sendMessage($leave->user->telegram_chat_id, $message);
         }
 
+        return redirect()->route('leaves.approvals')->with('success', 'Leave status updated successfully.');
     }
 
     private function getReportData($selectedYear, $selectedMonth, $selectedUserId)
@@ -414,14 +449,14 @@ class LeaveController extends Controller
                      'month' => $startOfMonth->format('F'),
                      'working_days' => $workingDays,
                      'present' => $present,
-                     'paid_leave' => $paid,
-                     'unpaid_leave' => $unpaid
+                     'paid_leave' => (int)round($paid),
+                     'unpaid_leave' => (int)round($unpaid)
                  ];
                  
                  $totals['working_days'] += $workingDays;
                  $totals['present'] += $present;
-                 $totals['paid_leave'] += $paid;
-                 $totals['unpaid_leave'] += $unpaid;
+                 $totals['paid_leave'] += (int)round($paid);
+                 $totals['unpaid_leave'] += (int)round($unpaid);
              }
         }
         

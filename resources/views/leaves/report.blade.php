@@ -98,7 +98,7 @@
                                 </div>
                                 <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Paid Leave</span>
                             </div>
-                            <div class="text-3xl font-bold text-purple-900">{{ $totals['paid_leave'] }}</div>
+                            <div class="text-3xl font-bold text-purple-900">{{ (int)$totals['paid_leave'] }}</div>
                              <div class="text-xs text-purple-600 mt-1">Total Paid Leaves</div>
                         </div>
 
@@ -110,7 +110,7 @@
                                 </div>
                                 <span class="text-xs font-bold text-red-600 uppercase tracking-wider">Unpaid Leave</span>
                             </div>
-                            <div class="text-3xl font-bold text-red-900">{{ $totals['unpaid_leave'] }}</div>
+                            <div class="text-3xl font-bold text-red-900">{{ (int)$totals['unpaid_leave'] }}</div>
                              <div class="text-xs text-red-600 mt-1">Total Unpaid Leaves</div>
                         </div>
                     </div>
@@ -135,8 +135,8 @@
                                     <tr class="hover:bg-slate-50/50 transition-colors">
                                         <td class="px-6 py-4 font-medium text-slate-900">{{ $data['month'] }}</td>
                                         <td class="px-6 py-4 text-slate-600">{{ $data['present'] }} Days</td>
-                                        <td class="px-6 py-4 text-slate-600">{{ $data['paid_leave'] }}</td>
-                                        <td class="px-6 py-4 text-slate-600">{{ $data['unpaid_leave'] }}</td>
+                                        <td class="px-6 py-4 text-slate-600">{{ (int)$data['paid_leave'] }}</td>
+                                        <td class="px-6 py-4 text-slate-600">{{ (int)$data['unpaid_leave'] }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

@@ -93,8 +93,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Employee Routes
     Route::get('/employee/attendance', [AttendanceController::class, 'myAttendance'])->name('employee.attendance');
-    // Employee Routes
-    Route::get('/employee/attendance', [AttendanceController::class, 'myAttendance'])->name('employee.attendance');
 
     // Settings
     Route::get('/settings', function () {
@@ -140,9 +138,9 @@ Route::get('/dev/test-telegram', function () {
 
 Route::get('/dev/check-schema', function () {
     $results = [];
-    $results['user_exists'] = \Illuminate\Support\Facades\Schema::hasTable('user');
+    $results['user_exists'] = \Illuminate\Support\Facades\Schema::hasTable('users');
     if ($results['user_exists']) {
-        $results['user_columns'] = \Illuminate\Support\Facades\Schema::getColumnListing('user');
+        $results['user_columns'] = \Illuminate\Support\Facades\Schema::getColumnListing('users');
     }
     $results['leaves_exists'] = \Illuminate\Support\Facades\Schema::hasTable('leaves');
     $results['roles_exists'] = \Illuminate\Support\Facades\Schema::hasTable('roles');

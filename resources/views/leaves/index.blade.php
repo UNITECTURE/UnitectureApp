@@ -200,6 +200,25 @@
                 <p><strong>Note:</strong> Leave type (Paid/Unpaid) will be determined automatically based on your leave balance.</p>
             </div>
 
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Leave Category</label>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-md cursor-pointer hover:bg-slate-50">
+                        <input type="radio" name="leave_category" value="planned" required class="w-4 h-4 text-blue-600">
+                        <div>
+                            <p class="font-medium text-slate-700">Planned Leave</p>
+                            <p class="text-xs text-slate-500">Requires 7 days notice</p>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-md cursor-pointer hover:bg-slate-50">
+                        <input type="radio" name="leave_category" value="emergency" required class="w-4 h-4 text-blue-600">
+                        <div>
+                            <p class="font-medium text-slate-700">Emergency Leave</p>
+                            <p class="text-xs text-slate-500">Only for today or tomorrow</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
 
              <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Reason for leave</label>

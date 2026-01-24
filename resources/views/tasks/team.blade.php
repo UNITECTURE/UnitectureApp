@@ -87,9 +87,9 @@
             <main class="flex-1 overflow-auto">
                 <!-- Vertical Kanban View -->
                 <div x-show="view === 'vertical'" class="h-full overflow-x-auto overflow-y-hidden p-6">
-                    <div class="inline-flex h-full gap-6 items-start pb-4" style="min-width: max-content;">
+                    <div class="flex h-full gap-6 items-start pb-4 w-full" style="min-width: max-content;">
                         <template x-for="stage in stages" :key="stage">
-                            <div class="w-80 flex flex-col h-full bg-slate-50 rounded-xl border border-slate-200 max-h-full"
+                            <div class="flex-1 min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-xl border border-slate-200 max-h-full"
                                 @dragover.prevent="dragOverStage = stage" @dragleave="dragOverStage = null"
                                 @drop="drop($event, stage); dragOverStage = null"
                                 :class="{ 'ring-2 ring-indigo-400 ring-inset bg-indigo-50': dragOverStage === stage }">
@@ -268,9 +268,10 @@
         </div>
 
         <!-- Task Detail Modal -->
-        <div x-show="selectedTask"
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
-            x-transition.opacity style="display: none;"
+        <template x-teleport="body">
+            <div x-show="selectedTask"
+                class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+                x-transition.opacity style="display: none;"
             @click.self="selectedTask = null">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
                 @click.stop>
@@ -355,6 +356,7 @@
                     </div>
                 </template>
             </div>
+        </template>
         </div>
     </div>
 

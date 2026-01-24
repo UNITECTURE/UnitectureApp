@@ -190,21 +190,38 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    @php
+                                        // $role passed from controller is string 'admin'. 
+                                        // But we need strict logic: If Auth User is Admin (Role 2) AND Requester is Admin (Role 2) OR Requester is SELF, then Disable.
+                                        $authUser = \Illuminate\Support\Facades\Auth::user();
+                                        $isSelf = $request->user_id === $authUser->id;
+                                        $isRequesterAdmin = $request->user->role_id === 2;
+                                        $isAuthAdmin = $authUser->role_id === 2;
+                                        
+                                        $canAction = !($isSelf || ($isAuthAdmin && $isRequesterAdmin)); 
+                                    @endphp
+
                                     @if($request->status === 'pending')
-                                    <div class="flex items-center justify-end gap-2">
-                                        <form action="{{ route('attendance.manual.approve', $request->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            <button type="submit" class="px-3 py-1.5 bg-indigo-600 text-white hover:bg-indigo-700 rounded text-xs font-medium transition-colors shadow-sm">
-                                                Approve
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('attendance.manual.reject', $request->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            <button type="submit" class="px-3 py-1.5 bg-white border border-red-500 text-red-600 hover:bg-red-50 rounded text-xs font-medium transition-colors">
-                                                Reject
-                                            </button>
-                                        </form>
-                                    </div>
+                                        @if($canAction)
+                                            <div class="flex items-center justify-end gap-2">
+                                                <form action="{{ route('attendance.manual.approve', $request->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="px-3 py-1.5 bg-indigo-600 text-white hover:bg-indigo-700 rounded text-xs font-medium transition-colors shadow-sm">
+                                                        Approve
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('attendance.manual.reject', $request->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="px-3 py-1.5 bg-white border border-red-500 text-red-600 hover:bg-red-50 rounded text-xs font-medium transition-colors">
+                                                        Reject
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @else
+                                            <span class="text-xs text-slate-400 italic">
+                                                {{ $isSelf ? 'Cannot approve own request' : 'Requires Super Admin' }}
+                                            </span>
+                                        @endif
                                     @else
                                         <span class="text-slate-400 text-xs text-right block">Completed</span>
                                     @endif

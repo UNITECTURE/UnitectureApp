@@ -366,7 +366,7 @@
                             <!-- Modal Footer -->
                             <div class="px-8 py-6 border-t border-slate-100 bg-slate-50 flex justify-end">
                                 <button type="submit"
-                                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all transform hover:-translate-y-0.5">
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all transform hover:-translate-y-0.5">
                                     Done
                                 </button>
                             </div>

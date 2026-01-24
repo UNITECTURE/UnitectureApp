@@ -87,9 +87,9 @@
             <main class="flex-1 overflow-auto">
                 <!-- Vertical Kanban View -->
                 <div x-show="view === 'vertical'" class="h-full overflow-x-auto overflow-y-hidden p-6">
-                    <div class="inline-flex h-full gap-6 items-start pb-4" style="min-width: max-content;">
+                    <div class="flex h-full gap-6 items-start pb-4 w-full" style="min-width: max-content;">
                         <template x-for="stage in stages" :key="stage">
-                            <div class="w-80 flex flex-col h-full bg-slate-50 rounded-xl border border-slate-200 max-h-full"
+                            <div class="flex-1 min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-xl border border-slate-200 max-h-full"
                                 @dragover.prevent="dragOverStage = stage" @dragleave="dragOverStage = null"
                                 @drop="drop($event, stage); dragOverStage = null"
                                 :class="{ 'ring-2 ring-indigo-400 ring-inset bg-indigo-50': dragOverStage === stage }">
