@@ -53,13 +53,19 @@ class ManualAttendanceController extends Controller
             'status' => 'pending',
         ]);
 
-        // Notify Supervisor
+        // Notify Supervisor or Superadmin
         $employee = User::find($request->user_id);
+        $supervisor = null;
+
         if ($employee && $employee->reporting_to) {
             $supervisor = User::find($employee->reporting_to);
-            if ($supervisor) {
-                $supervisor->notify(new NewManualAttendanceRequest($manualRequest));
-            }
+        } else {
+            // Fallback: If no supervisor (e.g. Admin), notify Superadmin (Role 3)
+            $supervisor = User::where('role_id', 3)->first();
+        }
+
+        if ($supervisor) {
+            $supervisor->notify(new NewManualAttendanceRequest($manualRequest));
         }
 
         return redirect()->back()->with('success', 'Manual attendance requested successfully.');
@@ -69,11 +75,23 @@ class ManualAttendanceController extends Controller
     public function approve(Request $request, $id)
     {
         $manualRequest = ManualAttendanceRequest::findOrFail($id);
+        $approver = Auth::user();
+
+        // 1. Prevent Approval of Own Request
+        if ($manualRequest->user_id === $approver->id) {
+            return redirect()->back()->with('error', 'You cannot approve your own request.');
+        }
+
+        // 2. If Requester is Admin (Role 2), Approver MUST be Super Admin (Role 3)
+        $requester = User::find($manualRequest->user_id);
+        if ($requester && $requester->role_id === 2 && $approver->role_id !== 3) {
+            return redirect()->back()->with('error', 'Only Super Admin can approve Admin requests.');
+        }
         
         // Update request status
         $manualRequest->update([
             'status' => 'approved',
-            'approved_by' => Auth::id() ?? 1,
+            'approved_by' => $approver->id,
         ]);
 
         // Find existing attendance or create new

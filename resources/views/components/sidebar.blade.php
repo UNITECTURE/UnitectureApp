@@ -181,6 +181,8 @@
                                 @endif
                                 <a href="{{ route('admin.attendance.all') }}"
                                     class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('admin.attendance.all') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'All Attendance' }}</a>
+                                <a href="{{ route('attendance.manual') }}"
+                                    class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('attendance.manual') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'Manual Request' }}</a>
                             @elseif($role === 'supervisor')
                                 <a href="{{ route('supervisor.attendance.self') }}"
                                     class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('supervisor.attendance.self') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'My Attendance' }}</a>

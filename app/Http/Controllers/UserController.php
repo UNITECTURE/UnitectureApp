@@ -41,10 +41,12 @@ class UserController extends Controller
             if ($hasCloudinary) {
                 try {
                     $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($uploadedFile->getRealPath(), [
-                        'folder' => 'unitecture_users'
+                        'folder' => 'unitecture_users',
+                        'resource_type' => 'auto'
                     ]);
                     $imageUrl = $uploadResult->getSecurePath();
                 } catch (\Exception $e) {
+                    \Log::error('Cloudinary upload failed: ' . $e->getMessage());
                     // Fallback to local if Cloudinary fails
                      $path = $uploadedFile->store('profile_images', 'public');
                     $imageUrl = asset('storage/' . $path);
@@ -81,5 +83,28 @@ class UserController extends Controller
                     ->get();
         
         return view('team.index', compact('team'));
+    }
+
+    /**
+     * Calculate leave balance based on joining date
+     * Counts only complete calendar months after 3-month probation
+     * Accrues 1.25 days per month
+     */
+    private function calculateLeaveBalance($joiningDate)
+    {
+        $joiningDate = \Carbon\Carbon::parse($joiningDate);
+        $today = now();
+        
+        // Count complete calendar months (only months where the 1st has passed)
+        $completedMonths = 0;
+        $currentDate = $joiningDate->copy();
+        
+        while ($currentDate->addMonth() <= $today) {
+            $completedMonths++;
+        }
+        
+        // After 3 months probation, accrue 1.25 days per month
+        $accrualMonths = max(0, $completedMonths - 3);
+        return $accrualMonths * 1.25;
     }
 }

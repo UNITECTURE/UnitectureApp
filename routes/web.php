@@ -93,8 +93,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Employee Routes
     Route::get('/employee/attendance', [AttendanceController::class, 'myAttendance'])->name('employee.attendance');
-    // Employee Routes
-    Route::get('/employee/attendance', [AttendanceController::class, 'myAttendance'])->name('employee.attendance');
 
     // Settings
     Route::get('/settings', function () {
