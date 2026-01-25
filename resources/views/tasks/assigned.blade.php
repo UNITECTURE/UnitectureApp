@@ -268,15 +268,16 @@
         </div>
 
         <!-- Task Detail Modal -->
-        <div x-show="selectedTask"
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
-            x-transition.opacity style="display: none;"
-            @click.self="selectedTask = null">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-                @click.stop>
-                <template x-if="selectedTask">
-                    <div>
-                        <div class="p-6 border-b border-slate-100 flex justify-between items-start">
+        <template x-teleport="body">
+            <div x-show="selectedTask"
+                class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+                x-transition.opacity style="display: none;"
+                @click.self="selectedTask = null">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto"
+                    @click.stop>
+                    <template x-if="selectedTask">
+                        <div>
+                            <div class="p-6 border-b border-slate-100 flex justify-between items-start">
                             <div>
                                 <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                     :class="{
@@ -355,7 +356,7 @@
                     </div>
                 </template>
             </div>
-        </div>
+        </template>
     </div>
 
     <script>

@@ -8,11 +8,31 @@ from zk import ZK, const
 from datetime import datetime
 
 # ================= CONFIGURATION =================
-DEVICE_IP = '192.168.1.201'  # IP of your eSSL K30 Device
-DEVICE_PORT = 4370           # Default Port
-API_URL = 'http://127.0.0.1:8000/api/essl/attendance' # Localhost URL
-PROCESS_URL = 'http://127.0.0.1:8000/api/attendance/process' # Trigger Calculation
-SYNC_INTERVAL = 1            # Sync every 1 minute for testing
+# Default config, overwritten by config.json if it exists
+config = {
+    "device_ip": "192.168.1.201",
+    "device_port": 4370,
+    "api_url": "http://127.0.0.1:8000/api/essl/attendance",
+    "process_url": "http://127.0.0.1:8000/api/attendance/process",
+    "sync_interval_minutes": 15
+}
+
+CONFIG_FILE = 'config.json'
+if os.path.exists(CONFIG_FILE):
+    try:
+        with open(CONFIG_FILE, 'r') as f:
+            file_config = json.load(f)
+            config.update(file_config)
+            print("Loaded configuration from config.json")
+    except Exception as e:
+        print(f"Error loading config.json: {e}")
+
+DEVICE_IP = config['device_ip']
+DEVICE_PORT = config['device_port']
+API_URL = config['api_url']
+PROCESS_URL = config['process_url']
+SYNC_INTERVAL = config['sync_interval_minutes']
+
 LAST_SYNC_FILE = 'last_sync.txt'
 
 def get_last_sync_time():
@@ -121,12 +141,9 @@ def main():
     print(">> Startup Sync Initiated (Catching up on any missed data)...")
     sync_data()
     
-    # 2. Schedule
-    # FOR TESTING: Run every 1 minute
-    # FOR PRODUCTION: Uncomment 'day.at("10:00")' and comment out 'every(1).minutes'
-    print(">> Scheduling Sync every 1 minute (TESTING MODE)...")
-    schedule.every(1).minutes.do(sync_data)
-    # schedule.every().day.at("10:00").do(sync_data)
+    # 2. Schedule: Run strictly at 10:00 AM
+    print(">> Scheduling Daily Sync at 10:00 AM...")
+    schedule.every().day.at("10:00").do(sync_data)
     
     while True:
         schedule.run_pending()
