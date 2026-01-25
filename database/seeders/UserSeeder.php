@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
         $password = Hash::make('password');
 
         // 1. Admin (ID 1)
-        DB::table('users')->insertOrIgnore([
+        DB::table('user')->insertOrIgnore([
             'id' => 1,
             'full_name' => 'Admin User',
             'email' => 'admin@example.com',
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
         ]);
 
         // 2. Supervisor (ID 2)
-        DB::table('users')->insertOrIgnore([
+        DB::table('user')->insertOrIgnore([
             'id' => 2,
             'full_name' => 'Supervisor User',
             'email' => 'supervisor@example.com',
@@ -45,7 +45,7 @@ class UserSeeder extends Seeder
         ]);
 
         // 3. Employee (ID 3)
-        DB::table('users')->insertOrIgnore([
+        DB::table('user')->insertOrIgnore([
             'id' => 3,
             'full_name' => 'Employee User',
             'email' => 'employee@example.com',

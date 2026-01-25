@@ -63,22 +63,11 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($users as $userData) {
-            // Calculate Leave Balance Logic
-            // Counts only complete calendar months after 3-month probation
-            // Accrues 1.25 days per month
+            // Calculate Leave Balance Logic (mock)
             $joiningDate = \Carbon\Carbon::parse($userData['joining_date']);
-            $today = \Carbon\Carbon::now();
-            
-            // Count complete calendar months (only months where the 1st has passed)
-            $completedMonths = 0;
-            $currentDate = $joiningDate->copy();
-            
-            while ($currentDate->addMonth() <= $today) {
-                $completedMonths++;
-            }
-            
-            // After 3 months probation, accrue 1.25 days per month
-            $accrualMonths = max(0, $completedMonths - 3);
+            $monthsSinceJoining = $joiningDate->diffInMonths(now());
+            // Logic: 1.25 per month after 3 months probation (example from existing code)
+            $accrualMonths = max(0, $monthsSinceJoining - 3);
             $initialBalance = $accrualMonths * 1.25;
 
             // Use updateOrInsert or just create if not exists

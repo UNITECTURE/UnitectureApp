@@ -68,7 +68,7 @@ class UserController extends Controller
             'status' => $request->status,
             'telegram_chat_id' => $request->telegram_chat_id,
             'biometric_id' => $request->biometric_id,
-            'leave_balance' => $this->calculateLeaveBalance($request->joining_date),
+            'leave_balance' => 0, // Default balance for new users
             'profile_image' => $imageUrl,
         ]);
 
