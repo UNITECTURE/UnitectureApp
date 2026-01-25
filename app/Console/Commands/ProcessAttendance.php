@@ -167,9 +167,8 @@ class ProcessAttendance extends Command
         }
         
         // Determine Status
-        // If total duration > 0 OR manual approved -> Present
-        // Otherwise Absent
-        $status = ($totalMinutes > 0 || $manualReq) ? 'present' : 'absent';
+        // Rule: Users are marked as absent if they do not complete 9 hours (540 minutes)
+        $status = ($totalMinutes >= 540) ? 'present' : 'absent';
         
         // Format Total Duration
         $hours = floor($totalMinutes / 60);
