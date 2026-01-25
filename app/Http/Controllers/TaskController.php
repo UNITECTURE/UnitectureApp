@@ -246,6 +246,8 @@ class TaskController extends Controller
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
             'description' => 'required|string',
+            'assignees' => 'required|array|min:1',
+            'assignees.*' => 'exists:users,id',
             'start_date' => [
                 'required',
                 'date',
@@ -314,7 +316,9 @@ class TaskController extends Controller
         $task->save();
 
         // Attach Assignees
-        $task->assignees()->attach($request->assignees, ['type' => 'assignee']);
+        if ($request->has('assignees') && !empty($request->assignees)) {
+            $task->assignees()->attach($request->assignees, ['type' => 'assignee']);
+        }
 
         // Attach Tagged Users
         if ($request->has('tagged')) {
