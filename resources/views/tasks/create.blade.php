@@ -117,7 +117,9 @@
                                     <label for="end_time_input" class="block text-sm font-semibold text-slate-700 mb-2">End Time</label>
                                     <div class="relative">
                                         <input type="time" name="end_time_input" id="end_time_input"
-                                            class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 pl-10 text-slate-800 bg-slate-50 transition-all duration-200">
+                                            x-model="endTime"
+                                            :disabled="priority === 'free'"
+                                            class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 pl-10 text-slate-800 bg-slate-50 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400">
                                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                             <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -385,6 +387,7 @@
                 priority: '{{ old('priority', 'medium') }}',
                 startDate: '{{ old('start_date') }}',
                 endDate: '{{ old('end_date_input') }}',
+                endTime: '{{ old('end_time_input', '23:59') }}',
                 todayDate: todayDate,
                 selectedEmployees: [],
                 taggedEmployees: [],
@@ -438,6 +441,22 @@
                             this.endDate = '';
                         }
                     });
+
+                    // Ensure end time behavior based on priority
+                    this.$watch('priority', (value) => {
+                        if (value === 'free') {
+                            // Free tasks always due at 23:59
+                            this.endTime = '23:59';
+                        } else if (!this.endTime) {
+                            // Default non-free tasks to 23:59 if not set
+                            this.endTime = '23:59';
+                        }
+                    });
+
+                    // Initialize default end time if empty
+                    if (!this.endTime) {
+                        this.endTime = '23:59';
+                    }
                 },
 
                 async loadEmployees() {
