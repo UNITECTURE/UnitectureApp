@@ -36,7 +36,7 @@
                         </div>
                         <button onclick="window.dispatchEvent(new CustomEvent('open-manual-attendance-modal'))" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center shadow-lg shadow-blue-500/20 active:scale-95 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            Apply Record
+                            Apply Manual Attendance
                         </button>
                     </div>
                     
