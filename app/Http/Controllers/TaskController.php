@@ -627,7 +627,7 @@ class TaskController extends Controller
         }
 
         $comments = $task->comments()
-            ->with('user:id,full_name,name')
+            ->with('user:id,full_name')
             ->get()
             ->map(function (TaskComment $comment) {
                 return [
@@ -637,7 +637,7 @@ class TaskController extends Controller
                     'created_at_human' => $comment->created_at->diffForHumans(),
                     'user' => [
                         'id' => $comment->user->id,
-                        'name' => $comment->user->full_name ?? $comment->user->name,
+                        'name' => $comment->user->full_name,
                     ],
                 ];
             });
