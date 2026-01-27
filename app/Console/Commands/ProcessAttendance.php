@@ -167,8 +167,18 @@ class ProcessAttendance extends Command
         }
         
         // Determine Status
-        // Rule: Users are marked as absent if they do not complete 9 hours (540 minutes)
-        $status = ($totalMinutes >= 540) ? 'present' : 'absent';
+        // Determine Status
+        $isToday = $date->isToday();
+
+        if ($isToday) {
+            // For TODAY (Live Monitoring): Mark as present if they have clocked in at all.
+            // We cannot enforce 9 hours yet for the 10 AM report.
+            $status = ($totalMinutes > 0 || $manualReq) ? 'present' : 'absent';
+        } else {
+            // For PAST dates (Finalizing): Enforce strict 9-Hour Rule
+            // Users are absent if they do not complete 9 hours (540 minutes)
+            $status = ($totalMinutes >= 540) ? 'present' : 'absent';
+        }
         
         // Format Total Duration
         $hours = floor($totalMinutes / 60);
