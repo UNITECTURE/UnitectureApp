@@ -219,21 +219,77 @@
                                         <p class="text-sm font-bold text-slate-700"
                                             x-text="formatDate(selectedTask.end_date, true)"></p>
                                     </div>
-                                    <div>
-                                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assignees</h3>
-                                        <div class="flex flex-wrap gap-2">
-                                            <template x-for="assignee in selectedTask.assignees" :key="assignee.id">
-                                                <div class="flex items-center gap-2 bg-indigo-50 px-2 py-1 rounded-lg">
-                                                    <img :src="getProfileImageUrl(assignee)"
-                                                        :alt="assignee.full_name || assignee.name"
-                                                        class="w-5 h-5 rounded-full object-cover">
-                                                    <span class="text-xs font-bold text-indigo-800"
-                                                        x-text="assignee.full_name || assignee.name"></span>
-                                                </div>
-                                            </template>
-                                        </div>
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assignees</h3>
+                                    <div class="flex flex-wrap gap-2">
+                                        <template x-for="assignee in selectedTask.assignees" :key="assignee.id">
+                                            <div class="flex items-center gap-2 bg-indigo-50 px-2 py-1 rounded-lg">
+                                                <img :src="getProfileImageUrl(assignee)"
+                                                    :alt="assignee.full_name || assignee.name"
+                                                    class="w-5 h-5 rounded-full object-cover">
+                                                <span class="text-xs font-bold text-indigo-800"
+                                                    x-text="assignee.full_name || assignee.name"></span>
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Comments -->
+                            <div class="px-6 pb-6 space-y-3 border-t border-slate-100">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Comments</h3>
+                                    <button type="button"
+                                        class="text-[11px] font-medium text-slate-500 hover:text-slate-700"
+                                        @click="loadComments(selectedTask.id)">
+                                        Refresh
+                                    </button>
+                                </div>
+
+                                <div class="max-h-48 overflow-y-auto space-y-3 pr-1">
+                                    <template x-if="commentsLoading">
+                                        <p class="text-xs text-slate-400 italic">Loading comments...</p>
+                                    </template>
+                                    <template x-if="!commentsLoading && taskComments.length === 0">
+                                        <p class="text-xs text-slate-400 italic">No comments yet. Start the discussion.</p>
+                                    </template>
+                                    <template x-for="comment in taskComments" :key="comment.id">
+                                        <div class="flex items-start gap-2">
+                                            <div
+                                                class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-700">
+                                                <span x-text="(comment.user.name || 'U').slice(0, 2).toUpperCase()"></span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="text-xs font-semibold text-slate-700"
+                                                        x-text="comment.user.name"></span>
+                                                    <span class="text-[10px] text-slate-400"
+                                                        x-text="comment.created_at_human"></span>
+                                                </div>
+                                                <p class="text-xs text-slate-600 mt-0.5 whitespace-pre-wrap"
+                                                    x-text="comment.comment"></p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <form @submit.prevent="submitComment(selectedTask.id)" class="space-y-2">
+                                    <textarea x-model="newComment"
+                                        class="w-full text-xs rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 px-3 py-2"
+                                        rows="2"
+                                        placeholder="Add a comment..."></textarea>
+                                    <div class="flex justify-end gap-2">
+                                        <button type="button" @click="newComment = ''"
+                                            class="text-[11px] font-medium text-slate-500 hover:text-slate-700">
+                                            Clear
+                                        </button>
+                                        <button type="submit"
+                                            class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            :disabled="!newComment.trim()">
+                                            Post
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
 
                             <div class="bg-slate-50 px-6 py-4 flex justify-end rounded-b-2xl">
@@ -259,6 +315,9 @@
                 sidebarOpen: true,
                 filterStatus: 'all',
                 selectedTask: null,
+                taskComments: [],
+                commentsLoading: false,
+                newComment: '',
 
                 get filteredTasks() {
                     let filtered = this.tasks;
@@ -377,6 +436,54 @@
 
                 openModal(task) {
                     this.selectedTask = task;
+                    this.loadComments(task.id);
+                },
+
+                async loadComments(taskId) {
+                    this.commentsLoading = true;
+                    this.taskComments = [];
+                    try {
+                        const response = await fetch(`/tasks/${taskId}/comments`, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        if (!response.ok) throw new Error();
+                        const data = await response.json();
+                        this.taskComments = data;
+                    } catch (e) {
+                        console.error('Failed to load comments', e);
+                    } finally {
+                        this.commentsLoading = false;
+                    }
+                },
+
+                async submitComment(taskId) {
+                    const text = this.newComment.trim();
+                    if (!text) return;
+
+                    try {
+                        const response = await fetch(`/tasks/${taskId}/comments`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ comment: text })
+                        });
+                        if (!response.ok) throw new Error();
+                        const data = await response.json();
+                        if (data.comment) {
+                            this.taskComments.unshift(data.comment);
+                            this.newComment = '';
+                        } else {
+                            await this.loadComments(taskId);
+                            this.newComment = '';
+                        }
+                    } catch (e) {
+                        console.error('Failed to post comment', e);
+                    }
                 }
             }));
         });

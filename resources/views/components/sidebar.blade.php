@@ -55,6 +55,24 @@
                     Dashboard</div>
             </a>
 
+            {{-- Calendar --}}
+            <a href="{{ route('calendar.index') }}"
+                class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative {{ request()->routeIs('calendar.index') ? 'bg-slate-800 text-white' : '' }}"
+                :class="!sidebarOpen ? 'justify-center' : ''">
+                <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
+                    :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                    </path>
+                </svg>
+                <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Calendar' }}</span>
+
+                {{-- Tooltip for collapsed state --}}
+                <div x-show="!sidebarOpen"
+                    class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
+                    Calendar</div>
+            </a>
+
             {{-- Tasks --}}
             @if($role !== 'admin')
             <div x-data="{ 

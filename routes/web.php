@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ManualAttendanceController;
+use App\Http\Controllers\CalendarController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -71,6 +72,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
     Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
     Route::get('/my-team', [App\Http\Controllers\UserController::class, 'team'])->name('team.index');
+
+    // Calendar
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::get('/api/calendar/events', [CalendarController::class, 'events'])->name('calendar.events');
 });
 
 // Attendance Routes
@@ -117,6 +122,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/tasks/{task}/stage', [App\Http\Controllers\TaskController::class, 'updateStage'])->name('tasks.updateStage');
     Route::get('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'show'])->name('tasks.show');
     Route::get('/api/tasks/employees', [App\Http\Controllers\TaskController::class, 'getEmployees'])->name('tasks.employees');
+    Route::get('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'comments'])->name('tasks.comments.index');
+    Route::post('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'addComment'])->name('tasks.comments.store');
 });
 
 // Test Telegram Route
