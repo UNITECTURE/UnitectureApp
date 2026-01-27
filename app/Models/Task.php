@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Task extends Model
 {
@@ -67,5 +68,13 @@ class Task extends Model
         return $this->belongsToMany(User::class, 'task_user')
             ->wherePivot('type', 'tagged')
             ->withTimestamps();
+    }
+
+    /**
+     * Comments associated with this task.
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(TaskComment::class)->latest();
     }
 }

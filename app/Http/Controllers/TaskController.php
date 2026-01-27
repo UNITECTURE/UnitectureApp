@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\User;
+use App\Models\TaskComment;
 use App\Services\TelegramService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -418,8 +419,10 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        // Check authorization if needed (can user view this task?)
-        // For now, assuming if they can list, they can view details.
+        $user = Auth::user();
+        if (!$this->canViewTask($user, $task)) {
+            abort(403, 'Unauthorized action.');
+        }
 
         return response()->json([
             'task' => $task->load(['project', 'assignees', 'taggedUsers', 'creator'])
@@ -556,5 +559,95 @@ class TaskController extends Controller
         }
 
         return response()->json(['message' => 'Stage updated successfully', 'stage' => $task->stage]);
+    }
+
+    /**
+     * List comments for a task.
+     */
+    public function comments(Task $task)
+    {
+        $user = Auth::user();
+        if (!$this->canViewTask($user, $task)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $comments = $task->comments()
+            ->with('user:id,full_name,name')
+            ->get()
+            ->map(function (TaskComment $comment) {
+                return [
+                    'id' => $comment->id,
+                    'comment' => $comment->comment,
+                    'created_at' => $comment->created_at->toDateTimeString(),
+                    'created_at_human' => $comment->created_at->diffForHumans(),
+                    'user' => [
+                        'id' => $comment->user->id,
+                        'name' => $comment->user->full_name ?? $comment->user->name,
+                    ],
+                ];
+            });
+
+        return response()->json($comments);
+    }
+
+    /**
+     * Store a new comment on a task.
+     */
+    public function addComment(Request $request, Task $task)
+    {
+        $user = Auth::user();
+        if (!$this->canViewTask($user, $task)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $data = $request->validate([
+            'comment' => 'required|string|max:2000',
+        ]);
+
+        $comment = TaskComment::create([
+            'task_id' => $task->id,
+            'user_id' => $user->id,
+            'comment' => $data['comment'],
+        ]);
+
+        return response()->json([
+            'message' => 'Comment added successfully.',
+            'comment' => [
+                'id' => $comment->id,
+                'comment' => $comment->comment,
+                'created_at' => $comment->created_at->toDateTimeString(),
+                'created_at_human' => $comment->created_at->diffForHumans(),
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->full_name ?? $user->name,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Determine if the user can view/comment on the task.
+     */
+    private function canViewTask(User $user, Task $task): bool
+    {
+        if ($user->isAdmin() || $user->isSupervisor()) {
+            return true;
+        }
+
+        if ($task->created_by === $user->id) {
+            return true;
+        }
+
+        $task->loadMissing(['assignees:id', 'taggedUsers:id']);
+
+        if ($task->assignees->contains('id', $user->id)) {
+            return true;
+        }
+
+        if ($task->taggedUsers->contains('id', $user->id)) {
+            return true;
+        }
+
+        return false;
     }
 }
