@@ -67,10 +67,21 @@ class CalendarController extends Controller
             $visibleUserIds = collect([$authUser->id]);
         }
 
-        // Optional filter by a specific user
-        $filterUserId = $request->query('user_id');
-        if ($filterUserId && $visibleUserIds->contains((int) $filterUserId)) {
-            $visibleUserIds = collect([(int) $filterUserId]);
+        // Optional filter by specific users (single or multi-select)
+        $filterUserIds = $request->query('user_ids');
+        if (is_string($filterUserIds)) {
+            // Support comma-separated string
+            $filterUserIds = array_filter(explode(',', $filterUserIds));
+        }
+        if (is_array($filterUserIds) && !empty($filterUserIds)) {
+            $ids = collect($filterUserIds)
+                ->map(fn ($id) => (int) $id)
+                ->filter(fn ($id) => $visibleUserIds->contains($id))
+                ->values();
+
+            if ($ids->isNotEmpty()) {
+                $visibleUserIds = $ids;
+            }
         }
 
         $events = [];
