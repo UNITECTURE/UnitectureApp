@@ -276,6 +276,8 @@ class TaskController extends Controller
             'end_time_input' => 'nullable|date_format:H:i',
             'time_estimate' => 'nullable|string|max:50',
             'priority' => 'required|in:high,medium,low,free',
+            // Optional initial comment from the creator when creating the task
+            'comments' => 'nullable|string|max:2000',
         ]);
 
         if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor'])) {
@@ -299,7 +301,7 @@ class TaskController extends Controller
         }
 
         // Prepare data for saving
-        $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged']);
+        $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged', 'comments']);
         $data['end_date'] = $endDate;
         // Use description as title if title is not provided
         $data['title'] = $request->input('title', substr($request->description, 0, 255));
@@ -325,6 +327,16 @@ class TaskController extends Controller
         }
         $task->created_by = Auth::id();
         $task->save();
+
+        // Persist initial comment (if provided) as a TaskComment
+        $initialCommentText = trim((string) $request->input('comments', ''));
+        if ($initialCommentText !== '') {
+            TaskComment::create([
+                'task_id' => $task->id,
+                'user_id' => Auth::id(),
+                'comment' => $initialCommentText,
+            ]);
+        }
 
         // Attach Assignees
         if ($request->has('assignees') && !empty($request->assignees)) {
