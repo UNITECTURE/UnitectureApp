@@ -1,7 +1,7 @@
 {
     "device_ip": "192.168.1.201",
     "device_port": 4370,
-    "api_url": "https://YOUR-GODADDY-DOMAIN.com/api/essl/attendance",
-    "process_url": "https://YOUR-GODADDY-DOMAIN.com/api/attendance/process",
-    "sync_interval_minutes": 15
+    "api_url": "http://app.unitecture.co/api/essl/attendance",
+    "process_url": "http://app.unitecture.co/api/attendance/process",
+    "sync_interval_minutes": 1
 }

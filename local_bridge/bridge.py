@@ -12,8 +12,8 @@ from datetime import datetime
 config = {
     "device_ip": "192.168.1.201",
     "device_port": 4370,
-    "api_url": "http://127.0.0.1:8000/api/essl/attendance",
-    "process_url": "http://127.0.0.1:8000/api/attendance/process",
+    "api_url": "http://app.unitecture.co/api/essl/attendance",
+    "process_url": "http://app.unitecture.co/api/attendance/process",
     "sync_interval_minutes": 15
 }
 
@@ -91,7 +91,8 @@ def sync_data():
             # Push to Cloud
             try:
                 payload = {'logs': new_records}
-                response = requests.post(API_URL, json=payload, timeout=10)
+                # Increased timeout to 120s because uploading 9000+ records takes time!
+                response = requests.post(API_URL, json=payload, timeout=120)
                 
                 if response.status_code == 200:
                     print("Upload Successful!")
@@ -119,14 +120,14 @@ def sync_data():
         # API_URL is .../attendance
         # PROCESS_URL is .../attendance/process
         
-        requests.get(PROCESS_URL + '/yesterday', timeout=10)
+        requests.get(PROCESS_URL + '/yesterday', timeout=120)
         print(" -> Triggered 'Yesterday' Processing (Catch-up)")
     except Exception as e:
         print(f"Trigger Yesterday Error: {e}")
 
     # 2. Process Today (For live status)
     try:
-        requests.get(PROCESS_URL + '/today', timeout=10)
+        requests.get(PROCESS_URL + '/today', timeout=120)
         print(" -> Triggered 'Today' Processing")
     except Exception as e:
         print(f"Trigger Today Error: {e}")
@@ -141,9 +142,9 @@ def main():
     print(">> Startup Sync Initiated (Catching up on any missed data)...")
     sync_data()
     
-    # 2. Schedule: Run strictly at 10:00 AM
-    print(">> Scheduling Daily Sync at 10:00 AM...")
-    schedule.every().day.at("10:00").do(sync_data)
+    # 2. Schedule
+    print(f">> Scheduling Sync every {SYNC_INTERVAL} minutes...")
+    schedule.every(SYNC_INTERVAL).minutes.do(sync_data)
     
     while True:
         schedule.run_pending()
