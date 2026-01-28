@@ -84,43 +84,58 @@ class CalendarController extends Controller
             }
         }
 
+        // Get event type filters
+        $eventTypes = $request->query('event_types', []);
+        if (is_string($eventTypes)) {
+            $eventTypes = array_filter(explode(',', $eventTypes));
+        }
+        if (!is_array($eventTypes)) {
+            $eventTypes = [];
+        }
+        $eventTypes = array_map('strtolower', $eventTypes);
+        $showLeaves = empty($eventTypes) || in_array('leave', $eventTypes);
+        $showTasks = empty($eventTypes) || in_array('task', $eventTypes);
+        $showAttendance = empty($eventTypes) || in_array('attendance', $eventTypes);
+
         $events = [];
 
         // Leaves (all-day, date range)
-        $leaves = Leave::with('user')
-            ->whereIn('user_id', $visibleUserIds)
-            ->whereDate('start_date', '<=', $endDate)
-            ->whereDate('end_date', '>=', $startDate)
-            ->get();
+        if ($showLeaves) {
+            $leaves = Leave::with('user')
+                ->whereIn('user_id', $visibleUserIds)
+                ->whereDate('start_date', '<=', $endDate)
+                ->whereDate('end_date', '>=', $startDate)
+                ->get();
 
-        foreach ($leaves as $leave) {
-            $status = $leave->status;
-            $color = match ($status) {
-                'approved', 'approved_by_supervisor' => '#22c55e', // green
-                'pending' => '#eab308', // yellow
-                'rejected' => '#ef4444', // red
-                default => '#6b7280', // gray
-            };
+            foreach ($leaves as $leave) {
+                $status = $leave->status;
+                $color = match ($status) {
+                    'approved', 'approved_by_supervisor' => '#22c55e', // green
+                    'pending' => '#eab308', // yellow
+                    'rejected' => '#ef4444', // red
+                    default => '#6b7280', // gray
+                };
 
-            $events[] = [
-                'id' => 'leave-' . $leave->id,
-                'title' => ($leave->user->name ?? 'User') . ' - Leave',
-                'start' => $leave->start_date?->toDateString(),
-                // FullCalendar expects exclusive end for all-day ranges
-                'end' => $leave->end_date?->copy()->addDay()->toDateString(),
-                'allDay' => true,
-                'color' => $color,
-                'type' => 'leave',
-                'extendedProps' => [
-                    'user' => $leave->user->name ?? null,
-                    'status' => $leave->status,
-                    'leave_type' => $leave->leave_type,
-                    'reason' => $leave->reason,
-                ],
-            ];
+                $events[] = [
+                    'id' => 'leave-' . $leave->id,
+                    'title' => ($leave->user->name ?? 'User') . ' - Leave',
+                    'start' => $leave->start_date?->toDateString(),
+                    // FullCalendar expects exclusive end for all-day ranges
+                    'end' => $leave->end_date?->copy()->addDay()->toDateString(),
+                    'allDay' => true,
+                    'color' => $color,
+                    'type' => 'leave',
+                    'extendedProps' => [
+                        'user' => $leave->user->name ?? null,
+                        'status' => $leave->status,
+                        'leave_type' => $leave->leave_type,
+                        'reason' => $leave->reason,
+                    ],
+                ];
+            }
         }
 
-        // Holidays (company-wide all-day)
+        // Holidays (company-wide all-day) - always show
         $holidays = Holiday::whereBetween('date', [$startDate, $endDate])->get();
 
         foreach ($holidays as $holiday) {
@@ -138,51 +153,55 @@ class CalendarController extends Controller
         }
 
         // Tasks (date range with optional time, only for assignees)
-        $tasks = Task::with(['assignees', 'project'])
-            ->whereHas('assignees', function ($query) use ($visibleUserIds) {
-                $query->whereIn('users.id', $visibleUserIds);
-            })
-            ->whereDate('start_date', '<=', $endDate)
-            ->whereDate('end_date', '>=', $startDate)
-            ->get();
+        if ($showTasks) {
+            $tasks = Task::with(['assignees', 'project'])
+                ->whereHas('assignees', function ($query) use ($visibleUserIds) {
+                    $query->whereIn('users.id', $visibleUserIds);
+                })
+                ->whereDate('start_date', '<=', $endDate)
+                ->whereDate('end_date', '>=', $startDate)
+                ->get();
 
-        foreach ($tasks as $task) {
-            $assigneeNames = $task->assignees->pluck('name')->implode(', ');
+            foreach ($tasks as $task) {
+                $assigneeNames = $task->assignees->pluck('name')->implode(', ');
 
-            $events[] = [
-                'id' => 'task-' . $task->id,
-                'title' => $task->title,
-                'start' => optional($task->start_date)->toDateString(),
-                'end' => optional($task->end_date)->toIso8601String(),
-                'allDay' => false,
-                'color' => '#f97316', // orange
-                'type' => 'task',
-                'extendedProps' => [
-                    'project' => $task->project?->title,
-                    'assignees' => $assigneeNames,
-                    'priority' => $task->priority,
-                    'status' => $task->status,
-                    'stage' => $task->stage,
-                ],
-            ];
+                $events[] = [
+                    'id' => 'task-' . $task->id,
+                    'title' => $task->title,
+                    'start' => optional($task->start_date)->toDateString(),
+                    'end' => optional($task->end_date)->toIso8601String(),
+                    'allDay' => false,
+                    'color' => '#f97316', // orange
+                    'type' => 'task',
+                    'extendedProps' => [
+                        'project' => $task->project?->title,
+                        'assignees' => $assigneeNames,
+                        'priority' => $task->priority,
+                        'status' => $task->status,
+                        'stage' => $task->stage,
+                    ],
+                ];
+            }
         }
 
         // Absences from Attendance (highlight days with explicit absence)
-        $absences = Attendance::with('user')
-            ->whereIn('user_id', $visibleUserIds)
-            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
-            ->where('status', 'absent')
-            ->get();
+        if ($showAttendance) {
+            $absences = Attendance::with('user')
+                ->whereIn('user_id', $visibleUserIds)
+                ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+                ->where('status', 'absent')
+                ->get();
 
-        foreach ($absences as $attendance) {
-            $events[] = [
-                'id' => 'absence-' . $attendance->id,
-                'title' => ($attendance->user->name ?? 'User') . ' - Absent',
-                'start' => $attendance->date,
-                'allDay' => true,
-                'color' => '#ef4444', // red
-                'type' => 'absence',
-            ];
+            foreach ($absences as $attendance) {
+                $events[] = [
+                    'id' => 'absence-' . $attendance->id,
+                    'title' => ($attendance->user->name ?? 'User') . ' - Absent',
+                    'start' => $attendance->date,
+                    'allDay' => true,
+                    'color' => '#ef4444', // red
+                    'type' => 'absence',
+                ];
+            }
         }
 
         return response()->json([

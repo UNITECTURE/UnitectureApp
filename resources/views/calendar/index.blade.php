@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-gray-50 overflow-hidden" x-data="{ sidebarOpen: true }">
+    <div class="flex h-screen bg-gray-50 overflow-hidden" x-data="{ sidebarOpen: true, showFilterModal: false, eventTypes: ['task', 'leave', 'attendance'], selectedUserIds: [] }">
         <x-sidebar :role="Auth::user()->isAdmin() ? 'admin' : (Auth::user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
         <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300">
@@ -41,27 +41,16 @@
                         </div>
                     </div>
 
-                    {{-- Filters --}}
-                    <div
-                        class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-100 px-4 py-3 flex flex-col md:flex-row md:items-center gap-3">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-semibold tracking-wide text-slate-400 uppercase">Filters</span>
-                        </div>
-                        <div class="flex-1 flex flex-wrap items-center gap-3">
-                            {{-- Multi-select Employees --}}
-                            <div class="flex items-center gap-2">
-                                <label for="calendar-user-filter" class="text-xs font-medium text-slate-500">Employees</label>
-                                <select id="calendar-user-filter" multiple
-                                    class="min-w-[180px] text-sm rounded-lg border-slate-200 focus:border-blue-500 focus:ring-blue-500 bg-slate-50 text-slate-700 px-3 py-1.5">
-                                    @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <p class="text-[11px] text-slate-400">
-                                Select one or more employees to show their tasks, leaves, holidays and attendance.
-                            </p>
-                        </div>
+                    {{-- Filter Icon Button --}}
+                    <div class="flex items-center justify-end">
+                        <button @click="showFilterModal = true"
+                            class="p-2.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm">
+                            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                                </path>
+                            </svg>
+                        </button>
                     </div>
 
                     {{-- Calendar Card --}}
@@ -76,6 +65,117 @@
         </div>
     </div>
 
+    {{-- Filter Modal --}}
+    <template x-teleport="body">
+        <div x-show="showFilterModal"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            style="display: none;"
+            @click.self="showFilterModal = false">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[85vh] overflow-hidden flex flex-col"
+                @click.stop>
+                {{-- Modal Header --}}
+                <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-slate-800">Filter Calendar</h3>
+                    <button type="button" @click="showFilterModal = false"
+                        class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Modal Body --}}
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    {{-- Employees Multi-select --}}
+                    <div>
+                        <label for="calendar-user-filter" class="block text-sm font-semibold text-slate-700 mb-2">
+                            Employees
+                        </label>
+                        <select id="calendar-user-filter" multiple
+                            class="w-full text-sm rounded-lg border-slate-200 focus:border-blue-500 focus:ring-blue-500 bg-slate-50 text-slate-700 px-3 py-2 min-h-[120px]">
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->full_name }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-slate-400 mt-1.5">Select one or more employees</p>
+                    </div>
+
+                    {{-- Event Type Filters --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Event Types</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors hover:bg-slate-50 border border-slate-200"
+                                :class="{ 'bg-blue-50 border-blue-300': eventTypes.includes('task') }">
+                                <input type="checkbox" 
+                                    :checked="eventTypes.includes('task')"
+                                    @change="eventTypes.includes('task') ? eventTypes = eventTypes.filter(t => t !== 'task') : eventTypes.push('task')"
+                                    class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
+                                <div class="flex items-center gap-2 flex-1">
+                                    <span class="w-3 h-3 rounded-full bg-[#f97316]"></span>
+                                    <span class="text-sm font-medium text-slate-700">Tasks</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors hover:bg-slate-50 border border-slate-200"
+                                :class="{ 'bg-blue-50 border-blue-300': eventTypes.includes('leave') }">
+                                <input type="checkbox"
+                                    :checked="eventTypes.includes('leave')"
+                                    @change="eventTypes.includes('leave') ? eventTypes = eventTypes.filter(t => t !== 'leave') : eventTypes.push('leave')"
+                                    class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
+                                <div class="flex items-center gap-2 flex-1">
+                                    <span class="w-3 h-3 rounded-full bg-[#22c55e]"></span>
+                                    <span class="text-sm font-medium text-slate-700">Leaves</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors hover:bg-slate-50 border border-slate-200"
+                                :class="{ 'bg-blue-50 border-blue-300': eventTypes.includes('attendance') }">
+                                <input type="checkbox"
+                                    :checked="eventTypes.includes('attendance')"
+                                    @change="eventTypes.includes('attendance') ? eventTypes = eventTypes.filter(t => t !== 'attendance') : eventTypes.push('attendance')"
+                                    class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
+                                <div class="flex items-center gap-2 flex-1">
+                                    <span class="w-3 h-3 rounded-full bg-[#ef4444]"></span>
+                                    <span class="text-sm font-medium text-slate-700">Attendance</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Modal Footer --}}
+                <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                    <button type="button" @click="showFilterModal = false"
+                        class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+                        Close
+                    </button>
+                    <button type="button" @click="
+                        const userSelect = document.getElementById('calendar-user-filter');
+                        if (userSelect) {
+                            selectedUserIds = Array.from(userSelect.selectedOptions).map(opt => opt.value);
+                        }
+                        // Sync filter state to global variable
+                        if (typeof window.calendarFilterState === 'undefined') {
+                            window.calendarFilterState = {};
+                        }
+                        window.calendarFilterState.eventTypes = [...eventTypes];
+                        if (window.calendarInstance) {
+                            window.calendarInstance.refetchEvents();
+                        }
+                        showFilterModal = false;
+                    "
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
     {{-- FullCalendar CDN (no build step required) --}}
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
@@ -86,8 +186,9 @@
             if (!calendarEl || !window.FullCalendar) return;
 
             const userFilterEl = document.getElementById('calendar-user-filter');
+            let calendarInstance;
 
-            const calendar = new FullCalendar.Calendar(calendarEl, {
+            calendarInstance = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 height: 'auto',
                 headerToolbar: {
@@ -120,6 +221,13 @@
                         if (selected.length) {
                             selected.forEach(id => params.append('user_ids[]', id));
                         }
+                    }
+
+                    // Add event type filters (from global filter state)
+                    if (window.calendarFilterState && window.calendarFilterState.eventTypes && window.calendarFilterState.eventTypes.length > 0) {
+                        window.calendarFilterState.eventTypes.forEach(type => {
+                            params.append('event_types[]', type);
+                        });
                     }
 
                     fetch('{{ route('calendar.events') }}?' + params.toString(), {
@@ -174,13 +282,13 @@
                 }
             });
 
-            calendar.render();
-
-            if (userFilterEl) {
-                userFilterEl.addEventListener('change', function () {
-                    calendar.refetchEvents();
-                });
-            }
+            calendarInstance.render();
+            window.calendarInstance = calendarInstance;
+            
+            // Initialize global filter state
+            window.calendarFilterState = {
+                eventTypes: ['task', 'leave', 'attendance']
+            };
         });
     </script>
 @endsection
