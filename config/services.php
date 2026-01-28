@@ -35,8 +35,15 @@ return [
         ],
     ],
 
+    // Telegram bots
+    // - TELEGRAM_BOT_TOKEN: general bot (attendance / leaves etc.)
+    // - TELEGRAM_TASK_BOT_TOKEN: dedicated bot for task-related notifications
     'telegram' => [
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+    ],
+
+    'telegram_tasks' => [
+        'bot_token' => env('TELEGRAM_TASK_BOT_TOKEN'),
     ],
 
 ];

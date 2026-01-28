@@ -40,6 +40,9 @@ class TaskController extends Controller
      */
     public function index()
     {
+        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        Task::bulkSyncPrioritiesFromDeadlines();
+
         // For now, show all tasks if admin/supervisor, or assigned tasks if employee
         $user = Auth::user();
 
@@ -90,6 +93,9 @@ class TaskController extends Controller
      */
     public function assigned()
     {
+        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        Task::bulkSyncPrioritiesFromDeadlines();
+
         $user = Auth::user();
 
         // Get tasks assigned to the user
@@ -128,6 +134,9 @@ class TaskController extends Controller
         if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
+
+        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        Task::bulkSyncPrioritiesFromDeadlines();
 
         $user = Auth::user();
         
@@ -267,6 +276,8 @@ class TaskController extends Controller
             'end_time_input' => 'nullable|date_format:H:i',
             'time_estimate' => 'nullable|string|max:50',
             'priority' => 'required|in:high,medium,low,free',
+            // Optional initial comment from the creator when creating the task
+            'comments' => 'nullable|string|max:2000',
         ]);
 
         if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor'])) {
@@ -290,7 +301,7 @@ class TaskController extends Controller
         }
 
         // Prepare data for saving
-        $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged']);
+        $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged', 'comments']);
         $data['end_date'] = $endDate;
         // Use description as title if title is not provided
         $data['title'] = $request->input('title', substr($request->description, 0, 255));
@@ -316,6 +327,16 @@ class TaskController extends Controller
         }
         $task->created_by = Auth::id();
         $task->save();
+
+        // Persist initial comment (if provided) as a TaskComment
+        $initialCommentText = trim((string) $request->input('comments', ''));
+        if ($initialCommentText !== '') {
+            TaskComment::create([
+                'task_id' => $task->id,
+                'user_id' => Auth::id(),
+                'comment' => $initialCommentText,
+            ]);
+        }
 
         // Attach Assignees
         if ($request->has('assignees') && !empty($request->assignees)) {
@@ -562,6 +583,61 @@ class TaskController extends Controller
     }
 
     /**
+     * Update the task due date and time.
+     * Only supervisors and admins are allowed to edit this.
+     */
+    public function updateDue(Request $request, Task $task)
+    {
+        $user = Auth::user();
+        if (!$user->isSupervisor() && !$user->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $data = $request->validate([
+            'end_date_input' => 'required|date',
+            'end_time_input' => 'nullable|date_format:H:i',
+        ]);
+
+        // Ensure end date is not before task start date (if present)
+        if ($task->start_date && $data['end_date_input'] < $task->start_date->toDateString()) {
+            return response()->json([
+                'message' => 'End date cannot be before task start date (' . $task->start_date->format('Y-m-d') . ').',
+            ], 422);
+        }
+
+        // Combine date and time similar to store()
+        $endDateTime = $data['end_date_input'];
+        if ($task->priority === 'free') {
+            // Free tasks always end at 23:59:59
+            $endDateTime .= ' 23:59:59';
+        } else {
+            if (!empty($data['end_time_input'])) {
+                $endDateTime .= ' ' . $data['end_time_input'] . ':00';
+            } else {
+                $endDateTime .= ' 23:59:59';
+            }
+        }
+
+        $task->end_date = $endDateTime;
+
+        // Recalculate stage based on new end date if not manually overridden
+        $endCarbon = \Carbon\Carbon::parse($endDateTime);
+        if ($endCarbon->isPast() && $task->stage !== 'completed') {
+            $task->stage = 'overdue';
+        } elseif (!$endCarbon->isPast() && $task->stage === 'overdue') {
+            $task->stage = 'pending';
+        }
+
+        $task->save();
+
+        return response()->json([
+            'message' => 'Due date updated successfully.',
+            'end_date' => $task->end_date->toIso8601String(),
+            'stage' => $task->stage,
+        ]);
+    }
+
+    /**
      * List comments for a task.
      */
     public function comments(Task $task)
@@ -575,14 +651,15 @@ class TaskController extends Controller
             ->with('user:id,full_name,name')
             ->get()
             ->map(function (TaskComment $comment) {
+                $commentUser = $comment->user;
                 return [
                     'id' => $comment->id,
                     'comment' => $comment->comment,
                     'created_at' => $comment->created_at->toDateTimeString(),
                     'created_at_human' => $comment->created_at->diffForHumans(),
                     'user' => [
-                        'id' => $comment->user->id,
-                        'name' => $comment->user->full_name ?? $comment->user->name,
+                        'id' => $commentUser?->id,
+                        'name' => $commentUser?->full_name ?? $commentUser?->name ?? 'Unknown',
                     ],
                 ];
             });
@@ -604,14 +681,24 @@ class TaskController extends Controller
             'comment' => 'required|string|max:2000',
         ]);
 
-        $comment = TaskComment::create([
+        // Guard against accidental double-posts (e.g. event bound twice, double-click, flaky network retries)
+        $text = trim((string) $data['comment']);
+        $recentDuplicate = TaskComment::query()
+            ->where('task_id', $task->id)
+            ->where('user_id', $user->id)
+            ->where('comment', $text)
+            ->where('created_at', '>=', now()->subSeconds(10))
+            ->latest('id')
+            ->first();
+
+        $comment = $recentDuplicate ?: TaskComment::create([
             'task_id' => $task->id,
             'user_id' => $user->id,
-            'comment' => $data['comment'],
+            'comment' => $text,
         ]);
 
         return response()->json([
-            'message' => 'Comment added successfully.',
+            'message' => $recentDuplicate ? 'Comment already added.' : 'Comment added successfully.',
             'comment' => [
                 'id' => $comment->id,
                 'comment' => $comment->comment,

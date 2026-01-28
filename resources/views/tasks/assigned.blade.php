@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="assignedTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="assignedTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ auth()->user()->isAdmin() || auth()->user()->isSupervisor() ? 'true' : 'false' }})">
         <x-sidebar :role="auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isSupervisor() ? 'supervisor' : 'employee')" />
         
         <div class="flex-1 flex flex-col h-full overflow-hidden">
@@ -329,8 +329,34 @@
                                 </div>
                                 <div>
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due Date</h3>
-                                    <p class="text-sm font-bold text-slate-700"
-                                        x-text="formatDate(selectedTask.end_date, true)"></p>
+                                    <template x-if="!canEditDue">
+                                        <p class="text-sm font-bold text-slate-700"
+                                            x-text="formatDate(selectedTask.end_date, true)"></p>
+                                    </template>
+                                    <template x-if="canEditDue">
+                                        <div class="space-y-2">
+                                            <p class="text-[11px] text-slate-400">
+                                                Current:
+                                                <span class="font-semibold text-slate-600"
+                                                    x-text="formatDate(selectedTask.end_date, true)"></span>
+                                            </p>
+                                            <div class="flex gap-2">
+                                                <input type="date"
+                                                    x-model="editEndDate"
+                                                    class="flex-1 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500">
+                                                <input type="time"
+                                                    x-model="editEndTime"
+                                                    :disabled="selectedTask.priority === 'free'"
+                                                    class="w-24 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400">
+                                            </div>
+                                            <button type="button"
+                                                @click="saveDue(selectedTask.id)"
+                                                class="inline-flex items-center px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                :disabled="!editEndDate">
+                                                Update Due
+                                            </button>
+                                        </div>
+                                    </template>
                                 </div>
                                 <div>
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assignees</h3>
@@ -418,7 +444,7 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('assignedTasks', (initialTasks, statuses, stages) => ({
+            Alpine.data('assignedTasks', (initialTasks, statuses, stages, canEditDue) => ({
                 tasks: initialTasks,
                 statuses: statuses,
                 stages: stages,
@@ -427,9 +453,34 @@
                 selectedStage: null,
                 selectedTask: null,
                 dragOverStage: null,
+                canEditDue: canEditDue,
+                editEndDate: '',
+                editEndTime: '',
                 taskComments: [],
                 commentsLoading: false,
                 newComment: '',
+                isPostingComment: false,
+
+                normalizeComments(data) {
+                    const list = Array.isArray(data) ? data : [];
+                    const byId = new Map();
+                    for (const c of list) {
+                        if (!c || c.id == null) continue;
+                        byId.set(c.id, c);
+                    }
+                    return Array.from(byId.values()).sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+                },
+
+                upsertComment(comment) {
+                    if (!comment || comment.id == null) return;
+                    const existingIdx = this.taskComments.findIndex(c => c && c.id === comment.id);
+                    if (existingIdx !== -1) {
+                        this.taskComments.splice(existingIdx, 1, comment);
+                        return;
+                    }
+                    this.taskComments.unshift(comment);
+                    this.taskComments = this.normalizeComments(this.taskComments);
+                },
 
                 tasksByStage(stage) {
                     return this.filteredTasks().filter(t => t.stage === stage);
@@ -587,7 +638,62 @@
 
                 openModal(task) {
                     this.selectedTask = task;
+
+                    // Initialize editable due date/time from task end_date
+                    if (task.end_date) {
+                        const d = new Date(task.end_date);
+                        if (!isNaN(d.getTime())) {
+                            this.editEndDate = d.toISOString().slice(0, 10);
+                            this.editEndTime = d.toTimeString().slice(0, 5);
+                        } else {
+                            this.editEndDate = '';
+                            this.editEndTime = '23:59';
+                        }
+                    } else {
+                        this.editEndDate = '';
+                        this.editEndTime = '23:59';
+                    }
+
                     this.loadComments(task.id);
+                },
+
+                async saveDue(taskId) {
+                    if (!this.canEditDue || !this.editEndDate) return;
+
+                    const task = this.tasks.find(t => t.id === taskId);
+                    if (!task) return;
+
+                    try {
+                        const response = await fetch(`/tasks/${taskId}/due`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                end_date_input: this.editEndDate,
+                                end_time_input: task.priority === 'free' ? null : this.editEndTime
+                            })
+                        });
+                        if (!response.ok) throw new Error();
+                        const data = await response.json();
+
+                        if (data.end_date) {
+                            task.end_date = data.end_date;
+                            if (this.selectedTask && this.selectedTask.id === taskId) {
+                                this.selectedTask.end_date = data.end_date;
+                            }
+                        }
+                        if (data.stage) {
+                            task.stage = data.stage;
+                            if (this.selectedTask && this.selectedTask.id === taskId) {
+                                this.selectedTask.stage = data.stage;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Failed to update due date', e);
+                    }
                 },
 
                 async loadComments(taskId) {
@@ -601,7 +707,7 @@
                         });
                         if (!response.ok) throw new Error();
                         const data = await response.json();
-                        this.taskComments = data;
+                        this.taskComments = this.normalizeComments(data);
                     } catch (e) {
                         console.error('Failed to load comments', e);
                     } finally {
@@ -611,7 +717,8 @@
 
                 async submitComment(taskId) {
                     const text = this.newComment.trim();
-                    if (!text) return;
+                    if (!text || this.isPostingComment) return;
+                    this.isPostingComment = true;
 
                     try {
                         const response = await fetch(`/tasks/${taskId}/comments`, {
@@ -626,7 +733,7 @@
                         if (!response.ok) throw new Error();
                         const data = await response.json();
                         if (data.comment) {
-                            this.taskComments.unshift(data.comment);
+                            this.upsertComment(data.comment);
                             this.newComment = '';
                         } else {
                             await this.loadComments(taskId);
@@ -634,6 +741,8 @@
                         }
                     } catch (e) {
                         console.error('Failed to post comment', e);
+                    } finally {
+                        this.isPostingComment = false;
                     }
                 }
             }));
