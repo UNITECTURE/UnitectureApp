@@ -460,6 +460,28 @@
                 taskComments: [],
                 commentsLoading: false,
                 newComment: '',
+                isPostingComment: false,
+
+                normalizeComments(data) {
+                    const list = Array.isArray(data) ? data : [];
+                    const byId = new Map();
+                    for (const c of list) {
+                        if (!c || c.id == null) continue;
+                        byId.set(c.id, c);
+                    }
+                    return Array.from(byId.values()).sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+                },
+
+                upsertComment(comment) {
+                    if (!comment || comment.id == null) return;
+                    const existingIdx = this.taskComments.findIndex(c => c && c.id === comment.id);
+                    if (existingIdx !== -1) {
+                        this.taskComments.splice(existingIdx, 1, comment);
+                        return;
+                    }
+                    this.taskComments.unshift(comment);
+                    this.taskComments = this.normalizeComments(this.taskComments);
+                },
 
                 tasksByStage(stage) {
                     return this.filteredTasks().filter(t => t.stage === stage);
@@ -615,11 +637,6 @@
                     }
                 },
 
-                openModal(task) {
-                    this.selectedTask = task;
-                    this.loadComments(task.id);
-                },
-
                 async loadComments(taskId) {
                     this.commentsLoading = true;
                     this.taskComments = [];
@@ -631,7 +648,7 @@
                         });
                         if (!response.ok) throw new Error();
                         const data = await response.json();
-                        this.taskComments = data;
+                        this.taskComments = this.normalizeComments(data);
                     } catch (e) {
                         console.error('Failed to load comments', e);
                     } finally {
@@ -641,7 +658,8 @@
 
                 async submitComment(taskId) {
                     const text = this.newComment.trim();
-                    if (!text) return;
+                    if (!text || this.isPostingComment) return;
+                    this.isPostingComment = true;
 
                     try {
                         const response = await fetch(`/tasks/${taskId}/comments`, {
@@ -656,7 +674,7 @@
                         if (!response.ok) throw new Error();
                         const data = await response.json();
                         if (data.comment) {
-                            this.taskComments.unshift(data.comment);
+                            this.upsertComment(data.comment);
                             this.newComment = '';
                         } else {
                             await this.loadComments(taskId);
@@ -664,6 +682,8 @@
                         }
                     } catch (e) {
                         console.error('Failed to post comment', e);
+                    } finally {
+                        this.isPostingComment = false;
                     }
                 },
 

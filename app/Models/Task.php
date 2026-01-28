@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -33,6 +35,113 @@ class Task extends Model
         'start_date' => 'date',
         'end_date' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $task) {
+            $task->syncPriorityFromDeadline();
+        });
+    }
+
+    /**
+     * Calculate the priority based on time remaining to end_date.
+     *
+     * Rules (from provided sheet):
+     * - Overdue: Any -> high
+     * - <= 24 hours: low/medium -> high (high stays high)
+     * - <= 48 hours: low -> medium (medium/high stay as-is)
+     * - > 48 hours: no change
+     *
+     * Note: "free" is treated as a special value and is only escalated when overdue.
+     */
+    public function calculatePriorityFromDeadline(?Carbon $now = null): string
+    {
+        $now = $now ?? now();
+
+        $current = (string) ($this->getRawOriginal('priority') ?? $this->attributes['priority'] ?? $this->priority ?? 'medium');
+        $current = strtolower(trim($current));
+
+        if (!$this->end_date) {
+            return $current;
+        }
+
+        $due = $this->end_date instanceof Carbon ? $this->end_date : Carbon::parse($this->end_date);
+
+        // Overdue always escalates to high (sheet: Any -> High)
+        if ($due->isPast()) {
+            return 'high';
+        }
+
+        // Preserve "free" unless overdue.
+        if ($current === 'free') {
+            return 'free';
+        }
+
+        $hoursRemaining = $now->diffInHours($due, false);
+
+        if ($hoursRemaining <= 24) {
+            return $current === 'high' ? 'high' : 'high';
+        }
+
+        if ($hoursRemaining <= 48) {
+            return $current === 'low' ? 'medium' : $current;
+        }
+
+        return $current;
+    }
+
+    /**
+     * Mutate this Task instance's priority to match the deadline rules.
+     * Does not save by itself.
+     */
+    public function syncPriorityFromDeadline(?Carbon $now = null): void
+    {
+        $newPriority = $this->calculatePriorityFromDeadline($now);
+        if (!empty($newPriority) && $this->priority !== $newPriority) {
+            $this->priority = $newPriority;
+        }
+    }
+
+    /**
+     * Bulk sync priorities in the DB using a single SQL update.
+     *
+     * @param  \Carbon\Carbon|null  $now
+     * @param  iterable<int>|null   $taskIds Optional scope by task IDs
+     * @return int affected rows
+     */
+    public static function bulkSyncPrioritiesFromDeadlines(?Carbon $now = null, ?iterable $taskIds = null): int
+    {
+        $now = $now ?? now();
+        $t24 = $now->copy()->addHours(24);
+        $t48 = $now->copy()->addHours(48);
+
+        $query = DB::table('tasks')
+            ->whereNotNull('end_date')
+            ->where(function ($q) {
+                // Avoid touching completed tasks to preserve history
+                $q->whereNull('stage')->orWhere('stage', '!=', 'completed');
+            });
+
+        if ($taskIds !== null) {
+            $ids = collect($taskIds)->filter()->values()->all();
+            if (empty($ids)) {
+                return 0;
+            }
+            $query->whereIn('id', $ids);
+        }
+
+        // MySQL-friendly CASE update.
+        return (int) $query->update([
+            'priority' => DB::raw(
+                "CASE
+                    WHEN end_date < '{$now->toDateTimeString()}' AND priority <> 'high' THEN 'high'
+                    WHEN end_date <= '{$t24->toDateTimeString()}' AND priority IN ('low','medium') THEN 'high'
+                    WHEN end_date <= '{$t48->toDateTimeString()}' AND priority = 'low' THEN 'medium'
+                    ELSE priority
+                END"
+            ),
+        ]);
+    }
 
     /**
      * Get the project that holds the task.

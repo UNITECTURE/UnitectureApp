@@ -40,6 +40,9 @@ class TaskController extends Controller
      */
     public function index()
     {
+        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        Task::bulkSyncPrioritiesFromDeadlines();
+
         // For now, show all tasks if admin/supervisor, or assigned tasks if employee
         $user = Auth::user();
 
@@ -90,6 +93,9 @@ class TaskController extends Controller
      */
     public function assigned()
     {
+        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        Task::bulkSyncPrioritiesFromDeadlines();
+
         $user = Auth::user();
 
         // Get tasks assigned to the user
@@ -128,6 +134,9 @@ class TaskController extends Controller
         if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
+
+        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        Task::bulkSyncPrioritiesFromDeadlines();
 
         $user = Auth::user();
         
@@ -627,17 +636,18 @@ class TaskController extends Controller
         }
 
         $comments = $task->comments()
-            ->with('user:id,full_name')
+            ->with('user:id,full_name,name')
             ->get()
             ->map(function (TaskComment $comment) {
+                $commentUser = $comment->user;
                 return [
                     'id' => $comment->id,
                     'comment' => $comment->comment,
                     'created_at' => $comment->created_at->toDateTimeString(),
                     'created_at_human' => $comment->created_at->diffForHumans(),
                     'user' => [
-                        'id' => $comment->user->id,
-                        'name' => $comment->user->full_name,
+                        'id' => $commentUser?->id,
+                        'name' => $commentUser?->full_name ?? $commentUser?->name ?? 'Unknown',
                     ],
                 ];
             });
@@ -659,14 +669,24 @@ class TaskController extends Controller
             'comment' => 'required|string|max:2000',
         ]);
 
-        $comment = TaskComment::create([
+        // Guard against accidental double-posts (e.g. event bound twice, double-click, flaky network retries)
+        $text = trim((string) $data['comment']);
+        $recentDuplicate = TaskComment::query()
+            ->where('task_id', $task->id)
+            ->where('user_id', $user->id)
+            ->where('comment', $text)
+            ->where('created_at', '>=', now()->subSeconds(10))
+            ->latest('id')
+            ->first();
+
+        $comment = $recentDuplicate ?: TaskComment::create([
             'task_id' => $task->id,
             'user_id' => $user->id,
-            'comment' => $data['comment'],
+            'comment' => $text,
         ]);
 
         return response()->json([
-            'message' => 'Comment added successfully.',
+            'message' => $recentDuplicate ? 'Comment already added.' : 'Comment added successfully.',
             'comment' => [
                 'id' => $comment->id,
                 'comment' => $comment->comment,

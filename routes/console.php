@@ -16,3 +16,6 @@ Schedule::command('attendance:process yesterday')->dailyAt('07:00');
 
 // 10 AM: Update today's attendance (For supervisors to check status)
 Schedule::command('attendance:process today')->dailyAt('10:00');
+
+// Keep task priorities in sync with their deadlines
+Schedule::command('tasks:sync-priorities')->everyFifteenMinutes();
