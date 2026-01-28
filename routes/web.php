@@ -90,6 +90,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/attendance', [AttendanceController::class, 'myAttendance'])->name('admin.attendance.self');
     Route::get('/admin/attendance/approvals', [AttendanceController::class, 'approvals'])->name('admin.attendance.approvals');
     Route::get('/admin/attendance/all', [AttendanceController::class, 'index'])->name('admin.attendance.all');
+    Route::get('/admin/attendance/exception', [AttendanceController::class, 'exception'])->name('admin.attendance.exception');
+    Route::post('/admin/attendance/exception', [AttendanceController::class, 'storeException'])->name('admin.attendance.storeException');
 
     // Supervisor Routes
     Route::get('/supervisor/attendance', [AttendanceController::class, 'myAttendance'])->name('supervisor.attendance.self');

@@ -66,6 +66,17 @@ class ProcessAttendance extends Command
 
     private function processUser($user, $date)
     {
+        // 0. Check for 'Exempted' status override
+        // If an admin has manually exempted this day, do not overwrite it.
+        $existing = Attendance::where('user_id', $user->id)
+                        ->where('date', $date->toDateString())
+                        ->first();
+                        
+        if ($existing && $existing->status === 'exempted') {
+            $this->info("Skipping User {$user->id} for {$date->toDateString()} (Exempted)");
+            return;
+        }
+
         // 1. Fetch Biometric Logs (if linked)
         $clockIn = null;
         $clockOut = null;

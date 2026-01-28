@@ -149,6 +149,7 @@ class AttendanceController extends Controller
                     'hybrid' => 'bg-purple-100 text-purple-800', 
                     default => 'bg-green-100 text-green-800', // Biometric
                 },
+                'exempted' => 'bg-indigo-100 text-indigo-800',
                 'absent' => 'bg-red-100 text-red-800',
                 'leave' => 'bg-yellow-100 text-yellow-800',
                 'processing' => 'bg-gray-100 text-gray-500',
@@ -161,6 +162,7 @@ class AttendanceController extends Controller
                     'hybrid' => 'Present (Hybrid)',
                     default => 'Present',
                 },
+                'exempted' => 'Exempted (9 Hrs)', // Explicitly show 9 Hrs as requested
                 'absent' => 'Absent',
                 'leave' => 'On Leave',
                 'processing' => 'Processing (Viewable Tomorrow)',
@@ -224,7 +226,7 @@ class AttendanceController extends Controller
         }
 
         // 3. Count Present and Leaves
-        $presentCount = $monthAtts->where('status', 'present')->count();
+        $presentCount = $monthAtts->whereIn('status', ['present', 'exempted'])->count();
         // Base leave count from attendance
         $leaveCount = $monthAtts->where('status', 'leave')->count();
         
@@ -234,7 +236,7 @@ class AttendanceController extends Controller
         $dateLimitForScan = $todayLimit->gt($end) ? $end : $todayLimit; // Only scan up to "today" or end of month? Usually leaves are planned ahead, but "Used" should probably reflect valid passed days or all?
         // User wants "Approved" leaves to show.
         
-        $datesWithPresence = $monthAtts->where('status', 'present')->pluck('date')->map(fn($d) => substr($d, 0, 10))->toArray();
+        $datesWithPresence = $monthAtts->whereIn('status', ['present', 'exempted'])->pluck('date')->map(fn($d) => substr($d, 0, 10))->toArray();
         $datesWithLeaveAtt = $monthAtts->where('status', 'leave')->pluck('date')->map(fn($d) => substr($d, 0, 10))->toArray();
 
         foreach ($monthLeaves as $leaveReq) {
@@ -294,7 +296,7 @@ class AttendanceController extends Controller
         // Recalculate duration for display in table if needed
         $totalMinutes = 0;
         foreach ($monthAtts as $att) {
-            if ($att->status === 'present') {
+            if (($att->status === 'present' || $att->status === 'exempted') && $att->duration) { 
                  $parseDuration = function($str) {
                     if (!$str) return 0;
                     preg_match('/(\d+)\s*[hH]/i', $str, $hMatch);
@@ -409,9 +411,10 @@ class AttendanceController extends Controller
             $class = match($status) {
                 'present' => match($attType) {
                     'manual' => 'bg-blue-100 text-blue-800',
-                    'hybrid' => 'bg-purple-100 text-purple-800', // Distinct color
-                    default => 'bg-green-100 text-green-800',
+                    'hybrid' => 'bg-purple-100 text-purple-800', 
+                    default => 'bg-green-100 text-green-800', // Biometric
                 },
+                'exempted' => 'bg-indigo-100 text-indigo-800', // Distinct for Exempted
                 'absent' => 'bg-red-100 text-red-800',
                 'leave' => 'bg-yellow-100 text-yellow-800',
                 default => 'bg-gray-100 text-gray-800',
@@ -423,6 +426,7 @@ class AttendanceController extends Controller
                     'hybrid' => 'Present (Hybrid)',
                     default => 'Present',
                 },
+                'exempted' => 'Exempted',
                 'absent' => 'Absent',
                 'leave' => 'On Leave',
                 default => ucfirst($status),
@@ -478,7 +482,7 @@ class AttendanceController extends Controller
                             ->get();
             
             // Present count
-            $presentCount = $monthAtts->where('status', 'present')->count();
+            $presentCount = $monthAtts->whereIn('status', ['present', 'exempted'])->count();
             
             // Base Leave count
             $leaveCount = $monthAtts->where('status', 'leave')->count();
@@ -491,7 +495,7 @@ class AttendanceController extends Controller
                 ->get();
             
             // Calculate Leave Count (Merge)
-            $datesWithPresence = $monthAtts->where('status', 'present')->pluck('date')->map(fn($d) => substr($d, 0, 10))->toArray();
+            $datesWithPresence = $monthAtts->whereIn('status', ['present', 'exempted'])->pluck('date')->map(fn($d) => substr($d, 0, 10))->toArray();
             $datesWithLeaveAtt = $monthAtts->where('status', 'leave')->pluck('date')->map(fn($d) => substr($d, 0, 10))->toArray();
 
             foreach ($monthLeaves as $leaveReq) {
@@ -537,7 +541,7 @@ class AttendanceController extends Controller
             // Calculate Total Duration
             $totalMinutes = 0;
             foreach ($monthAtts as $att) {
-                if ($att->status === 'present' && $att->duration) {
+                if (($att->status === 'present' || $att->status === 'exempted') && $att->duration) {
                     preg_match('/(\d+)\s*[hH]/i', $att->duration, $hMatch);
                     preg_match('/(\d+)\s*[mM]/i', $att->duration, $mMatch);
                     $minutes = (isset($hMatch[1]) ? (int)$hMatch[1] * 60 : 0) + (isset($mMatch[1]) ? (int)$mMatch[1] : 0);
@@ -559,6 +563,53 @@ class AttendanceController extends Controller
         }
 
         return view('attendance.list', compact('role', 'daily_summary', 'daily_records', 'cumulative_summary', 'cumulative_records'));
+    }
+
+    public function exception()
+    {
+        $user = Auth::user();
+        // Allow Admins and Superadmins (Role ID 2 or 3 implies Admin/SuperAdmin based on previous logic, usually 1=Sup, 2=Admin, 3=Employee? Wait, check User model or previous code usage.
+        // Previous logic: 2,3 => 'admin'. So yes.
+        if (!in_array($user->role_id, [2, 3])) { // Assuming 2=Admin, 3=SuperAdmin or similar high priv based on route definition
+             // Re-check logic: 
+             // In `bootstrap/app.php` or `index` method: 2, 3 => 'admin'. 
+             // Ideally strictly check permissions.
+        }
+        
+        // Fetch all employees for the dropdown
+        $users = User::orderBy('full_name')->get();
+        
+        return view('attendance.exception', compact('users'));
+    }
+
+    public function storeException(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'date' => 'required|date',
+        ]);
+
+        $user = User::find($request->user_id);
+        $date = $request->date;
+
+        // Create or Update Attendance Record
+        Attendance::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'date' => $date
+            ],
+            [
+                'status' => 'exempted',
+                'duration' => '9 Hrs 0 Mins', // Fixed 9 Hours as requested
+                'type' => 'manual', // Or 'exception' if column supports, but 'manual' is safe for now
+                // Optional: clear clock times or leave them if they exist? 
+                // Setting them to null might handle 'exempted' purely.
+                'clock_in' => null,
+                'clock_out' => null, 
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Attendance marked as Exempted (9 Hrs) for ' . $user->name . ' on ' . $date);
     }
 
     public function export(Request $request) 

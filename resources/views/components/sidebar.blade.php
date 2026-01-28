@@ -276,6 +276,11 @@
                         @endif
                         <a href="{{ route('leaves.approvals') }}"
                             class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'Leave' }}</a>
+                        
+                        @if($role === 'admin')
+                             <a href="{{ route('admin.attendance.exception') }}"
+                                class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('admin.attendance.exception') ? 'text-white bg-slate-800' : 'text-slate-400' }}">{{ 'Exception' }}</a>
+                        @endif
                     </div>
                 </div>
             @endif
