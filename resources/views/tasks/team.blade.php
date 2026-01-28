@@ -4,80 +4,81 @@
     <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="teamTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ auth()->user()->isAdmin() || auth()->user()->isSupervisor() ? 'true' : 'false' }})">
         <x-sidebar :role="auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isSupervisor() ? 'supervisor' : 'employee')" />
         
-        <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
             <!-- Header -->
-            <header class="bg-white border-b border-slate-100 py-4 px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 z-10">
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-800">My Team Tasks</h1>
-                    <p class="text-slate-400 text-sm font-medium">Track and manage tasks assigned to your team members</p>
+            <header class="bg-white border-b border-slate-100 py-3 sm:py-4 px-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shrink-0 z-10">
+                <div class="min-w-0">
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-800 truncate">My Team Tasks</h1>
+                    <p class="text-slate-400 text-xs sm:text-sm font-medium hidden sm:block">Track and manage tasks assigned to your team members</p>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <!-- View Toggle -->
                     <div class="flex bg-slate-100 p-1 rounded-lg">
-                        <button @click="view = 'vertical'" class="px-3 py-1.5 rounded-md text-sm font-bold transition-all"
+                        <button @click="view = 'vertical'" class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs sm:text-sm font-bold transition-all"
                             :class="view === 'vertical' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 inline-block sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
                                 </path>
                             </svg>
-                            Vertical
+                            <span class="hidden sm:inline">Vertical</span>
                         </button>
-                        <button @click="view = 'horizontal'" class="px-3 py-1.5 rounded-md text-sm font-bold transition-all"
+                        <button @click="view = 'horizontal'" class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs sm:text-sm font-bold transition-all"
                             :class="view === 'horizontal' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 inline-block sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
                             </svg>
-                            Horizontal
+                            <span class="hidden sm:inline">Horizontal</span>
                         </button>
                     </div>
 
                     <a href="{{ route('tasks.index') }}"
-                        class="text-slate-600 hover:text-slate-800 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-all text-sm font-bold flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="text-slate-600 hover:text-slate-800 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-all text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 whitespace-nowrap">
+                        <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
-                        Overview
+                        <span class="hidden sm:inline">Overview</span>
                     </a>
                 </div>
             </header>
 
             <!-- Filters -->
-            <div class="bg-white border-b border-slate-100 px-6 py-4 shrink-0">
+            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-3 sm:py-4 shrink-0">
                 <div class="flex flex-wrap gap-2">
                     <button @click="selectedStage = null"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all"
+                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap"
                         :class="selectedStage === null ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
                         All Tasks (<span x-text="tasks.length"></span>)
                     </button>
 
                     <button @click="selectedStage = 'overdue'"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2"
+                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
                         :class="selectedStage === 'overdue' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
-                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500 shrink-0"></span>
                         Overdue
                     </button>
 
                     <button @click="selectedStage = 'pending'"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2"
+                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
                         :class="selectedStage === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
-                        <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-yellow-500 shrink-0"></span>
                         Pending
                     </button>
 
                     <button @click="selectedStage = 'in_progress'"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2"
+                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
                         :class="selectedStage === 'in_progress' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
-                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                        In Progress
+                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-500 shrink-0"></span>
+                        <span class="hidden sm:inline">In Progress</span>
+                        <span class="sm:hidden">Progress</span>
                     </button>
 
                     <button @click="selectedStage = 'completed'"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2"
+                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
                         :class="selectedStage === 'completed' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
-                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 shrink-0"></span>
                         Completed
                     </button>
                 </div>
@@ -86,10 +87,10 @@
             <!-- Content Area -->
             <main class="flex-1 overflow-auto">
                 <!-- Vertical Kanban View -->
-                <div x-show="view === 'vertical'" class="h-full overflow-x-auto overflow-y-hidden p-6">
-                    <div class="flex h-full gap-6 items-start pb-4 w-full" style="min-width: max-content;">
+                <div x-show="view === 'vertical'" class="h-full overflow-x-auto overflow-y-hidden p-3 sm:p-4 md:p-6">
+                    <div class="flex h-full gap-3 sm:gap-4 md:gap-6 items-start pb-4 w-full" style="min-width: max-content;">
                         <template x-for="stage in stages" :key="stage">
-                            <div class="flex-1 min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-xl border border-slate-200 max-h-full"
+                            <div class="flex-1 min-w-[280px] sm:min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-lg sm:rounded-xl border border-slate-200 max-h-full"
                                 @dragover.prevent="dragOverStage = stage" @dragleave="dragOverStage = null"
                                 @drop="drop($event, stage); dragOverStage = null"
                                 :class="{ 'ring-2 ring-indigo-400 ring-inset bg-indigo-50': dragOverStage === stage }">
