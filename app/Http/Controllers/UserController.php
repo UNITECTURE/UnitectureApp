@@ -12,7 +12,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        $managers = User::whereIn('role_id', [1, 2])->get(); // Supervisors and Admins
+        $managers = User::whereIn('role_id', [1, 2, 3])->get(); // Supervisors, Admins, and Super Admin
         return view('users.create', compact('roles', 'managers'));
     }
 
