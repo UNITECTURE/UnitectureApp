@@ -11,7 +11,8 @@ class TelegramService
 
     public function __construct()
     {
-        $this->token = config('services.telegram.bot_token');
+        // Use dedicated bot for task-related notifications
+        $this->token = config('services.telegram_tasks.bot_token', config('services.telegram.bot_token'));
     }
 
     /**
