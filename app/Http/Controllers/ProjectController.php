@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\User;
+use App\Services\TelegramService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -69,5 +71,84 @@ class ProjectController extends Controller
         $project->save();
 
         return redirect()->route('projects.index')->with('success', 'Project created successfully!');
+    }
+
+    /**
+     * Show the form for editing the specified project.
+     */
+    public function edit(Project $project)
+    {
+        if (!Auth::user()->isSupervisor()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('projects.edit', compact('project'));
+    }
+
+    /**
+     * Update the specified project in storage.
+     * Any supervisor can edit; all supervisors/admins are notified via Telegram.
+     */
+    public function update(Request $request, Project $project)
+    {
+        if (!Auth::user()->isSupervisor()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'department' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'project_custom_id' => 'required|string|max:255',
+            'project_code' => 'required|string|max:255|unique:projects,project_code,' . $project->id,
+            'name' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'description' => 'required|string',
+        ]);
+
+        $project->fill($validated);
+        $project->save();
+
+        // Notify supervisors/admins about the update (Telegram, if mapped)
+        try {
+            /** @var TelegramService $telegram */
+            $telegram = app(TelegramService::class);
+            $editor = Auth::user();
+
+            $recipients = User::whereIn('role_id', [1, 2, 3])
+                ->whereNotNull('telegram_chat_id')
+                ->get();
+
+            if ($recipients->isNotEmpty()) {
+                foreach ($recipients as $recipient) {
+                    $lines = [];
+                    $lines[] = '🔔 <b>Project details updated</b>';
+                    $lines[] = '';
+                    $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
+                    $lines[] = '<b>Department:</b> ' . e($project->department);
+                    $lines[] = '<b>Location:</b> ' . e($project->location);
+
+                    if ($project->start_date) {
+                        $lines[] = '<b>Start:</b> ' . e($project->start_date);
+                    }
+                    if ($project->end_date) {
+                        $lines[] = '<b>End:</b> ' . e($project->end_date);
+                    }
+
+                    if ($editor) {
+                        $lines[] = '<b>Edited by:</b> ' . e($editor->name);
+                    }
+
+                    $lines[] = '';
+                    $lines[] = 'Open the Unitecture app to view full project details.';
+
+                    $telegram->sendMessage($recipient->telegram_chat_id, implode("\n", $lines));
+                }
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Failed to send Telegram project update notifications: ' . $e->getMessage());
+        }
+
+        return redirect()->route('projects.index')->with('success', 'Project updated successfully!');
     }
 }
