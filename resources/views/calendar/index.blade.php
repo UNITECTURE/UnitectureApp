@@ -48,16 +48,19 @@
                             <span class="text-xs font-semibold tracking-wide text-slate-400 uppercase">Filters</span>
                         </div>
                         <div class="flex-1 flex flex-wrap items-center gap-3">
+                            {{-- Multi-select Employees --}}
                             <div class="flex items-center gap-2">
-                                <label for="calendar-user-filter" class="text-xs font-medium text-slate-500">User</label>
-                                <select id="calendar-user-filter"
-                                    class="text-sm rounded-lg border-slate-200 focus:border-blue-500 focus:ring-blue-500 bg-slate-50 text-slate-700 px-3 py-1.5">
-                                    <option value="">All visible users</option>
+                                <label for="calendar-user-filter" class="text-xs font-medium text-slate-500">Employees</label>
+                                <select id="calendar-user-filter" multiple
+                                    class="min-w-[180px] text-sm rounded-lg border-slate-200 focus:border-blue-500 focus:ring-blue-500 bg-slate-50 text-slate-700 px-3 py-1.5">
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
+                            <p class="text-[11px] text-slate-400">
+                                Select one or more employees to show their tasks, leaves, holidays and attendance.
+                            </p>
                         </div>
                     </div>
 
@@ -109,9 +112,14 @@
                         end: fetchInfo.endStr
                     });
 
-                    const userId = userFilterEl?.value;
-                    if (userId) {
-                        params.append('user_id', userId);
+                    // Collect selected employee IDs (multi-select)
+                    if (userFilterEl) {
+                        const selected = Array.from(userFilterEl.selectedOptions || [])
+                            .map(opt => opt.value)
+                            .filter(Boolean);
+                        if (selected.length) {
+                            selected.forEach(id => params.append('user_ids[]', id));
+                        }
                     }
 
                     fetch('{{ route('calendar.events') }}?' + params.toString(), {
