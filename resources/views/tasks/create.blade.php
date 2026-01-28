@@ -115,14 +115,14 @@
 
                                 <!-- End Time -->
                                 <div>
-                                    <label for="end_time_input" class="block text-sm font-semibold text-slate-700 mb-2">End Time</label>
+                                    <label for="end_time_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Time</label>
                                     <div class="relative">
                                         <input type="time" name="end_time_input" id="end_time_input"
                                             x-model="endTime"
                                             :disabled="priority === 'free'"
-                                            class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 pl-10 text-slate-800 bg-slate-50 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400">
-                                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                            <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            class="block w-full max-w-[200px] rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400">
+                                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
+                                            <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
                                         </div>
