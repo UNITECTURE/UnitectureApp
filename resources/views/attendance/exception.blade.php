@@ -79,6 +79,65 @@
                             </div>
                         </form>
                     </div>
+
+                    {{-- Exemption History Table --}}
+                    <div class="bg-white rounded-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden mt-8">
+                        <div class="p-6 border-b border-slate-100 bg-slate-50/30">
+                            <h2 class="text-lg font-bold text-slate-800">Exemption History</h2>
+                            <p class="text-sm text-slate-500 mt-1">Record of all manual exemptions granted.</p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-100">
+                                <thead class="bg-slate-50/50">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Duration</th>
+                                        <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-slate-100">
+                                    @forelse($exceptions as $exception)
+                                    <tr class="hover:bg-slate-50/50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 h-9 w-9 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-xs font-bold border border-indigo-200">
+                                                    {{ substr($exception->user->full_name ?? 'U', 0, 2) }}
+                                                </div>
+                                                <div class="ml-3">
+                                                    <div class="text-sm font-medium text-slate-900">{{ $exception->user->full_name ?? 'Unknown' }}</div>
+                                                    <div class="text-xs text-slate-500">{{ $exception->user->email ?? '' }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                            {{ \Carbon\Carbon::parse($exception->date)->format('M d, Y') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">
+                                            {{ $exception->duration }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-700">
+                                                Exempted
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                            <span class="text-slate-400 text-xs">Completed</span>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                                            <p class="text-base font-medium text-slate-900">No exemptions found</p>
+                                            <p class="text-sm mt-1">Exemptions granted will appear here.</p>
+                                        </td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>

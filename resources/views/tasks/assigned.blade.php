@@ -463,7 +463,7 @@
                 isPostingComment: false,
 
                 normalizeComments(data) {
-                    const list = Array.isArray(data) ? data : [];
+                    const list = Array.isArray(data) ? data : Object.values(data);
                     const byId = new Map();
                     for (const c of list) {
                         if (!c || c.id == null) continue;
@@ -731,7 +731,13 @@
                             },
                             body: JSON.stringify({ comment: text })
                         });
-                        if (!response.ok) throw new Error();
+                        
+                        if (!response.ok) {
+                             const errText = await response.text();
+                             console.error('Server Error:', errText);
+                             throw new Error('Server responded with ' + response.status);
+                        }
+
                         const data = await response.json();
                         if (data.comment) {
                             this.upsertComment(data.comment);
@@ -742,6 +748,7 @@
                         }
                     } catch (e) {
                         console.error('Failed to post comment', e);
+                        alert('Failed to post comment. Check console for details.');
                     } finally {
                         this.isPostingComment = false;
                     }

@@ -640,6 +640,9 @@ class TaskController extends Controller
     /**
      * List comments for a task.
      */
+    /**
+     * List comments for a task.
+     */
     public function comments(Task $task)
     {
         $user = Auth::user();
@@ -648,7 +651,8 @@ class TaskController extends Controller
         }
 
         $comments = $task->comments()
-            ->with('user:id,full_name,name')
+            ->with('user')
+            ->latest()
             ->get()
             ->map(function (TaskComment $comment) {
                 $commentUser = $comment->user;
@@ -697,6 +701,8 @@ class TaskController extends Controller
             'comment' => $text,
         ]);
 
+        $comment->load('user');
+
         return response()->json([
             'message' => $recentDuplicate ? 'Comment already added.' : 'Comment added successfully.',
             'comment' => [
@@ -725,7 +731,7 @@ class TaskController extends Controller
             return true;
         }
 
-        $task->loadMissing(['assignees:id', 'taggedUsers:id']);
+        $task->loadMissing(['assignees', 'taggedUsers']);
 
         if ($task->assignees->contains('id', $user->id)) {
             return true;
