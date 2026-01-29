@@ -34,6 +34,17 @@
                         </button>
                     </div>
 
+                    @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
+                        <a href="{{ route('tasks.create') }}"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 shadow-lg shadow-indigo-200 transition-all whitespace-nowrap">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <span class="hidden sm:inline">Add Task</span>
+                            <span class="sm:hidden">Add</span>
+                        </a>
+                    @endif
+
                     <a href="{{ route('tasks.index') }}"
                         class="text-slate-600 hover:text-slate-800 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-all text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 whitespace-nowrap">
                         <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
