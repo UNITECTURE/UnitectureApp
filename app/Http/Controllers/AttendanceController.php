@@ -578,8 +578,14 @@ class AttendanceController extends Controller
         
         // Fetch all employees for the dropdown
         $users = User::orderBy('full_name')->get();
+
+        // Fetch Exception History
+        $exceptions = Attendance::where('status', 'exempted')
+                        ->with('user')
+                        ->orderBy('date', 'desc')
+                        ->get();
         
-        return view('attendance.exception', compact('users'));
+        return view('attendance.exception', compact('users', 'exceptions'));
     }
 
     public function storeException(Request $request)
