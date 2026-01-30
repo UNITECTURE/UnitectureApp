@@ -27,6 +27,21 @@
                          x-data="taskForm({{ json_encode($projects) }}, '{{ now()->format('Y-m-d') }}')">
                         
                         <form action="{{ route('tasks.store') }}" method="POST"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                            class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
+                            @csrf
+
+                            <!-- Modal Header -->
+                            <div class="px-8 py-6 border-b border-slate-100">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-xl font-bold text-slate-800">Add New Task</h2>
+                                    <a href="{{ route('tasks.index') }}"
+                                        class="text-slate-400 hover:text-slate-600 transition-colors">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                             class="bg-white rounded-xl sm:rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
                             @csrf
 
@@ -37,6 +52,10 @@
                                     <a href="{{ route('tasks.index') }}"
                                         class="text-slate-400 hover:text-slate-600 transition-colors shrink-0">
                                         <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                         </svg>
                                     </a>
@@ -44,7 +63,15 @@
                             </div>
 
                             <!-- Modal Body -->
+<<<<<<< HEAD
                             <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 space-y-4 sm:space-y-5 md:space-y-6">
+=======
+<<<<<<< HEAD
+                            <div class="px-8 py-6 space-y-6">
+=======
+                            <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 space-y-4 sm:space-y-5 md:space-y-6">
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                 <!-- Project Selection -->
                                 <div>
                                     <label for="project_id" class="block text-sm font-semibold text-slate-700 mb-2">Project</label>
@@ -74,19 +101,45 @@
                                 </div>
 
                                 <!-- Date Fields -->
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                <div class="grid grid-cols-2 gap-4">
+                                    <!-- Start Date -->
+                                    <div>
+                                        <label for="start_date" class="block text-sm font-semibold text-slate-700 mb-2">Start Date</label>
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <!-- Start Date -->
                                     <div>
                                         <label for="start_date" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Start Date</label>
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                         <div class="relative">
                                             <input type="date" name="start_date" id="start_date"
                                                 x-model="startDate"
                                                 :min="todayDate"
                                                 :max="maxDate"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                                class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 pl-10 text-slate-800 bg-slate-50 transition-all duration-200"
+                                                required>
+                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                 class="block w-full rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200"
                                                 required>
                                             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
                                                 <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                                 </svg>
                                             </div>
@@ -96,15 +149,35 @@
 
                                     <!-- End Date -->
                                     <div>
+<<<<<<< HEAD
                                         <label for="end_date_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Date</label>
+=======
+<<<<<<< HEAD
+                                        <label for="end_date_input" class="block text-sm font-semibold text-slate-700 mb-2">End Date</label>
+=======
+                                        <label for="end_date_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Date</label>
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                         <div class="relative">
                                             <input type="date" name="end_date_input" id="end_date_input"
                                                 x-model="endDate"
                                                 :min="startDate || todayDate"
                                                 :max="maxDate"
+<<<<<<< HEAD
                                                 class="block w-full rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200">
                                             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
                                                 <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+=======
+<<<<<<< HEAD
+                                                class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 pl-10 text-slate-800 bg-slate-50 transition-all duration-200">
+                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+=======
+                                                class="block w-full rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200">
+                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
+                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                                 </svg>
                                             </div>
@@ -115,6 +188,17 @@
 
                                 <!-- End Time -->
                                 <div>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                    <label for="end_time_input" class="block text-sm font-semibold text-slate-700 mb-2">End Time</label>
+                                    <div class="relative">
+                                        <input type="time" name="end_time_input" id="end_time_input"
+                                            class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 pl-10 text-slate-800 bg-slate-50 transition-all duration-200">
+                                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                     <label for="end_time_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Time</label>
                                     <div class="relative">
                                         <input type="time" name="end_time_input" id="end_time_input"
@@ -123,6 +207,10 @@
                                             class="block w-full max-w-[200px] rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400">
                                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
                                             <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
                                         </div>
@@ -132,8 +220,18 @@
 
                                 <!-- Priority Radio Buttons -->
                                 <div>
+<<<<<<< HEAD
                                     <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Priority</label>
                                     <div class="flex flex-wrap gap-3 sm:gap-4">
+=======
+<<<<<<< HEAD
+                                    <label class="block text-sm font-semibold text-slate-700 mb-3">Priority</label>
+                                    <div class="flex flex-wrap gap-4">
+=======
+                                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Priority</label>
+                                    <div class="flex flex-wrap gap-3 sm:gap-4">
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                         <label class="flex items-center gap-2 cursor-pointer group">
                                             <input type="radio" name="priority" value="high" x-model="priority" 
                                                 class="sr-only peer">
@@ -188,17 +286,38 @@
 
                                 <!-- Add People Section -->
                                 <div>
+<<<<<<< HEAD
                                     <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Add People</label>
+=======
+<<<<<<< HEAD
+                                    <label class="block text-sm font-semibold text-slate-700 mb-3">Add People</label>
+=======
+                                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Add People</label>
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                     <div class="flex items-center gap-2 flex-wrap">
                                         <!-- Selected Employees (Profile Photos) -->
                                         <template x-for="employee in selectedEmployees" :key="employee.id">
                                             <div class="relative group">
                                                 <img :src="getProfileImageUrl(employee)"
                                                     :alt="employee.full_name"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                                    class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
+                                                    :title="employee.full_name">
+                                                <button type="button" @click="removeEmployee(employee.id)"
+                                                    class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600">
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                     class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-sm object-cover cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
                                                     :title="employee.full_name">
                                                 <button type="button" @click="removeEmployee(employee.id)"
                                                     class="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                     ×
                                                 </button>
                                             </div>
@@ -206,8 +325,18 @@
 
                                         <!-- Plus Button -->
                                         <button type="button" @click="showEmployeeModal = true"
+<<<<<<< HEAD
                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors shadow-sm">
                                             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+=======
+<<<<<<< HEAD
+                                            class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors shadow-sm">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+=======
+                                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors shadow-sm">
+                                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                             </svg>
                                         </button>
@@ -235,6 +364,21 @@
                                         x-transition:leave="transition ease-in duration-150"
                                         x-transition:leave-start="opacity-100"
                                         x-transition:leave-end="opacity-0"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                        class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                                        style="display: none;"
+                                        @click.self="showEmployeeModal = false">
+                                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col"
+                                            @click.stop>
+                                            <!-- Modal Header -->
+                                            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-center relative">
+                                                <h3 class="text-lg font-bold text-slate-800">Select Employees</h3>
+                                                <button type="button" @click="showEmployeeModal = false"
+                                                    class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors">
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                         class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm"
                                         style="display: none;"
                                         @click.self="showEmployeeModal = false">
@@ -245,6 +389,10 @@
                                                 <h3 class="text-base sm:text-lg font-bold text-slate-800">Select Employees</h3>
                                                 <button type="button" @click="showEmployeeModal = false"
                                                     class="absolute right-3 sm:right-4 text-slate-400 hover:text-slate-600 transition-colors">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                     </svg>
@@ -252,20 +400,46 @@
                                             </div>
 
                                             <!-- Employee List -->
+<<<<<<< HEAD
                                             <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
                                                 <template x-for="employee in availableEmployees" :key="employee.id">
                                                     <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
+=======
+<<<<<<< HEAD
+                                            <div class="flex-1 overflow-y-auto p-4 space-y-2">
+                                                <template x-for="employee in availableEmployees" :key="employee.id">
+                                                    <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors"
+=======
+                                            <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
+                                                <template x-for="employee in availableEmployees" :key="employee.id">
+                                                    <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                         :class="isEmployeeSelected(employee.id) ? 'bg-slate-100 opacity-50' : 'hover:bg-slate-50'">
                                                         <input type="checkbox" 
                                                             :value="employee.id"
                                                             :checked="isEmployeeSelected(employee.id)"
                                                             @change="toggleEmployee(employee)"
                                                             :disabled="isEmployeeSelected(employee.id)"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                                            class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
+                                                        <img :src="getProfileImageUrl(employee)"
+                                                            :alt="employee.full_name"
+                                                            class="w-10 h-10 rounded-full object-cover">
+                                                        <span class="text-sm font-medium text-slate-700 flex-1" 
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded shrink-0">
                                                         <img :src="getProfileImageUrl(employee)"
                                                             :alt="employee.full_name"
                                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shrink-0">
                                                         <span class="text-xs sm:text-sm font-medium text-slate-700 flex-1 min-w-0 truncate" 
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                             :class="isEmployeeSelected(employee.id) ? 'text-slate-400' : ''"
                                                             x-text="employee.full_name"></span>
                                                     </label>
@@ -273,6 +447,18 @@
                                             </div>
 
                                             <!-- Modal Footer -->
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                            <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                                                <button type="button" @click="showEmployeeModal = false"
+                                                    class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+                                                    Cancel
+                                                </button>
+                                                <button type="button" @click="showEmployeeModal = false"
+                                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                             <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 flex justify-end gap-2 sm:gap-3">
                                                 <button type="button" @click="showEmployeeModal = false"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
@@ -280,6 +466,10 @@
                                                 </button>
                                                 <button type="button" @click="showEmployeeModal = false"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                     Done
                                                 </button>
                                             </div>
@@ -313,6 +503,21 @@
                                         x-transition:leave="transition ease-in duration-150"
                                         x-transition:leave-start="opacity-100"
                                         x-transition:leave-end="opacity-0"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                        class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                                        style="display: none;"
+                                        @click.self="showTagModal = false">
+                                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col"
+                                            @click.stop>
+                                            <!-- Modal Header -->
+                                            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-center relative">
+                                                <h3 class="text-lg font-bold text-slate-800">Tag People</h3>
+                                                <button type="button" @click="showTagModal = false"
+                                                    class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors">
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                         class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm"
                                         style="display: none;"
                                         @click.self="showTagModal = false">
@@ -323,6 +528,10 @@
                                                 <h3 class="text-base sm:text-lg font-bold text-slate-800">Tag People</h3>
                                                 <button type="button" @click="showTagModal = false"
                                                     class="absolute right-3 sm:right-4 text-slate-400 hover:text-slate-600 transition-colors">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                     </svg>
@@ -330,20 +539,46 @@
                                             </div>
 
                                             <!-- Employee List -->
+<<<<<<< HEAD
                                             <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
                                                 <template x-for="employee in availableEmployees" :key="employee.id">
                                                     <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
+=======
+<<<<<<< HEAD
+                                            <div class="flex-1 overflow-y-auto p-4 space-y-2">
+                                                <template x-for="employee in availableEmployees" :key="employee.id">
+                                                    <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors"
+=======
+                                            <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
+                                                <template x-for="employee in availableEmployees" :key="employee.id">
+                                                    <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                         :class="isTaggedEmployee(employee.id) ? 'bg-slate-100 opacity-50' : 'hover:bg-slate-50'">
                                                         <input type="checkbox" 
                                                             :value="employee.id"
                                                             :checked="isTaggedEmployee(employee.id)"
                                                             @change="toggleTaggedEmployee(employee)"
                                                             :disabled="isTaggedEmployee(employee.id)"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                                            class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
+                                                        <img :src="getProfileImageUrl(employee)"
+                                                            :alt="employee.full_name"
+                                                            class="w-10 h-10 rounded-full object-cover">
+                                                        <span class="text-sm font-medium text-slate-700 flex-1" 
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded shrink-0">
                                                         <img :src="getProfileImageUrl(employee)"
                                                             :alt="employee.full_name"
                                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shrink-0">
                                                         <span class="text-xs sm:text-sm font-medium text-slate-700 flex-1 min-w-0 truncate" 
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                             :class="isTaggedEmployee(employee.id) ? 'text-slate-400' : ''"
                                                             x-text="employee.full_name"></span>
                                                     </label>
@@ -351,6 +586,18 @@
                                             </div>
 
                                             <!-- Modal Footer -->
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                            <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                                                <button type="button" @click="showTagModal = false"
+                                                    class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+                                                    Cancel
+                                                </button>
+                                                <button type="button" @click="showTagModal = false"
+                                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                             <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 flex justify-end gap-2 sm:gap-3">
                                                 <button type="button" @click="showTagModal = false"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
@@ -358,6 +605,10 @@
                                                 </button>
                                                 <button type="button" @click="showTagModal = false"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                     Done
                                                 </button>
                                             </div>
@@ -367,9 +618,21 @@
                             </div>
 
                             <!-- Modal Footer -->
+<<<<<<< HEAD
                             <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 border-t border-slate-100 bg-slate-50 flex justify-end">
                                 <button type="submit"
                                     class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg shadow-lg transition-all transform hover:-translate-y-0.5 text-sm sm:text-base">
+=======
+<<<<<<< HEAD
+                            <div class="px-8 py-6 border-t border-slate-100 bg-slate-50 flex justify-end">
+                                <button type="submit"
+                                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all transform hover:-translate-y-0.5">
+=======
+                            <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 border-t border-slate-100 bg-slate-50 flex justify-end">
+                                <button type="submit"
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg shadow-lg transition-all transform hover:-translate-y-0.5 text-sm sm:text-base">
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                     Done
                                 </button>
                             </div>
@@ -388,7 +651,14 @@
                 priority: '{{ old('priority', 'medium') }}',
                 startDate: '{{ old('start_date') }}',
                 endDate: '{{ old('end_date_input') }}',
+<<<<<<< HEAD
                 endTime: '{{ old('end_time_input', '23:59') }}',
+=======
+<<<<<<< HEAD
+=======
+                endTime: '{{ old('end_time_input', '23:59') }}',
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                 todayDate: todayDate,
                 selectedEmployees: [],
                 taggedEmployees: [],
@@ -442,6 +712,11 @@
                             this.endDate = '';
                         }
                     });
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
 
                     // Ensure end time behavior based on priority
                     this.$watch('priority', (value) => {
@@ -458,6 +733,10 @@
                     if (!this.endTime) {
                         this.endTime = '23:59';
                     }
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                 },
 
                 async loadEmployees() {

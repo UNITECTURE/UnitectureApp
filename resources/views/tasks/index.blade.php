@@ -1,7 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+<<<<<<< HEAD
     <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }})">
+=======
+<<<<<<< HEAD
+
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }})">
+=======
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }})">
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -109,6 +118,73 @@
                             <!-- Description -->
                             <p class="text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4 line-clamp-2 break-words" x-text="task.description || ''"></p>
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                        <span class="text-xs font-bold uppercase text-slate-500"
+                                            x-text="formatStatus(status)"></span>
+                                        <span class="bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded text-[10px] font-bold"
+                                            x-text="tasksByStatus(status).length"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Cards Container -->
+                                <div class="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar" style="min-height: 100px;">
+                                    <template x-for="task in tasksByStatus(status)" :key="task.id">
+                                        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100 cursor-grab hover:shadow-md transition-all active:cursor-grabbing group relative"
+                                            draggable="true" @dragstart="dragStart($event, task)" @click="openModal(task)">
+
+                                            <!-- Priority Badge -->
+                                            <div class="flex justify-between items-start mb-2">
+                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded border" :class="{
+                                                          'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                          'text-orange-600 bg-orange-50 border-orange-100': task.priority === 'medium',
+                                                          'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                          'text-slate-600 bg-slate-50 border-slate-100': task.priority === 'free'
+                                                      }" x-text="task.priority"></span>
+
+                                                <!-- Edit Icon (visible on hover) -->
+                                                <button
+                                                    class="text-slate-300 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                                        </path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+
+                                            <h3 class="text-sm font-bold text-slate-800 leading-tight mb-1" x-text="task.title">
+                                            </h3>
+                                            <p class="text-xs text-slate-400 font-medium mb-3 truncate"
+                                                x-text="task.project?.name || 'No Project'"></p>
+
+                                            <div class="flex items-center justify-between border-t border-slate-50 pt-3 mt-1">
+                                                <!-- Assignees -->
+                                                <div class="flex -space-x-2 overflow-hidden">
+                                                    <template x-for="(assignee, index) in task.assignees.slice(0, 3)"
+                                                        :key="assignee.id">
+                                                        <div class="w-6 h-6 rounded-full border border-white bg-indigo-100 flex items-center justify-center text-[10px] font-bold text-indigo-700"
+                                                            :title="assignee.name" x-text="assignee.name ? assignee.name.charAt(0) : '?'"></div>
+                                                    </template>
+                                                    <template x-if="task.assignees.length > 3">
+                                                        <div class="w-6 h-6 rounded-full border border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500"
+                                                            x-text="`+${task.assignees.length - 3}`"></div>
+                                                    </template>
+                                                </div>
+
+                                                <!-- Due Date -->
+                                                <div class="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                        </path>
+                                                    </svg>
+                                                    <span x-text="formatDate(task.end_date)"></span>
+                                                </div>
+                                            </div>
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                             <!-- Footer -->
                             <div class="flex items-center justify-between pt-2 sm:pt-3 border-t border-slate-100 gap-2">
                                 <div class="flex -space-x-1.5 sm:-space-x-2 shrink-0">
@@ -122,6 +198,10 @@
                                         <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] sm:text-xs font-bold text-slate-600 shadow-sm"
                                             :title="'+' + (task.assignees.length - 3) + ' more'"
                                             x-text="'+' + (task.assignees.length - 3)">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                         </div>
                                     </template>
                                 </div>
@@ -149,12 +229,91 @@
                     </template>
                 </div>
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                <!-- List View (Table) -->
+                <div x-show="view === 'table'" class="h-full overflow-y-auto p-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-100">
+                                <tr>
+                                    <th class="px-6 py-4 font-bold text-slate-500 uppercase text-xs">Task Name</th>
+                                    <th class="px-6 py-4 font-bold text-slate-500 uppercase text-xs">Project</th>
+                                    <th class="px-6 py-4 font-bold text-slate-500 uppercase text-xs">Priority</th>
+                                    <th class="px-6 py-4 font-bold text-slate-500 uppercase text-xs">Status</th>
+                                    <th class="px-6 py-4 font-bold text-slate-500 uppercase text-xs">Assignees</th>
+                                    <th class="px-6 py-4 font-bold text-slate-500 uppercase text-xs">Due Date</th>
+                                    <th class="px-6 py-4 font-bold text-slate-500 uppercase text-xs">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                <template x-for="task in tasks" :key="task.id">
+                                    <tr class="hover:bg-slate-50/50 group">
+                                        <td class="px-6 py-4">
+                                            <div class="font-bold text-slate-700 hover:text-indigo-600 cursor-pointer"
+                                                @click="openModal(task)" x-text="task.title"></div>
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-600" x-text="task.project?.name || '-'"></td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex items-center px-2 py-0.5 rounded textxs font-bold capitalize"
+                                                :class="{
+                                                      'text-red-600 bg-red-50': task.priority === 'high',
+                                                      'text-orange-600 bg-orange-50': task.priority === 'medium',
+                                                      'text-green-600 bg-green-50': task.priority === 'low',
+                                                      'text-slate-600 bg-slate-50': task.priority === 'free'
+                                                  }" x-text="task.priority"></span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <select @change="updateStatus(task.id, $event.target.value)"
+                                                class="bg-transparent text-xs font-bold rounded-lg border-slate-200 focus:ring-indigo-500 focus:border-indigo-500 py-1 pl-2 pr-8"
+                                                :class="{
+                                                    'text-blue-600 bg-blue-50 border-blue-100': task.status === 'wip',
+                                                    'text-green-600 bg-green-50 border-green-100': task.status === 'completed',
+                                                    'text-slate-600 bg-slate-50 border-slate-100': !['wip','completed'].includes(task.status)
+                                                }">
+                                                <template x-for="status in statuses" :key="status">
+                                                    <option :value="status" :selected="task.status === status"
+                                                        x-text="formatStatus(status)"></option>
+                                                </template>
+                                            </select>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex -space-x-2">
+                                                <template x-for="assignee in task.assignees.slice(0,3)">
+                                                    <div class="w-6 h-6 rounded-full bg-indigo-100 border border-white flex items-center justify-center text-[10px] font-bold text-indigo-600"
+                                                        :title="assignee.name" x-text="assignee.name ? assignee.name.charAt(0) : '?'"></div>
+                                                </template>
+                                                <template x-if="task.assignees.length > 3">
+                                                    <div class="w-6 h-6 rounded-full bg-slate-100 border border-white flex items-center justify-center text-[10px] font-bold text-slate-500"
+                                                        x-text="`+${task.assignees.length - 3}`"></div>
+                                                </template>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-500 font-medium" x-text="formatDate(task.end_date)">
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <button @click="openModal(task)"
+                                                class="text-slate-400 hover:text-indigo-600 font-bold text-xs uppercase">View</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                 <!-- Empty State -->
                 <div x-show="filteredTasks.length === 0" class="flex flex-col items-center justify-center py-20">
                     <svg class="w-16 h-16 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                     </svg>
                     <p class="text-slate-500 font-medium">No tasks found</p>
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                 </div>
             </main>
 
@@ -220,6 +379,24 @@
                                     </div>
                                     <div class="sm:col-span-2">
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due Date</h3>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                                        <p class="text-sm font-bold text-slate-700"
+                                            x-text="formatDate(selectedTask.end_date, true)"></p>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assignees
+                                        </h3>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="assignee in selectedTask.assignees" :key="assignee.id">
+                                                <div class="flex items-center gap-2 bg-indigo-50 px-2 py-1 rounded-lg">
+                                                    <div class="w-5 h-5 rounded-full bg-indigo-200 flex items-center justify-center text-[10px] font-bold text-indigo-700"
+                                                        x-text="assignee.name ? assignee.name.charAt(0) : '?'"></div>
+                                                    <span class="text-xs font-bold text-indigo-800"
+                                                        x-text="assignee.name"></span>
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                         <template x-if="!canEditDue">
                                             <p class="text-xs sm:text-sm font-bold text-slate-700"
                                                 x-text="formatDate(selectedTask.end_date, true)"></p>
@@ -239,6 +416,10 @@
                                                         x-model="editEndTime"
                                                         :disabled="selectedTask.priority === 'free'"
                                                         class="w-full sm:w-24 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400">
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                                                 </div>
                                                 <button type="button"
                                                     @click="saveDue(selectedTask.id)"
@@ -344,6 +525,40 @@
                 canEditDue: canEditDue,
                 search: '',
                 sidebarOpen: true,
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                filterStatus: 'all', // 'all', 'pending', 'in_progress', 'completed', 'overdue'
+                selectedTask: null,
+                view: 'board',
+                dragOverStyle: null,
+
+                tasksByStatus(status) {
+                    return this.filteredTasks.filter(t => t.status === status);
+                },
+
+                dragStart(event, task) {
+                    event.dataTransfer.effectAllowed = 'move';
+                    event.dataTransfer.setData('text/plain', JSON.stringify(task));
+                    event.target.classList.add('opacity-50');
+                },
+
+                async drop(event, newStatus) {
+                    const data = event.dataTransfer.getData('text/plain');
+                    if (!data) return;
+                    
+                    const task = JSON.parse(data);
+                    // Find the actual task object in our array to update it
+                    const validTask = this.tasks.find(t => t.id === task.id);
+                    
+                    if (validTask && validTask.status !== newStatus) {
+                         await this.updateStatus(validTask.id, newStatus);
+                    }
+                    
+                    // Remove opacity from all dragged items
+                    document.querySelectorAll('.opacity-50').forEach(el => el.classList.remove('opacity-50'));
+=======
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                 filterStatus: 'all',
                 selectedTask: null,
                 editEndDate: '',
@@ -372,6 +587,10 @@
                     }
                     this.taskComments.unshift(comment);
                     this.taskComments = this.normalizeComments(this.taskComments);
+<<<<<<< HEAD
+=======
+>>>>>>> 32ffe4d4d3312c2f6640cbac64466f128a1abb41
+>>>>>>> a45382e8423caf559894fc9a8c51701e43af3a68
                 },
 
                 get filteredTasks() {
