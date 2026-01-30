@@ -83,6 +83,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/manual', [ManualAttendanceController::class, 'store'])->name('attendance.manual.store');
     Route::post('/attendance/manual/{id}/approve', [ManualAttendanceController::class, 'approve'])->name('attendance.manual.approve');
     Route::post('/attendance/manual/reject/{id}', [ManualAttendanceController::class, 'reject'])->name('attendance.manual.reject');
+    Route::post('/attendance/manual/{id}/cancel', [ManualAttendanceController::class, 'cancel'])->name('attendance.manual.cancel');
+
     Route::get('/attendance/manual', [AttendanceController::class, 'manualAccess'])->name('attendance.manual');
     Route::get('/attendance/export', [AttendanceController::class, 'export'])->name('attendance.export');
 
