@@ -239,11 +239,7 @@
                 <textarea name="reason" rows="3" required placeholder="e.g. Emergency, Medical, Family function" class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"></textarea>
             </div>
 
-            <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-6">
-                <div class="text-sm">
-                    <span class="text-slate-500">Current Month Balance:</span>
-                    <span class="font-bold text-slate-800">{{ Auth::user()->leave_balance }} Days</span>
-                </div>
+            <div class="flex items-center justify-end pt-2 border-t border-slate-100 mt-6">
                 <div class="flex items-center gap-3">
                     <button type="button" onclick="document.getElementById('apply-leave-modal').classList.add('hidden')" class="px-4 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors">Apply</button>
