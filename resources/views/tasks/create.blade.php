@@ -6,7 +6,7 @@
 
         <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300 min-w-0">
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[#F8F9FB]">
-                <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 md:py-8">
+                <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 md:py-8 min-w-0">
                     <!-- Header -->
                     <div class="mb-4 sm:mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                         <div class="min-w-0">
@@ -79,17 +79,17 @@
                                     <div>
                                         <label for="start_date" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Start Date</label>
                                         <div class="relative rounded-xl border border-slate-200 bg-slate-50 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
-                                            <input type="date" name="start_date" id="start_date"
-                                                x-model="startDate"
-                                                :min="todayDate"
-                                                :max="maxDate"
-                                                class="block w-full min-h-[2.75rem] sm:min-h-[3rem] rounded-xl border-0 bg-transparent text-xs sm:text-sm px-3 sm:px-4 py-2.5 sm:py-3 pl-9 sm:pl-10 text-slate-800 placeholder:text-slate-400 focus:ring-0 focus:outline-none transition-colors"
-                                                required>
                                             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                 <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                                 </svg>
                                             </div>
+                                            <input type="date" name="start_date" id="start_date"
+                                                x-model="startDate"
+                                                :min="todayDate"
+                                                :max="maxDate"
+                                                class="block w-full min-h-[2.75rem] sm:min-h-[3rem] rounded-xl border-0 bg-transparent text-xs sm:text-sm py-2.5 sm:py-3 pr-3 sm:pr-4 pl-11 sm:pl-12 text-slate-800 placeholder:text-slate-400 focus:ring-0 focus:outline-none transition-colors"
+                                                required>
                                         </div>
                                         @error('start_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                     </div>
@@ -98,94 +98,94 @@
                                     <div>
                                         <label for="end_date_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Date</label>
                                         <div class="relative rounded-xl border border-slate-200 bg-slate-50 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
-                                            <input type="date" name="end_date_input" id="end_date_input"
-                                                x-model="endDate"
-                                                :min="startDate || todayDate"
-                                                :max="maxDate"
-                                                class="block w-full min-h-[2.75rem] sm:min-h-[3rem] rounded-xl border-0 bg-transparent text-xs sm:text-sm px-3 sm:px-4 py-2.5 sm:py-3 pl-9 sm:pl-10 text-slate-800 placeholder:text-slate-400 focus:ring-0 focus:outline-none transition-colors">
                                             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                 <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                                 </svg>
                                             </div>
+                                            <input type="date" name="end_date_input" id="end_date_input"
+                                                x-model="endDate"
+                                                :min="startDate || todayDate"
+                                                :max="maxDate"
+                                                class="block w-full min-h-[2.75rem] sm:min-h-[3rem] rounded-xl border-0 bg-transparent text-xs sm:text-sm py-2.5 sm:py-3 pr-3 sm:pr-4 pl-11 sm:pl-12 text-slate-800 placeholder:text-slate-400 focus:ring-0 focus:outline-none transition-colors">
                                         </div>
                                         @error('end_date_input') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
 
-                                <!-- End Time & Priority on same row -->
+                                <!-- Priority (left) & End Date / End Time (right) -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                                    <!-- End Time -->
+                                    <!-- Priority Radio Buttons - Left -->
+                                    <div>
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Priority</label>
+                                        <div class="flex flex-wrap gap-3 sm:gap-4">
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input type="radio" name="priority" value="high" x-model="priority" 
+                                                    class="sr-only peer">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                                                        :class="priority === 'high' ? 'border-red-500' : 'border-slate-300 group-hover:border-red-300'">
+                                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500 transition-transform duration-200"
+                                                            :class="priority === 'high' ? 'scale-100' : 'scale-0'"></div>
+                                                    </div>
+                                                    <span class="text-sm font-medium text-slate-700">High</span>
+                                                </div>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input type="radio" name="priority" value="medium" x-model="priority"
+                                                    class="sr-only peer">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                                                        :class="priority === 'medium' ? 'border-blue-500' : 'border-slate-300 group-hover:border-blue-300'">
+                                                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500 transition-transform duration-200"
+                                                            :class="priority === 'medium' ? 'scale-100' : 'scale-0'"></div>
+                                                    </div>
+                                                    <span class="text-sm font-medium text-slate-700">Moderate</span>
+                                                </div>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input type="radio" name="priority" value="low" x-model="priority"
+                                                    class="sr-only peer">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                                                        :class="priority === 'low' ? 'border-green-500' : 'border-slate-300 group-hover:border-green-300'">
+                                                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 transition-transform duration-200"
+                                                            :class="priority === 'low' ? 'scale-100' : 'scale-0'"></div>
+                                                    </div>
+                                                    <span class="text-sm font-medium text-slate-700">Low</span>
+                                                </div>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input type="radio" name="priority" value="free" x-model="priority"
+                                                    class="sr-only peer">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                                                        :class="priority === 'free' ? 'border-slate-500' : 'border-slate-300 group-hover:border-slate-400'">
+                                                        <div class="w-2.5 h-2.5 rounded-full bg-slate-500 transition-transform duration-200"
+                                                            :class="priority === 'free' ? 'scale-100' : 'scale-0'"></div>
+                                                    </div>
+                                                    <span class="text-sm font-medium text-slate-700">Free</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        @error('priority') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                    </div>
+
+                                    <!-- End Time - Right -->
                                     <div>
                                         <label for="end_time_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Time</label>
                                         <div class="relative inline-block w-full sm:max-w-[180px]">
-                                            <input type="time" name="end_time_input" id="end_time_input"
-                                                x-model="endTime"
-                                                :disabled="priority === 'free'"
-                                                class="block w-full rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400">
                                             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
                                                 <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
                                             </div>
+                                            <input type="time" name="end_time_input" id="end_time_input"
+                                                x-model="endTime"
+                                                :disabled="priority === 'free'"
+                                                class="block w-full rounded-lg sm:rounded-xl border border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm py-2 sm:py-3 pr-3 sm:pr-4 pl-10 sm:pl-11 text-slate-800 bg-slate-50 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400">
                                         </div>
                                         @error('end_time_input') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                                    </div>
-
-                                    <!-- Priority Radio Buttons -->
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Priority</label>
-                                    <div class="flex flex-wrap gap-3 sm:gap-4">
-                                        <label class="flex items-center gap-2 cursor-pointer group">
-                                            <input type="radio" name="priority" value="high" x-model="priority" 
-                                                class="sr-only peer">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
-                                                    :class="priority === 'high' ? 'border-red-500' : 'border-slate-300 group-hover:border-red-300'">
-                                                    <div class="w-2.5 h-2.5 rounded-full bg-red-500 transition-transform duration-200"
-                                                        :class="priority === 'high' ? 'scale-100' : 'scale-0'"></div>
-                                                </div>
-                                                <span class="text-sm font-medium text-slate-700">High</span>
-                                            </div>
-                                        </label>
-                                        <label class="flex items-center gap-2 cursor-pointer group">
-                                            <input type="radio" name="priority" value="medium" x-model="priority"
-                                                class="sr-only peer">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
-                                                    :class="priority === 'medium' ? 'border-blue-500' : 'border-slate-300 group-hover:border-blue-300'">
-                                                    <div class="w-2.5 h-2.5 rounded-full bg-blue-500 transition-transform duration-200"
-                                                        :class="priority === 'medium' ? 'scale-100' : 'scale-0'"></div>
-                                                </div>
-                                                <span class="text-sm font-medium text-slate-700">Moderate</span>
-                                            </div>
-                                        </label>
-                                        <label class="flex items-center gap-2 cursor-pointer group">
-                                            <input type="radio" name="priority" value="low" x-model="priority"
-                                                class="sr-only peer">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
-                                                    :class="priority === 'low' ? 'border-green-500' : 'border-slate-300 group-hover:border-green-300'">
-                                                    <div class="w-2.5 h-2.5 rounded-full bg-green-500 transition-transform duration-200"
-                                                        :class="priority === 'low' ? 'scale-100' : 'scale-0'"></div>
-                                                </div>
-                                                <span class="text-sm font-medium text-slate-700">Low</span>
-                                            </div>
-                                        </label>
-                                        <label class="flex items-center gap-2 cursor-pointer group">
-                                            <input type="radio" name="priority" value="free" x-model="priority"
-                                                class="sr-only peer">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
-                                                    :class="priority === 'free' ? 'border-slate-500' : 'border-slate-300 group-hover:border-slate-400'">
-                                                    <div class="w-2.5 h-2.5 rounded-full bg-slate-500 transition-transform duration-200"
-                                                        :class="priority === 'free' ? 'scale-100' : 'scale-0'"></div>
-                                                </div>
-                                                <span class="text-sm font-medium text-slate-700">Free</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                        @error('priority') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
 
