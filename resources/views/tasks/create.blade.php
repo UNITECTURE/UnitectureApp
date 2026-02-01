@@ -74,19 +74,19 @@
                                 </div>
 
                                 <!-- Date Fields -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                     <!-- Start Date -->
                                     <div>
                                         <label for="start_date" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Start Date</label>
-                                        <div class="relative">
+                                        <div class="relative rounded-xl border border-slate-200 bg-slate-50 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
                                             <input type="date" name="start_date" id="start_date"
                                                 x-model="startDate"
                                                 :min="todayDate"
                                                 :max="maxDate"
-                                                class="block w-full rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200"
+                                                class="block w-full min-h-[2.75rem] sm:min-h-[3rem] rounded-xl border-0 bg-transparent text-xs sm:text-sm px-3 sm:px-4 py-2.5 sm:py-3 pl-9 sm:pl-10 text-slate-800 placeholder:text-slate-400 focus:ring-0 focus:outline-none transition-colors"
                                                 required>
-                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
-                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                                 </svg>
                                             </div>
@@ -97,14 +97,14 @@
                                     <!-- End Date -->
                                     <div>
                                         <label for="end_date_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Date</label>
-                                        <div class="relative">
+                                        <div class="relative rounded-xl border border-slate-200 bg-slate-50 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
                                             <input type="date" name="end_date_input" id="end_date_input"
                                                 x-model="endDate"
                                                 :min="startDate || todayDate"
                                                 :max="maxDate"
-                                                class="block w-full rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200">
-                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
-                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                class="block w-full min-h-[2.75rem] sm:min-h-[3rem] rounded-xl border-0 bg-transparent text-xs sm:text-sm px-3 sm:px-4 py-2.5 sm:py-3 pl-9 sm:pl-10 text-slate-800 placeholder:text-slate-400 focus:ring-0 focus:outline-none transition-colors">
+                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                                 </svg>
                                             </div>
@@ -113,26 +113,28 @@
                                     </div>
                                 </div>
 
-                                <!-- End Time -->
-                                <div>
-                                    <label for="end_time_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Time</label>
-                                    <div class="relative">
-                                        <input type="time" name="end_time_input" id="end_time_input"
-                                            x-model="endTime"
-                                            :disabled="priority === 'free'"
-                                            class="block w-full max-w-[200px] rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400">
-                                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
-                                            <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
+                                <!-- End Time & Priority on same row -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <!-- End Time -->
+                                    <div>
+                                        <label for="end_time_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Time</label>
+                                        <div class="relative inline-block w-full sm:max-w-[180px]">
+                                            <input type="time" name="end_time_input" id="end_time_input"
+                                                x-model="endTime"
+                                                :disabled="priority === 'free'"
+                                                class="block w-full rounded-lg sm:rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 text-slate-800 bg-slate-50 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400">
+                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
+                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                            </div>
                                         </div>
+                                        @error('end_time_input') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                     </div>
-                                    @error('end_time_input') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                                </div>
 
-                                <!-- Priority Radio Buttons -->
-                                <div>
-                                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Priority</label>
+                                    <!-- Priority Radio Buttons -->
+                                    <div>
+                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Priority</label>
                                     <div class="flex flex-wrap gap-3 sm:gap-4">
                                         <label class="flex items-center gap-2 cursor-pointer group">
                                             <input type="radio" name="priority" value="high" x-model="priority" 
@@ -183,7 +185,8 @@
                                             </div>
                                         </label>
                                     </div>
-                                    @error('priority') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                        @error('priority') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                    </div>
                                 </div>
 
                                 <!-- Add People Section -->
