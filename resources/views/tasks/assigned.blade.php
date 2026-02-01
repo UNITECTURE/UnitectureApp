@@ -6,94 +6,80 @@
         
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
             <!-- Header -->
-            <header class="bg-white border-b border-slate-100 py-3 sm:py-4 px-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shrink-0 z-10">
-                <div class="min-w-0">
-                    <h1 class="text-xl sm:text-2xl font-bold text-slate-800 truncate">My Tasks</h1>
-                    <p class="text-slate-400 text-xs sm:text-sm font-medium hidden sm:block">Track, prioritize, and complete your assigned tasks</p>
-                </div>
+            <header class="bg-white border-b border-slate-200 py-5 px-6 shrink-0 z-10">
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-slate-900">My Tasks</h1>
+                            <p class="text-slate-500 text-sm font-medium mt-1">Track, prioritize, and complete your assigned tasks</p>
+                        </div>
 
-                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                    <!-- View Toggle -->
-                    <div class="flex bg-slate-100 p-0.5 sm:p-1 rounded-lg">
-                        <button @click="view = 'vertical'" class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs sm:text-sm font-bold transition-all"
-                            :class="view === 'vertical' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'">
-                            <svg class="w-3 h-3 sm:w-4 sm:h-4 inline-block sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
-                                </path>
-                            </svg>
-                            <span class="hidden sm:inline">Vertical</span>
-                        </button>
-                        <button @click="view = 'horizontal'" class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs sm:text-sm font-bold transition-all"
-                            :class="view === 'horizontal' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'">
-                            <svg class="w-3 h-3 sm:w-4 sm:h-4 inline-block sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                            </svg>
-                            <span class="hidden sm:inline">Horizontal</span>
-                        </button>
+                        <div class="flex items-center gap-3">
+                            <!-- View Toggle -->
+                            <div class="flex bg-white border border-slate-300 p-1 rounded-lg gap-1">
+                                <button @click="view = 'vertical'" 
+                                    class="p-2 rounded transition-all"
+                                    :class="view === 'vertical' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:text-slate-900'">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M5 3a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V3zM5 13a2 2 0 012-2h6a2 2 0 012 2v2a2 2 0 01-2 2H7a2 2 0 01-2-2v-2z"></path>
+                                    </svg>
+                                </button>
+                                <button @click="view = 'horizontal'" 
+                                    class="p-2 rounded transition-all"
+                                    :class="view === 'horizontal' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:text-slate-900'">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <a href="{{ route('tasks.index') }}"
+                                class="text-slate-600 hover:text-slate-900 p-2 rounded-lg hover:bg-slate-100 transition-all">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"></path>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
 
-                    @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
-                        <a href="{{ route('tasks.create') }}"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 shadow-lg shadow-indigo-200 transition-all whitespace-nowrap">
-                            <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            <span class="hidden sm:inline">Add Task</span>
-                            <span class="sm:hidden">Add</span>
-                        </a>
-                    @endif
+                    <!-- Filter Buttons -->
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button @click="selectedStage = null"
+                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border whitespace-nowrap"
+                            :class="selectedStage === null ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
+                            All Tasks (<span x-text="tasks.length"></span>)
+                        </button>
 
-                    <a href="{{ route('tasks.index') }}"
-                        class="text-slate-600 hover:text-slate-800 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-all text-xs sm:text-sm font-bold flex items-center gap-1 sm:gap-2 whitespace-nowrap">
-                        <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                        <span class="hidden sm:inline">Overview</span>
-                    </a>
+                        <button @click="selectedStage = 'overdue'"
+                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="selectedStage === 'overdue' ? 'bg-red-100 border-red-500 text-red-700' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
+                            <span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>
+                            Overdue
+                        </button>
+
+                        <button @click="selectedStage = 'pending'"
+                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="selectedStage === 'pending' ? 'bg-yellow-100 border-yellow-500 text-yellow-700' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
+                            <span class="w-2 h-2 rounded-full bg-yellow-500 shrink-0"></span>
+                            Pending
+                        </button>
+
+                        <button @click="selectedStage = 'in_progress'"
+                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="selectedStage === 'in_progress' ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
+                            <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                            In Progress
+                        </button>
+
+                        <button @click="selectedStage = 'completed'"
+                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="selectedStage === 'completed' ? 'bg-green-100 border-green-500 text-green-700' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
+                            <span class="w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
+                            Completed
+                        </button>
+                    </div>
                 </div>
             </header>
-
-            <!-- Filters -->
-            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-3 sm:py-4 shrink-0">
-                <div class="flex flex-wrap gap-2">
-                    <button @click="selectedStage = null"
-                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap"
-                        :class="selectedStage === null ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
-                        All Tasks (<span x-text="tasks.length"></span>)
-                    </button>
-
-                    <button @click="selectedStage = 'overdue'"
-                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
-                        :class="selectedStage === 'overdue' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
-                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500 shrink-0"></span>
-                        Overdue
-                    </button>
-
-                    <button @click="selectedStage = 'pending'"
-                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
-                        :class="selectedStage === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
-                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-yellow-500 shrink-0"></span>
-                        Pending
-                    </button>
-
-                    <button @click="selectedStage = 'in_progress'"
-                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
-                        :class="selectedStage === 'in_progress' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
-                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-500 shrink-0"></span>
-                        <span class="hidden sm:inline">In Progress</span>
-                        <span class="sm:hidden">Progress</span>
-                    </button>
-
-                    <button @click="selectedStage = 'completed'"
-                        class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
-                        :class="selectedStage === 'completed' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'">
-                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 shrink-0"></span>
-                        Completed
-                    </button>
-                </div>
-            </div>
 
             <!-- Content Area -->
             <main class="flex-1 overflow-auto">
@@ -282,8 +268,9 @@
         <!-- Task Detail Modal -->
         <template x-teleport="body">
             <div x-show="selectedTask"
-                class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 bg-slate-900/50 backdrop-blur-sm"
-                x-transition.opacity style="display: none;"
+                class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-slate-900/50 backdrop-blur-sm"
+                style="z-index: 99999; display: none;"
+                x-transition.opacity
                 @click.self="selectedTask = null">
                 <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
                     @click.stop>
@@ -446,7 +433,7 @@
 
                         <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex justify-end rounded-b-xl sm:rounded-b-2xl">
                             <button @click="selectedTask = null"
-                                class="text-slate-600 font-bold text-xs sm:text-sm hover:underline">Close</button>
+                                class="bg-indigo-600 text-white font-bold text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg hover:bg-indigo-700 transition-colors">Done</button>
                         </div>
                     </div>
                 </template>

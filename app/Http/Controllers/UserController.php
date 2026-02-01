@@ -27,7 +27,7 @@ class UserController extends Controller
             'joining_date' => 'required|date',
             'status' => 'required|in:active,inactive',
             'telegram_chat_id' => 'nullable|string|max:50',
-            'biometric_id' => 'nullable|integer|unique:users,biometric_id',
+            'biometric_id' => 'nullable|string|max:20|unique:users,biometric_id',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
