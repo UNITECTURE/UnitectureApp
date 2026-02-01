@@ -158,4 +158,64 @@ class ManualAttendanceController extends Controller
 
         return redirect()->back()->with('success', 'Attendance request rejected.');
     }
+
+    public function cancel(Request $request, $id)
+    {
+        $manualRequest = ManualAttendanceRequest::findOrFail($id);
+        $user = Auth::user();
+
+        // Check authorization (User can cancel their own, or Admin)
+        if ($manualRequest->user_id !== $user->id && $user->role_id !== 2 && $user->role_id !== 3) {
+            return redirect()->back()->with('error', 'You are not authorized to cancel this request.');
+        }
+
+        if ($manualRequest->status === 'cancelled') {
+             return redirect()->back()->with('info', 'Request is already cancelled.');
+        }
+
+        // Revert Attendance if needed
+        $this->revertAttendanceEffect($manualRequest);
+
+        // Update Request Status
+        $manualRequest->status = 'cancelled';
+        $manualRequest->save();
+
+        return redirect()->back()->with('success', 'Manual attendance request cancelled and hours reverted.');
+    }
+
+
+
+    /**
+     * Helper to revert attendance changes if the request was approved.
+     */
+    private function revertAttendanceEffect(ManualAttendanceRequest $manualRequest)
+    {
+        if ($manualRequest->status === 'approved') {
+            $attendance = Attendance::where('user_id', $manualRequest->user_id)
+                            ->where('date', $manualRequest->date)
+                            ->first();
+
+            if ($attendance) {
+                // If clock_in and clock_out exist, revert to biometric calculation
+                if ($attendance->clock_in && $attendance->clock_out) {
+                    $start = Carbon::parse($attendance->clock_in);
+                    $end = Carbon::parse($attendance->clock_out);
+                    $diffMinutes = $start->diffInMinutes($end);
+
+                    $h = floor($diffMinutes / 60);
+                    $m = $diffMinutes % 60;
+                    
+                    $attendance->duration = "{$h} Hrs {$m} Mins";
+                    $attendance->status = 'present';
+                    $attendance->type = 'biometric'; // Revert type
+                } else {
+                    // No biometric data, reset to absent/empty
+                    $attendance->duration = null;
+                    $attendance->status = 'absent';
+                    $attendance->type = 'biometric';
+                }
+                $attendance->save();
+            }
+        }
+    }
 }

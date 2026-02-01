@@ -25,12 +25,25 @@ class LeaveController extends Controller
      */
     public function index()
     {
-        $leaves = Auth::user()->leaves()->orderBy('created_at', 'desc')->get();
+        $user = Auth::user();
+        $leaves = $user->leaves()->orderBy('created_at', 'desc')->get();
         
         // Calculate Used Leaves (Approved & Paid)
         $usedLeaves = $leaves->where('status', 'approved')->where('leave_type', 'paid')->sum('days');
         
-        return view('leaves.index', compact('leaves', 'usedLeaves'));
+                // Calculate Earned Leaves (Total eligible months × 1.25)
+                $joiningDate = \Carbon\Carbon::parse($user->joining_date);
+                $eligibilityDate = $joiningDate->copy()->addMonths(3)->startOfMonth();
+                $currentMonth = now()->startOfMonth();
+                $monthsEligible = $eligibilityDate->diffInMonths($currentMonth) + 1;
+                $earnedLeaves = $monthsEligible * 1.25;
+        
+                // If earned reaches 25, it resets to 0
+                if ($earnedLeaves >= 25) {
+                    $earnedLeaves = 0;
+                }
+        
+        return view('leaves.index', compact('leaves', 'usedLeaves', 'earnedLeaves'));
     }
 
     /**
@@ -49,10 +62,37 @@ class LeaveController extends Controller
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reason' => 'required|string|max:255',
+            'leave_category' => 'required|in:planned,emergency',
         ]);
 
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
+        $leaveCategory = $request->leave_category;
+        $daysUntilLeave = now()->diffInDays($startDate);
+        
+        // Validate 7-day prior notice for PLANNED leaves only
+        if ($leaveCategory === 'planned' && $daysUntilLeave < 7) {
+            return back()->withErrors(['error' => "Planned leave must be applied at least 7 days in advance. Days remaining: {$daysUntilLeave}. Consider applying as Emergency leave if urgent."]);
+        }
+        
+        // Emergency leaves can only be applied for same day or next day
+        if ($leaveCategory === 'emergency' && $daysUntilLeave > 1) {
+            return back()->withErrors(['error' => 'Emergency leave can only be applied for today or tomorrow. Use Planned leave for future dates.']);
+        }
+
+        // Prevent duplicate/overlapping leave requests for the same date range
+        $user = Auth::user();
+        $hasOverlap = Leave::where('user_id', $user->id)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereDate('start_date', '<=', $endDate)
+                      ->whereDate('end_date', '>=', $startDate);
+            })
+            ->whereIn('status', ['pending', 'approved'])
+            ->exists();
+
+        if ($hasOverlap) {
+            return back()->withErrors(['error' => 'Leave already applied for the selected date(s). Please choose different dates.']);
+        }
         
         // Calculate actual leave days (Excluding Sundays and Holidays)
         $holidays = \App\Models\Holiday::whereBetween('date', [$startDate, $endDate])->get()->map(function($holiday) {
@@ -73,12 +113,12 @@ class LeaveController extends Controller
         // Prevent 0 days leave if user selects only holidays/Sundays (Optional: validate or just allow 0)
         // If days is 0, it means they applied for holidays. We can still record it but it consumes 0 balance.
         
-        $user = Auth::user();
         $leaveType = ($user->leave_balance >= $days) ? 'paid' : 'unpaid';
 
         $leave = Leave::create([
             'user_id' => $user->id,
             'leave_type' => $leaveType,
+            'leave_category' => $leaveCategory,
             'reason' => $request->reason,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
@@ -86,12 +126,24 @@ class LeaveController extends Controller
             'status' => 'pending',
         ]);
 
+        // Determine if urgent
+        $isUrgent = $leaveCategory === 'emergency';
+        $urgentTag = $isUrgent ? '🚨 <b>URGENT</b> ' : '';
+
         // Send Telegram Notification to Supervisor
         if ($user->manager && $user->manager->telegram_chat_id) {
-            $message = "<b>New Leave Request</b>\n\n";
+            $message = "{$urgentTag}<b>New Leave Request</b>\n\n";
             $message .= "Employee: {$user->name}\n";
-            $message .= "Duration: {$days} days ({$request->start_date} to {$request->end_date})\n";
-            $message .= "Reason: {$request->reason}";
+            $message .= "<b>Date Applied:</b> " . now()->format('Y-m-d H:i A') . "\n";
+            $message .= "<b>Leave Category:</b> " . ucfirst($leaveCategory) . "\n";
+            $message .= "<b>Leave Type:</b> " . ucfirst($leaveType) . "\n";
+            $message .= "<b>Duration:</b> {$days} day(s)\n";
+            $message .= "<b>Dates:</b> {$request->start_date} to {$request->end_date}\n";
+            $message .= "<b>Reason:</b> {$request->reason}\n\n";
+            
+            if ($isUrgent) {
+                $message .= "<b>⚠️ ACTION REQUIRED: This is an emergency leave and needs immediate approval!</b>";
+            }
             
             $this->telegramService->sendMessage($user->manager->telegram_chat_id, $message);
         }
@@ -99,15 +151,23 @@ class LeaveController extends Controller
         // Also notify Admins (Role ID 2)
         $admins = User::where('role_id', 2)->whereNotNull('telegram_chat_id')->get();
         foreach ($admins as $admin) {
-            $adminMessage = "<b>Alert: Leave requested</b>\n\n";
+            $adminMessage = "{$urgentTag}<b>Alert: Leave Request Received</b>\n\n";
             $adminMessage .= "Employee: {$user->name}\n";
-            $adminMessage .= "Status: Pending Supervisor\n";
-            $adminMessage .= "Dates: {$request->start_date} to {$request->end_date}";
+            $adminMessage .= "<b>Date Applied:</b> " . now()->format('Y-m-d H:i A') . "\n";
+            $adminMessage .= "<b>Leave Category:</b> " . ucfirst($leaveCategory) . "\n";
+            $adminMessage .= "<b>Leave Type:</b> " . ucfirst($leaveType) . "\n";
+            $adminMessage .= "<b>Status:</b> " . ($isUrgent ? 'Pending Supervisor (URGENT)' : 'Pending Supervisor Approval') . "\n";
+            $adminMessage .= "<b>Dates:</b> {$request->start_date} to {$request->end_date}";
             
             $this->telegramService->sendMessage($admin->telegram_chat_id, $adminMessage);
         }
 
-        return redirect()->route('leaves.index')->with('success', 'Leave requested successfully. System assigned type: ' . ucfirst($leaveType));
+        $message = "Leave requested successfully as <b>" . ucfirst($leaveCategory) . "</b>. System assigned type: <b>" . ucfirst($leaveType) . "</b>";
+        if ($isUrgent) {
+            $message .= ". ⚠️ Awaiting immediate supervisor approval.";
+        }
+        
+        return redirect()->route('leaves.index')->with('success', $message);
     }
 
     public function approvals(Request $request)
@@ -279,6 +339,11 @@ class LeaveController extends Controller
 
         $user = Auth::user();
 
+        // Prevent approval of already rejected leaves
+        if ($leave->status === 'rejected' && $request->status === 'approved') {
+            return back()->withErrors(['error' => 'Cannot approve a rejected leave request. A rejected leave cannot be re-approved.']);
+        }
+
         // Supervisor Approval Logic
         if ($user->isSupervisor()) {
             // Can only approve subordinates
@@ -334,6 +399,75 @@ class LeaveController extends Controller
             $this->telegramService->sendMessage($leave->user->telegram_chat_id, $message);
         }
 
+        return redirect()->back()->with('success', 'Leave status updated successfully.');
+    }
+
+    /**
+     * Cancel a leave request by the employee
+     */
+    public function cancel(Leave $leave)
+    {
+        $user = Auth::user();
+
+        // Only the employee who created the leave can cancel it
+        if ($leave->user_id !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Cannot cancel if already rejected or cancelled
+        if (in_array($leave->status, ['rejected', 'cancelled'])) {
+            return back()->withErrors(['error' => 'This leave request cannot be cancelled as it is already ' . $leave->status . '.']);
+        }
+
+        // If leave was approved and paid, restore the balance
+        if ($leave->status === 'approved' && $leave->leave_type === 'paid') {
+            $leave->user->increment('leave_balance', $leave->days);
+
+            // Remove from attendance table
+            $currentDate = $leave->start_date->copy();
+            $endDate = $leave->end_date->copy();
+
+            while ($currentDate->lte($endDate)) {
+                \App\Models\Attendance::where('user_id', $leave->user_id)
+                    ->where('date', $currentDate->toDateString())
+                    ->where('status', 'leave')
+                    ->delete();
+                $currentDate->addDay();
+            }
+        }
+
+        // Update status to cancelled
+        $leave->update(['status' => 'cancelled']);
+
+        // Send Telegram Notification to Supervisor
+        if ($user->manager && $user->manager->telegram_chat_id) {
+            $message = "<b>🚫 Leave Cancelled</b>\n\n";
+            $message .= "Employee: {$user->name}\n";
+            $message .= "<b>Cancelled By:</b> {$user->name} (Self)\n";
+            $message .= "<b>Leave Type:</b> " . ucfirst($leave->leave_type) . "\n";
+            $message .= "<b>Duration:</b> {$leave->days} day(s)\n";
+            $message .= "<b>Dates:</b> {$leave->start_date->format('Y-m-d')} to {$leave->end_date->format('Y-m-d')}\n";
+            $message .= "<b>Reason for Leave:</b> {$leave->reason}\n";
+            $message .= "<b>Cancelled At:</b> " . now()->format('Y-m-d H:i A');
+            
+            $this->telegramService->sendMessage($user->manager->telegram_chat_id, $message);
+        }
+
+        // Send Telegram Notification to Admins
+        $admins = User::where('role_id', 2)->whereNotNull('telegram_chat_id')->get();
+        foreach ($admins as $admin) {
+            $adminMessage = "<b>🚫 Leave Cancelled Alert</b>\n\n";
+            $adminMessage .= "Employee: {$user->name}\n";
+            $adminMessage .= "<b>Cancelled By:</b> {$user->name}\n";
+            $adminMessage .= "<b>Leave Type:</b> " . ucfirst($leave->leave_type) . "\n";
+            $adminMessage .= "<b>Previous Status:</b> " . ucfirst(str_replace('_', ' ', $leave->getOriginal('status'))) . "\n";
+            $adminMessage .= "<b>Dates:</b> {$leave->start_date->format('Y-m-d')} to {$leave->end_date->format('Y-m-d')}\n";
+            $adminMessage .= "<b>Cancelled At:</b> " . now()->format('Y-m-d H:i A');
+            
+            $this->telegramService->sendMessage($admin->telegram_chat_id, $adminMessage);
+        }
+
+        return redirect()->route('leaves.index')->with('success', 'Leave request cancelled successfully. Balance has been restored if applicable.');
     }
 
     private function getReportData($selectedYear, $selectedMonth, $selectedUserId)

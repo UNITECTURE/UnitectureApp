@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/leaves/admin-report', [App\Http\Controllers\LeaveController::class, 'adminReport'])->name('leaves.admin-report');
     Route::get('/leaves', [App\Http\Controllers\LeaveController::class, 'index'])->name('leaves.index');
     Route::post('/leaves', [App\Http\Controllers\LeaveController::class, 'store'])->name('leaves.store');
+    Route::delete('/leaves/{leave}/cancel', [App\Http\Controllers\LeaveController::class, 'cancel'])->name('leaves.cancel');
     Route::get('/leave-approvals', [App\Http\Controllers\LeaveController::class, 'approvals'])->name('leaves.approvals');
     Route::patch('/leaves/{leave}/status', [App\Http\Controllers\LeaveController::class, 'updateStatus'])->name('leaves.status');
     Route::get('/leaves/report', [App\Http\Controllers\LeaveController::class, 'report'])->name('leaves.report');
@@ -83,6 +84,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/manual', [ManualAttendanceController::class, 'store'])->name('attendance.manual.store');
     Route::post('/attendance/manual/{id}/approve', [ManualAttendanceController::class, 'approve'])->name('attendance.manual.approve');
     Route::post('/attendance/manual/reject/{id}', [ManualAttendanceController::class, 'reject'])->name('attendance.manual.reject');
+    Route::post('/attendance/manual/{id}/cancel', [ManualAttendanceController::class, 'cancel'])->name('attendance.manual.cancel');
+
     Route::get('/attendance/manual', [AttendanceController::class, 'manualAccess'])->name('attendance.manual');
     Route::get('/attendance/export', [AttendanceController::class, 'export'])->name('attendance.export');
 

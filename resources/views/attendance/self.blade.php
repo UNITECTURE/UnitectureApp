@@ -193,7 +193,7 @@
                                 </div>
                                 <div class="flex-1 min-w-[120px] bg-purple-50 rounded-lg p-3 text-center border border-slate-200 shadow-sm flex flex-col justify-center h-24">
                                     <div class="text-xl font-bold text-slate-800">{{ $cumulative_summary['holidays'] }}</div>
-                                    <div class="text-[10px] uppercase font-bold text-slate-600 mt-1 leading-tight">Holidays<br>(+ Sundays)</div>
+                                    <div class="text-[10px] uppercase font-bold text-slate-600 mt-1 leading-tight">Holidays<br>(INCL Sundays)</div>
                                 </div>
                             </div>
 
