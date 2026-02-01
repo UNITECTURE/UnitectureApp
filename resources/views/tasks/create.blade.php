@@ -295,11 +295,11 @@
                                         placeholder="Start writing here..."></textarea>
                                     <div class="flex items-center gap-2 mt-2">
                                         <button type="button" @click="showTagModal = true"
-                                            class="text-blue-500 hover:text-blue-600 text-sm font-medium flex items-center gap-1 transition-colors">
+                                            class="text-blue-500 hover:text-blue-600 text-sm font-medium flex items-center gap-1 transition-colors"
+                                            title="Tag people (they will be notified)">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                             </svg>
-                                            @
                                         </button>
                                     </div>
                                 </div>
@@ -329,22 +329,20 @@
                                                 </button>
                                             </div>
 
-                                            <!-- Employee List -->
+                                            <!-- Employee List (check/uncheck to tag or deselect) -->
                                             <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
                                                 <template x-for="employee in availableEmployees" :key="employee.id">
                                                     <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
-                                                        :class="isTaggedEmployee(employee.id) ? 'bg-slate-100 opacity-50' : 'hover:bg-slate-50'">
+                                                        :class="isTaggedEmployee(employee.id) ? 'bg-blue-50' : 'hover:bg-slate-50'">
                                                         <input type="checkbox" 
                                                             :value="employee.id"
                                                             :checked="isTaggedEmployee(employee.id)"
                                                             @change="toggleTaggedEmployee(employee)"
-                                                            :disabled="isTaggedEmployee(employee.id)"
                                                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded shrink-0">
                                                         <img :src="getProfileImageUrl(employee)"
                                                             :alt="employee.full_name"
                                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shrink-0">
                                                         <span class="text-xs sm:text-sm font-medium text-slate-700 flex-1 min-w-0 truncate" 
-                                                            :class="isTaggedEmployee(employee.id) ? 'text-slate-400' : ''"
                                                             x-text="employee.full_name"></span>
                                                     </label>
                                                 </template>
