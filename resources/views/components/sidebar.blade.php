@@ -79,7 +79,7 @@
                 open: localStorage.getItem('sidebar_tasks_open') === 'true', 
                 init() { this.$watch('open', val => localStorage.setItem('sidebar_tasks_open', val)) } 
             }" class="space-y-1">
-                <div @click="sidebarOpen ? (open = !open) : (sidebarOpen = true)"
+                <div @click="if (sidebarOpen) { if (open) { open = false } else { open = true; window.location.href = '{{ route('tasks.index') }}' } } else { sidebarOpen = true; open = true; window.location.href = '{{ route('tasks.index') }}' }"
                     class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
                     :class="!sidebarOpen ? 'justify-center' : ''">
                     <div class="flex items-center flex-1 min-w-0" :class="!sidebarOpen ? 'justify-center' : ''">
@@ -139,7 +139,7 @@
                 open: localStorage.getItem('sidebar_attendance_open') === 'true', 
                 init() { this.$watch('open', val => localStorage.setItem('sidebar_attendance_open', val)) } 
             }" class="space-y-1">
-                <div @click="sidebarOpen ? (open = !open) : (sidebarOpen = true)"
+                <div @click="if (sidebarOpen) { if (open) { open = false } else { open = true; window.location.href = '{{ route('leaves.index') }}' } } else { sidebarOpen = true; open = true; window.location.href = '{{ route('leaves.index') }}' }"
                     class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
                     :class="!sidebarOpen ? 'justify-center' : ''">
                     <div class="flex items-center flex-1 min-w-0" :class="!sidebarOpen ? 'justify-center' : ''">
