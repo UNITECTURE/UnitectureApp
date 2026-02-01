@@ -32,6 +32,19 @@ class ProjectController extends Controller
     }
 
     /**
+     * Display the specified project with full details (created by, etc.).
+     */
+    public function show(Project $project)
+    {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $project->load('creator');
+        return view('projects.show', compact('project'));
+    }
+
+    /**
      * Show the form for creating a new project.
      */
     public function create()
@@ -75,11 +88,15 @@ class ProjectController extends Controller
 
     /**
      * Show the form for editing the specified project.
+     * Only the supervisor who created the project (or admin) can edit.
      */
     public function edit(Project $project)
     {
-        if (!Auth::user()->isSupervisor()) {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
+        }
+        if (Auth::id() !== (int) $project->created_by && !Auth::user()->isAdmin()) {
+            abort(403, 'Only the supervisor who created this project can edit it.');
         }
 
         return view('projects.edit', compact('project'));
@@ -87,12 +104,15 @@ class ProjectController extends Controller
 
     /**
      * Update the specified project in storage.
-     * Any supervisor can edit; all supervisors/admins are notified via Telegram.
+     * Only the supervisor who created the project (or admin) can update; changes reflect everywhere.
      */
     public function update(Request $request, Project $project)
     {
-        if (!Auth::user()->isSupervisor()) {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
+        }
+        if (Auth::id() !== (int) $project->created_by && !Auth::user()->isAdmin()) {
+            abort(403, 'Only the supervisor who created this project can edit it.');
         }
 
         $validated = $request->validate([
@@ -104,6 +124,7 @@ class ProjectController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'description' => 'required|string',
+            'status' => 'required|in:active,completed,archived',
         ]);
 
         $project->fill($validated);
