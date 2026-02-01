@@ -254,22 +254,20 @@
                                                 </button>
                                             </div>
 
-                                            <!-- Employee List -->
+                                            <!-- Employee List (check/uncheck to add or remove) -->
                                             <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
                                                 <template x-for="employee in availableEmployees" :key="employee.id">
                                                     <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
-                                                        :class="isEmployeeSelected(employee.id) ? 'bg-slate-100 opacity-50' : 'hover:bg-slate-50'">
+                                                        :class="isEmployeeSelected(employee.id) ? 'bg-blue-50' : 'hover:bg-slate-50'">
                                                         <input type="checkbox" 
                                                             :value="employee.id"
                                                             :checked="isEmployeeSelected(employee.id)"
                                                             @change="toggleEmployee(employee)"
-                                                            :disabled="isEmployeeSelected(employee.id)"
                                                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded shrink-0">
                                                         <img :src="getProfileImageUrl(employee)"
                                                             :alt="employee.full_name"
                                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shrink-0">
                                                         <span class="text-xs sm:text-sm font-medium text-slate-700 flex-1 min-w-0 truncate" 
-                                                            :class="isEmployeeSelected(employee.id) ? 'text-slate-400' : ''"
                                                             x-text="employee.full_name"></span>
                                                     </label>
                                                 </template>
