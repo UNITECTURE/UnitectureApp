@@ -174,7 +174,7 @@ class CalendarController extends Controller
                     'color' => '#f97316', // orange
                     'type' => 'task',
                     'extendedProps' => [
-                        'project' => $task->project?->title,
+                        'project' => $task->project?->name,
                         'assignees' => $assigneeNames,
                         'priority' => $task->priority,
                         'status' => $task->status,
