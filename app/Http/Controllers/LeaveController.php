@@ -54,6 +54,18 @@ class LeaveController extends Controller
 
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
+        $leaveCategory = $request->leave_category;
+        $daysUntilLeave = now()->diffInDays($startDate);
+        
+        // Validate 7-day prior notice for PLANNED leaves only
+        if ($leaveCategory === 'planned' && $daysUntilLeave < 7) {
+            return back()->withErrors(['error' => "Planned leave must be applied at least 7 days in advance. Days remaining: {$daysUntilLeave}. Consider applying as Emergency leave if urgent."]);
+        }
+        
+        // Emergency leaves can only be applied for same day or next day
+        if ($leaveCategory === 'emergency' && $daysUntilLeave > 1) {
+            return back()->withErrors(['error' => 'Emergency leave can only be applied for today or tomorrow. Use Planned leave for future dates.']);
+        }
         
         // Calculate actual leave days (Excluding Sundays and Holidays)
         $holidays = \App\Models\Holiday::whereBetween('date', [$startDate, $endDate])->get()->map(function($holiday) {
@@ -356,6 +368,7 @@ class LeaveController extends Controller
             $this->telegramService->sendMessage($leave->user->telegram_chat_id, $message);
         }
 
+        return redirect()->route('leaves.approvals')->with('success', 'Leave status updated successfully.');
     }
 
     private function getReportData($selectedYear, $selectedMonth, $selectedUserId)
@@ -436,14 +449,14 @@ class LeaveController extends Controller
                      'month' => $startOfMonth->format('F'),
                      'working_days' => $workingDays,
                      'present' => $present,
-                     'paid_leave' => $paid,
-                     'unpaid_leave' => $unpaid
+                     'paid_leave' => (int)round($paid),
+                     'unpaid_leave' => (int)round($unpaid)
                  ];
                  
                  $totals['working_days'] += $workingDays;
                  $totals['present'] += $present;
-                 $totals['paid_leave'] += $paid;
-                 $totals['unpaid_leave'] += $unpaid;
+                 $totals['paid_leave'] += (int)round($paid);
+                 $totals['unpaid_leave'] += (int)round($unpaid);
              }
         }
         

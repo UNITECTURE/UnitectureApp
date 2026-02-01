@@ -34,10 +34,20 @@ class UserController extends Controller
         $imageUrl = null;
         if ($request->hasFile('profile_image')) {
             $uploadedFile = $request->file('profile_image');
-            $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($uploadedFile->getRealPath(), [
-                'folder' => 'unitecture_users'
-            ]);
-            $imageUrl = $uploadResult->getSecurePath();
+            try {
+                $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload(
+                    $uploadedFile->getRealPath(),
+                    [
+                        'folder' => 'unitecture_users',
+                        'resource_type' => 'auto'
+                    ]
+                );
+                $imageUrl = $uploadResult->getSecurePath();
+            } catch (\Exception $e) {
+                // If Cloudinary upload fails, log and continue
+                \Log::error('Cloudinary upload failed: ' . $e->getMessage());
+                $imageUrl = null;
+            }
         }
 
         User::create([
@@ -50,10 +60,33 @@ class UserController extends Controller
             'status' => $request->status,
             'telegram_chat_id' => $request->telegram_chat_id,
             'biometric_id' => $request->biometric_id,
-            'leave_balance' => 0, // Default balance for new users
+            'leave_balance' => $this->calculateLeaveBalance($request->joining_date),
             'profile_image' => $imageUrl,
         ]);
 
         return redirect()->route('dashboard')->with('success', 'User created successfully.');
+    }
+
+    /**
+     * Calculate leave balance based on joining date
+     * Counts only complete calendar months after 3-month probation
+     * Accrues 1.25 days per month
+     */
+    private function calculateLeaveBalance($joiningDate)
+    {
+        $joiningDate = \Carbon\Carbon::parse($joiningDate);
+        $today = now();
+        
+        // Count complete calendar months (only months where the 1st has passed)
+        $completedMonths = 0;
+        $currentDate = $joiningDate->copy();
+        
+        while ($currentDate->addMonth() <= $today) {
+            $completedMonths++;
+        }
+        
+        // After 3 months probation, accrue 1.25 days per month
+        $accrualMonths = max(0, $completedMonths - 3);
+        return $accrualMonths * 1.25;
     }
 }
