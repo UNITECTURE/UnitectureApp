@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }})">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -64,6 +64,39 @@
                         </button>
                     </div>
 
+                    <!-- Filter by Employee (admin/supervisor only) -->
+                    <div x-show="showEmployeeFilter" class="relative flex-shrink-0" x-data="{ open: false }">
+                        <button type="button" @click="open = !open"
+                            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-lg text-sm font-semibold bg-white text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                            <span>Filter by employee</span>
+                            <span x-show="filterEmployeeIds.length > 0" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full" x-text="filterEmployeeIds.length"></span>
+                            <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div x-show="open" @click.outside="open = false"
+                            x-transition
+                            class="absolute right-0 mt-2 w-72 max-h-80 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg z-20 py-2">
+                            <div class="px-3 py-2 border-b border-slate-100">
+                                <button type="button" @click="filterEmployeeIds = []; open = false"
+                                    class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Clear filter</button>
+                            </div>
+                            <template x-for="emp in employees" :key="emp.id">
+                                <label class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" :checked="filterEmployeeIds.includes(emp.id)"
+                                        @change="toggleEmployeeFilter(emp.id)"
+                                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                    <img :src="emp.profile_image_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(emp.full_name || emp.name || '') + '&background=6366f1&color=fff&size=64')"
+                                        class="w-6 h-6 rounded-full object-cover" :alt="emp.full_name">
+                                    <span class="text-sm font-medium text-slate-700 truncate" x-text="emp.full_name || emp.name || 'Unknown'"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+
                     <!-- Search -->
                     <div class="relative ml-4 flex-shrink-0">
                         <input type="text" x-model="search" placeholder="Search tasks..."
@@ -120,11 +153,19 @@
                                         </div>
                                     </template>
                                 </div>
-                                <div class="flex items-center gap-1.5 text-xs font-medium text-slate-400 min-w-0">
-                                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                    <span class="truncate">Due: <span x-text="formatDate(task.end_date)"></span></span>
+                                <div class="flex flex-col gap-0.5 text-xs font-medium text-slate-400 min-w-0">
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span class="truncate">Due: <span x-text="formatDate(task.end_date)"></span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="truncate">End: <span x-text="formatTime(task.end_date)"></span></span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -332,12 +373,15 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue) => ({
+            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter) => ({
                 tasks: initialTasks,
                 statuses: allStatuses,
                 stages: allStages,
                 counts: initialCounts,
                 canEditDue: canEditDue,
+                employees: initialEmployees || [],
+                showEmployeeFilter: !!showEmployeeFilter,
+                filterEmployeeIds: [],
                 search: '',
                 sidebarOpen: true,
                 filterStatus: 'all',
@@ -348,6 +392,15 @@
                 commentsLoading: false,
                 newComment: '',
                 isPostingComment: false,
+
+                toggleEmployeeFilter(employeeId) {
+                    const idx = this.filterEmployeeIds.indexOf(employeeId);
+                    if (idx === -1) {
+                        this.filterEmployeeIds = [...this.filterEmployeeIds, employeeId];
+                    } else {
+                        this.filterEmployeeIds = this.filterEmployeeIds.filter(id => id !== employeeId);
+                    }
+                },
 
                 normalizeComments(data) {
                     const list = Array.isArray(data) ? data : Object.values(data);
@@ -394,6 +447,25 @@
                         filtered = filtered.filter(t => t.stage === 'overdue');
                     }
 
+                    // Filter by Employee(s)
+                    if (this.filterEmployeeIds && this.filterEmployeeIds.length > 0) {
+                        filtered = filtered.filter(t =>
+                            t.assignees && t.assignees.some(a => this.filterEmployeeIds.includes(a.id))
+                        );
+                    }
+
+                    // Sort: overdue → pending → in_progress → completed, then by priority (high → medium → low → free)
+                    const stageOrder = { overdue: 0, pending: 1, in_progress: 2, completed: 3 };
+                    const priorityOrder = { high: 0, medium: 1, low: 2, free: 3 };
+                    filtered = [...filtered].sort((a, b) => {
+                        const stageA = stageOrder[a.stage] ?? 4;
+                        const stageB = stageOrder[b.stage] ?? 4;
+                        if (stageA !== stageB) return stageA - stageB;
+                        const priA = priorityOrder[a.priority] ?? 4;
+                        const priB = priorityOrder[b.priority] ?? 4;
+                        return priA - priB;
+                    });
+
                     return filtered;
                 },
 
@@ -409,6 +481,12 @@
                     if (!dateString) return '-';
                     const date = new Date(dateString);
                     return full ? date.toLocaleString() : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                },
+
+                formatTime(dateString) {
+                    if (!dateString) return '-';
+                    const date = new Date(dateString);
+                    return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
                 },
 
                 getProfileImageUrl(assignee) {
