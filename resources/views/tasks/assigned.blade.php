@@ -134,12 +134,20 @@
                                             <!-- Project -->
                                             <p class="text-[10px] sm:text-xs text-slate-400 font-medium mb-2 sm:mb-3 truncate" x-text="task.project?.name || 'No Project'"></p>
 
-                                            <!-- Time Estimate -->
-                                            <div class="flex items-center gap-1 text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
-                                                <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                                <span x-text="task.time_estimate || '12:00'"></span>
+                                            <!-- Due date & End time (from task.end_date) -->
+                                            <div class="flex flex-col gap-0.5 text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
+                                                <div class="flex items-center gap-1">
+                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                    <span>Due: <span x-text="formatDate(task.end_date)"></span></span>
+                                                </div>
+                                                <div class="flex items-center gap-1">
+                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    <span>End: <span x-text="formatTime(task.end_date)"></span></span>
+                                                </div>
                                             </div>
 
                                             <!-- Footer -->
@@ -158,14 +166,6 @@
                                                             x-text="'+' + (task.assignees.length - 3)">
                                                         </div>
                                                     </template>
-                                                </div>
-
-                                                <!-- Due Date -->
-                                                <div class="text-[9px] sm:text-[10px] font-bold text-slate-400 flex items-center gap-0.5 sm:gap-1 min-w-0">
-                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                    </svg>
-                                                    <span class="truncate" x-text="formatDate(task.end_date)"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -241,7 +241,7 @@
                                                 </div>
                                             </td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-slate-600 whitespace-nowrap" x-text="formatDate(task.start_date)"></td>
-                                            <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-slate-600 whitespace-nowrap" x-text="formatDate(task.end_date)"></td>
+                                            <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-slate-600 whitespace-nowrap" x-text="formatDate(task.end_date) + ' ' + formatTime(task.end_date)"></td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 whitespace-nowrap">
                                                 <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold"
                                                     :class="getPriorityColor(task.priority)"
@@ -482,7 +482,10 @@
                 },
 
                 tasksByStage(stage) {
-                    return this.filteredTasks().filter(t => t.stage === stage);
+                    const priorityOrder = { high: 0, medium: 1, low: 2, free: 3 };
+                    return this.filteredTasks()
+                        .filter(t => t.stage === stage)
+                        .sort((a, b) => (priorityOrder[a.priority] ?? 4) - (priorityOrder[b.priority] ?? 4));
                 },
 
                 filteredTasks() {
@@ -523,9 +526,15 @@
                     if (!dateString) return 'N/A';
                     const date = new Date(dateString);
                     if (full) {
-                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                        return date.toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                     }
                     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                },
+
+                formatTime(dateString) {
+                    if (!dateString) return 'N/A';
+                    const date = new Date(dateString);
+                    return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
                 },
 
                 getPriorityColor(priority) {
