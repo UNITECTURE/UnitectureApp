@@ -4,7 +4,7 @@
     <script>
         window.__calendarAllUserIds = @json($users->pluck('id')->values());
     </script>
-    <div class="flex h-screen bg-gray-50 overflow-hidden" x-data="calendarFilterData()">
+    <div class="flex h-screen bg-gray-50 overflow-hidden" x-data="calendarFilterData">
         <x-sidebar :role="Auth::user()->isAdmin() ? 'admin' : (Auth::user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
         <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300">
@@ -63,10 +63,9 @@
                 </div>
             </main>
         </div>
-    </div>
 
-    {{-- Filter Modal --}}
-    <template x-teleport="body">
+        {{-- Filter Modal --}}
+        <template x-teleport="body">
         <div x-show="showFilterModal"
             x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0"
@@ -167,7 +166,8 @@
                 </div>
             </div>
         </div>
-    </template>
+        </template>
+    </div>
 
     {{-- FullCalendar CDN (no build step required) --}}
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
