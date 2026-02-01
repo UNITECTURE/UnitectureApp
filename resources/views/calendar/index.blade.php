@@ -44,23 +44,22 @@
                         </div>
                     </div>
 
-                    {{-- Filter Button --}}
-                    <div class="flex items-center justify-end gap-2">
+                    {{-- Filter Button (z-index so calendar doesn't overlap) --}}
+                    <div class="relative z-10 flex items-center justify-end gap-2">
                         <span x-show="hasActiveFilters()" class="text-xs text-slate-500 font-medium" x-text="filterSummary()"></span>
-                        <button @click="openFilterModal()"
-                            class="p-2.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm flex items-center gap-2">
-                            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" @click="openFilterModal()"
+                            class="relative z-10 p-2.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm flex items-center gap-2 cursor-pointer">
+                            <svg class="w-5 h-5 text-slate-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
                                 </path>
                             </svg>
-                            <span class="text-sm font-medium text-slate-600">Filters</span>
+                            <span class="text-sm font-medium text-slate-600 pointer-events-none">Filters</span>
                         </button>
                     </div>
 
-                    {{-- Calendar Card --}}
-                    <div
-                        class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-100 p-4 md:p-6">
+                    {{-- Calendar Card (z-0 so filter button stays on top) --}}
+                    <div class="relative z-0 bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-100 p-4 md:p-6">
                         <div id="calendar"
                             class="fc-theme-standard text-sm [&_.fc-toolbar-title]:text-lg [&_.fc-toolbar-title]:font-semibold [&_.fc-toolbar-title]:text-slate-800 [&_.fc-button]:!bg-slate-100 [&_.fc-button]:!border-slate-200 [&_.fc-button]:!text-slate-700 [&_.fc-button-active]:!bg-blue-600 [&_.fc-button-active]:!text-white [&_.fc-daygrid-day-number]:text-xs">
                         </div>
