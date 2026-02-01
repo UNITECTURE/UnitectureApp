@@ -23,11 +23,7 @@
                         <div class="hidden md:flex items-center gap-4 text-xs">
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-[#22c55e]"></span>
-                                <span class="text-slate-500 font-medium">Approved Leave</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-[#eab308]"></span>
-                                <span class="text-slate-500 font-medium">Pending Leave</span>
+                                <span class="text-slate-500 font-medium">Leave</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-[#3b82f6]"></span>

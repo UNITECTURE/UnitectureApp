@@ -35,7 +35,7 @@
     </div>
 
     {{-- Navigation --}}
-    <div class="flex-1 overflow-y-auto py-4 overflow-x-hidden">
+    <div class="flex-1 overflow-y-auto overflow-x-hidden py-4 sidebar-nav-scroll">
         <nav class="px-3 space-y-1">
             {{-- Dashboard --}}
             <a href="{{ route('dashboard') }}"
@@ -382,3 +382,12 @@
         </div>
     </div>
 </aside>
+<style>
+    .sidebar-nav-scroll {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    .sidebar-nav-scroll::-webkit-scrollbar {
+        display: none;
+    }
+</style>
