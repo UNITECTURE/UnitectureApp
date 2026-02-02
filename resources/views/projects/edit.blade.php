@@ -118,6 +118,19 @@
                                         required>{{ old('description', $project->description) }}</textarea>
                                     @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
+
+                                <!-- Status -->
+                                <div class="md:col-span-2">
+                                    <label for="status" class="block text-sm font-bold text-slate-700 mb-2">Status</label>
+                                    <select name="status" id="status"
+                                        class="w-full rounded-lg border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                        required>
+                                        <option value="active" {{ old('status', $project->status) === 'active' ? 'selected' : '' }}>Active</option>
+                                        <option value="completed" {{ old('status', $project->status) === 'completed' ? 'selected' : '' }}>Completed</option>
+                                        <option value="archived" {{ old('status', $project->status) === 'archived' ? 'selected' : '' }}>Archived</option>
+                                    </select>
+                                    @error('status') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                </div>
                             </div>
 
                             <div class="flex justify-end pt-4 border-t border-slate-50">

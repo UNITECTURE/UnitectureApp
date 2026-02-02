@@ -79,6 +79,20 @@ class LeaveController extends Controller
         if ($leaveCategory === 'emergency' && $daysUntilLeave > 1) {
             return back()->withErrors(['error' => 'Emergency leave can only be applied for today or tomorrow. Use Planned leave for future dates.']);
         }
+
+        // Prevent duplicate/overlapping leave requests for the same date range
+        $user = Auth::user();
+        $hasOverlap = Leave::where('user_id', $user->id)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereDate('start_date', '<=', $endDate)
+                      ->whereDate('end_date', '>=', $startDate);
+            })
+            ->whereIn('status', ['pending', 'approved'])
+            ->exists();
+
+        if ($hasOverlap) {
+            return back()->withErrors(['error' => 'Leave already applied for the selected date(s). Please choose different dates.']);
+        }
         
         // Calculate actual leave days (Excluding Sundays and Holidays)
         $holidays = \App\Models\Holiday::whereBetween('date', [$startDate, $endDate])->get()->map(function($holiday) {
@@ -99,7 +113,6 @@ class LeaveController extends Controller
         // Prevent 0 days leave if user selects only holidays/Sundays (Optional: validate or just allow 0)
         // If days is 0, it means they applied for holidays. We can still record it but it consumes 0 balance.
         
-        $user = Auth::user();
         $leaveType = ($user->leave_balance >= $days) ? 'paid' : 'unpaid';
 
         $leave = Leave::create([
@@ -384,6 +397,11 @@ class LeaveController extends Controller
             $message .= "Your leave request for {$leave->start_date} has been <b>" . strtoupper($statusText) . "</b> by {$user->name}.";
             
             $this->telegramService->sendMessage($leave->user->telegram_chat_id, $message);
+        }
+
+        // Return JSON for AJAX requests
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Leave status updated successfully.']);
         }
 
         return redirect()->back()->with('success', 'Leave status updated successfully.');

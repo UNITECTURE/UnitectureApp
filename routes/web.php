@@ -116,6 +116,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects', [App\Http\Controllers\ProjectController::class, 'index'])->name('projects.index');
     Route::get('/projects/create', [App\Http\Controllers\ProjectController::class, 'create'])->name('projects.create');
     Route::post('/projects', [App\Http\Controllers\ProjectController::class, 'store'])->name('projects.store');
+    Route::get('/projects/{project}', [App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
     Route::get('/projects/{project}/edit', [App\Http\Controllers\ProjectController::class, 'edit'])->name('projects.edit');
     Route::put('/projects/{project}', [App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
 

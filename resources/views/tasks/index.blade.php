@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }})">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -13,83 +13,111 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
             <!-- Header & Toolbar -->
-            <header class="bg-white border-b border-slate-100 py-3 sm:py-4 px-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shrink-0 z-10">
-                <div class="min-w-0">
-                    <h1 class="text-xl sm:text-2xl font-bold text-slate-800 truncate">Tasks</h1>
-                    <p class="text-slate-400 text-xs sm:text-sm font-medium hidden sm:block">Manage and track your assigned tasks</p>
-                </div>
+            <header class="bg-white border-b border-slate-100 py-5 px-4 sm:px-6 shrink-0 z-10">
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-3">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Tasks</h1>
+                        <p class="text-slate-500 text-sm font-medium">Manage and track your assigned tasks</p>
+                    </div>
 
-                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
                         <a href="{{ route('tasks.create') }}"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-1.5 sm:gap-2 shadow-lg shadow-indigo-200 transition-all whitespace-nowrap">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md w-fit transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
                             </svg>
-                            <span class="hidden sm:inline">Add Task</span>
-                            <span class="sm:hidden">Add</span>
+                            <span>Add Task</span>
                         </a>
                     @endif
                 </div>
             </header>
 
             <!-- Filters and Search -->
-            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-3 sm:py-4 shrink-0">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-4 sm:py-5 shrink-0">
+                <div class="flex items-center gap-4 justify-between w-full">
                     <!-- Filter Buttons -->
-                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-1 overflow-x-auto">
                         <button @click="filterStatus = 'all'"
-                            class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-all border-2 whitespace-nowrap"
-                            :class="filterStatus === 'all' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'">
+                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
+                            :class="filterStatus === 'all' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
                             All (<span x-text="counts.all"></span>)
                         </button>
                         <button @click="filterStatus = 'pending'"
-                            class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-all border-2 whitespace-nowrap"
-                            :class="filterStatus === 'pending' ? 'bg-slate-50 border-slate-400 text-slate-700' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'">
+                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
+                            :class="filterStatus === 'pending' ? 'bg-yellow-500 border-yellow-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
                             Pending (<span x-text="counts.pending"></span>)
                         </button>
                         <button @click="filterStatus = 'in_progress'"
-                            class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-all border-2 whitespace-nowrap"
-                            :class="filterStatus === 'in_progress' ? 'bg-purple-50 border-purple-400 text-purple-700' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'">
-                            <span class="hidden sm:inline">In Progress</span>
-                            <span class="sm:hidden">Progress</span>
-                            (<span x-text="counts.in_progress"></span>)
+                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
+                            :class="filterStatus === 'in_progress' ? 'bg-blue-500 border-blue-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
+                            In Progress (<span x-text="counts.in_progress"></span>)
                         </button>
                         <button @click="filterStatus = 'completed'"
-                            class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-all border-2 whitespace-nowrap"
-                            :class="filterStatus === 'completed' ? 'bg-green-50 border-green-400 text-green-700' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'">
+                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
+                            :class="filterStatus === 'completed' ? 'bg-green-500 border-green-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
                             Completed (<span x-text="counts.completed"></span>)
                         </button>
                         <button @click="filterStatus = 'overdue'"
-                            class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-all border-2 whitespace-nowrap"
-                            :class="filterStatus === 'overdue' ? 'bg-red-50 border-red-400 text-red-700' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'">
+                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
+                            :class="filterStatus === 'overdue' ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
                             Overdue (<span x-text="counts.overdue"></span>)
                         </button>
                     </div>
 
-                    <!-- Search -->
-                    <div class="flex items-center gap-2 shrink-0">
-                        <div class="relative flex-1 sm:flex-initial min-w-[200px] sm:min-w-[250px]">
-                            <input type="text" x-model="search" placeholder="Search tasks..."
-                                class="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 border border-slate-200 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-2.5 sm:left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    <!-- Filter by Employee (admin/supervisor only) -->
+                    <div x-show="showEmployeeFilter" class="relative flex-shrink-0" x-data="{ open: false }">
+                        <button type="button" @click="open = !open"
+                            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-lg text-sm font-semibold bg-white text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                             </svg>
+                            <span>Filter by employee</span>
+                            <span x-show="filterEmployeeIds.length > 0" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full" x-text="filterEmployeeIds.length"></span>
+                            <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div x-show="open" @click.outside="open = false"
+                            x-transition
+                            class="absolute right-0 mt-2 w-72 max-h-80 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg z-20 py-2">
+                            <div class="px-3 py-2 border-b border-slate-100">
+                                <button type="button" @click="filterEmployeeIds = []; open = false"
+                                    class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Clear filter</button>
+                            </div>
+                            <template x-for="emp in employees" :key="emp.id">
+                                <label class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 cursor-pointer">
+                                    <input type="checkbox" :checked="filterEmployeeIds.includes(emp.id)"
+                                        @change="toggleEmployeeFilter(emp.id)"
+                                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                    <img :src="emp.profile_image_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(emp.full_name || emp.name || '') + '&background=6366f1&color=fff&size=64')"
+                                        class="w-6 h-6 rounded-full object-cover" :alt="emp.full_name">
+                                    <span class="text-sm font-medium text-slate-700 truncate" x-text="emp.full_name || emp.name || 'Unknown'"></span>
+                                </label>
+                            </template>
                         </div>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="relative ml-4 flex-shrink-0">
+                        <input type="text" x-model="search" placeholder="Search tasks..."
+                            class="w-64 pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                        <svg class="w-5 h-5 text-slate-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
                     </div>
                 </div>
             </div>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50">
                 <!-- Task Cards Grid -->
-                <div x-show="filteredTasks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                <div x-show="filteredTasks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <template x-for="task in filteredTasks" :key="task.id">
-                        <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border border-slate-100 p-4 sm:p-5 hover:shadow-md transition-all cursor-pointer group"
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
                             @click="openModal(task)">
                             <!-- Header -->
-                            <div class="flex items-start justify-between mb-2 sm:mb-3 gap-2">
-                                <span class="inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold shrink-0"
+                            <div class="flex items-start justify-between mb-3 gap-2">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold shrink-0"
                                     :class="{
                                         'bg-red-100 text-red-700': task.priority === 'high',
                                         'bg-orange-100 text-orange-700': task.priority === 'medium',
@@ -98,49 +126,57 @@
                                     }"
                                     x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
                                 </span>
-                                <span class="text-[10px] sm:text-xs font-medium text-slate-500 truncate min-w-0" x-text="task.project?.name || 'No Project'"></span>
+                                <span class="text-xs font-medium text-slate-500 truncate" x-text="task.project?.name || 'No Project'"></span>
                             </div>
 
                             <!-- Title -->
-                            <h3 class="text-sm sm:text-base font-bold text-slate-800 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors break-words"
+                            <h3 class="text-base font-bold text-slate-800 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors"
                                 x-text="task.title">
                             </h3>
 
                             <!-- Description -->
-                            <p class="text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4 line-clamp-2 break-words" x-text="task.description || ''"></p>
+                            <p class="text-xs text-slate-500 mb-3 line-clamp-2" x-text="task.description || ''"></p>
 
                             <!-- Footer -->
-                            <div class="flex items-center justify-between pt-2 sm:pt-3 border-t border-slate-100 gap-2">
-                                <div class="flex -space-x-1.5 sm:-space-x-2 shrink-0">
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-2">
+                                <div class="flex -space-x-2 shrink-0">
                                     <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
                                         <img :src="getProfileImageUrl(assignee)"
                                             :alt="assignee.full_name || assignee.name"
                                             :title="assignee.full_name || assignee.name"
-                                            class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white object-cover shadow-sm">
+                                            class="w-7 h-7 rounded-full border-2 border-white object-cover shadow-sm">
                                     </template>
                                     <template x-if="task.assignees.length > 3">
-                                        <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] sm:text-xs font-bold text-slate-600 shadow-sm"
+                                        <div class="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
                                             :title="'+' + (task.assignees.length - 3) + ' more'"
                                             x-text="'+' + (task.assignees.length - 3)">
                                         </div>
                                     </template>
                                 </div>
-                                <div class="flex items-center gap-1 text-[10px] sm:text-xs font-medium text-slate-400 min-w-0">
-                                    <svg class="w-3 h-3 sm:w-4 sm:h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                    <span class="truncate">Due: <span x-text="formatDate(task.end_date)"></span></span>
+                                <div class="flex flex-col gap-0.5 text-xs font-medium text-slate-400 min-w-0">
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span class="truncate">Due: <span x-text="formatDate(task.end_date)"></span></span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="truncate">End: <span x-text="formatTime(task.end_date)"></span></span>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Status Badge -->
-                            <div class="mt-2 sm:mt-3">
-                                <span class="inline-flex items-center px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium"
+                            <div class="mt-3">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold"
                                     :class="{
-                                        'bg-slate-100 text-slate-600': task.stage === 'pending',
-                                        'bg-blue-100 text-blue-600': task.stage === 'in_progress',
-                                        'bg-green-100 text-green-600': task.stage === 'completed',
-                                        'bg-red-100 text-red-600': task.stage === 'overdue'
+                                        'bg-slate-100 text-slate-700': task.stage === 'pending',
+                                        'bg-blue-100 text-blue-700': task.stage === 'in_progress',
+                                        'bg-green-100 text-green-700': task.stage === 'completed',
+                                        'bg-red-100 text-red-700': task.stage === 'overdue'
                                     }"
                                     x-text="formatStage(task.stage)">
                                 </span>
@@ -161,8 +197,9 @@
             <!-- Task Detail Modal -->
             <template x-teleport="body">
                 <div x-show="selectedTask"
-                    class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 bg-slate-900/50 backdrop-blur-sm"
-                    x-transition.opacity style="display: none;"
+                    class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-slate-900/50 backdrop-blur-sm"
+                    style="z-index: 99999; display: none;"
+                    x-transition.opacity
                 @click.self="selectedTask = null">
                 <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
                     @click.stop>
@@ -324,7 +361,7 @@
 
                             <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex justify-end rounded-b-xl sm:rounded-b-2xl">
                                 <button @click="selectedTask = null"
-                                    class="text-slate-600 font-bold text-xs sm:text-sm hover:underline">Close</button>
+                                    class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all">Done</button>
                             </div>
                         </div>
                     </template>
@@ -336,12 +373,15 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue) => ({
+            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter) => ({
                 tasks: initialTasks,
                 statuses: allStatuses,
                 stages: allStages,
                 counts: initialCounts,
                 canEditDue: canEditDue,
+                employees: initialEmployees || [],
+                showEmployeeFilter: !!showEmployeeFilter,
+                filterEmployeeIds: [],
                 search: '',
                 sidebarOpen: true,
                 filterStatus: 'all',
@@ -352,6 +392,15 @@
                 commentsLoading: false,
                 newComment: '',
                 isPostingComment: false,
+
+                toggleEmployeeFilter(employeeId) {
+                    const idx = this.filterEmployeeIds.indexOf(employeeId);
+                    if (idx === -1) {
+                        this.filterEmployeeIds = [...this.filterEmployeeIds, employeeId];
+                    } else {
+                        this.filterEmployeeIds = this.filterEmployeeIds.filter(id => id !== employeeId);
+                    }
+                },
 
                 normalizeComments(data) {
                     const list = Array.isArray(data) ? data : Object.values(data);
@@ -398,6 +447,25 @@
                         filtered = filtered.filter(t => t.stage === 'overdue');
                     }
 
+                    // Filter by Employee(s)
+                    if (this.filterEmployeeIds && this.filterEmployeeIds.length > 0) {
+                        filtered = filtered.filter(t =>
+                            t.assignees && t.assignees.some(a => this.filterEmployeeIds.includes(a.id))
+                        );
+                    }
+
+                    // Sort: overdue → pending → in_progress → completed, then by priority (high → medium → low → free)
+                    const stageOrder = { overdue: 0, pending: 1, in_progress: 2, completed: 3 };
+                    const priorityOrder = { high: 0, medium: 1, low: 2, free: 3 };
+                    filtered = [...filtered].sort((a, b) => {
+                        const stageA = stageOrder[a.stage] ?? 4;
+                        const stageB = stageOrder[b.stage] ?? 4;
+                        if (stageA !== stageB) return stageA - stageB;
+                        const priA = priorityOrder[a.priority] ?? 4;
+                        const priB = priorityOrder[b.priority] ?? 4;
+                        return priA - priB;
+                    });
+
                     return filtered;
                 },
 
@@ -413,6 +481,12 @@
                     if (!dateString) return '-';
                     const date = new Date(dateString);
                     return full ? date.toLocaleString() : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                },
+
+                formatTime(dateString) {
+                    if (!dateString) return '-';
+                    const date = new Date(dateString);
+                    return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
                 },
 
                 getProfileImageUrl(assignee) {

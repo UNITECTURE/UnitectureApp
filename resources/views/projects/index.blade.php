@@ -28,11 +28,12 @@
                     @if($projects->count() > 0)
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             @foreach($projects as $project)
-                                <div class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-6 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] transition-all">
+                                <a href="{{ route('projects.show', $project) }}"
+                                    class="block bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-6 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] transition-all cursor-pointer group">
                                     <!-- Header -->
                                     <div class="flex items-start justify-between mb-4">
                                         <div class="flex-1">
-                                            <h3 class="text-lg font-bold text-slate-800 mb-1">{{ $project->name }}</h3>
+                                            <h3 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-indigo-600 transition-colors">{{ $project->name }}</h3>
                                             <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ $project->project_code }}</p>
                                         </div>
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold
@@ -93,7 +94,7 @@
                                             <span class="text-xs font-bold text-slate-700">{{ $project->project_custom_id ?? 'N/A' }}</span>
                                         </div>
                                     </div>
-                                </div>
+                                </a>
                             @endforeach
                         </div>
                     @else

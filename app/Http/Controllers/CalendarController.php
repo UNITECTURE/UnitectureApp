@@ -99,23 +99,16 @@ class CalendarController extends Controller
 
         $events = [];
 
-        // Leaves (all-day, date range)
+        // Leaves (all-day, date range) — only approved
         if ($showLeaves) {
             $leaves = Leave::with('user')
                 ->whereIn('user_id', $visibleUserIds)
+                ->whereIn('status', ['approved', 'approved_by_supervisor'])
                 ->whereDate('start_date', '<=', $endDate)
                 ->whereDate('end_date', '>=', $startDate)
                 ->get();
 
             foreach ($leaves as $leave) {
-                $status = $leave->status;
-                $color = match ($status) {
-                    'approved', 'approved_by_supervisor' => '#22c55e', // green
-                    'pending' => '#eab308', // yellow
-                    'rejected' => '#ef4444', // red
-                    default => '#6b7280', // gray
-                };
-
                 $events[] = [
                     'id' => 'leave-' . $leave->id,
                     'title' => ($leave->user->name ?? 'User') . ' - Leave',
@@ -123,7 +116,7 @@ class CalendarController extends Controller
                     // FullCalendar expects exclusive end for all-day ranges
                     'end' => $leave->end_date?->copy()->addDay()->toDateString(),
                     'allDay' => true,
-                    'color' => $color,
+                    'color' => '#22c55e', // green (approved only)
                     'type' => 'leave',
                     'extendedProps' => [
                         'user' => $leave->user->name ?? null,
@@ -174,7 +167,7 @@ class CalendarController extends Controller
                     'color' => '#f97316', // orange
                     'type' => 'task',
                     'extendedProps' => [
-                        'project' => $task->project?->title,
+                        'project' => $task->project?->name,
                         'assignees' => $assigneeNames,
                         'priority' => $task->priority,
                         'status' => $task->status,

@@ -83,9 +83,29 @@ class TaskController extends Controller
             'overdue' => $tasks->where('stage', 'overdue')->count(),
         ];
 
+        // Employees for filter dropdown (admin/supervisor only)
+        $employees = collect();
+        if ($user->isAdmin()) {
+            $employees = User::select('id', 'full_name', 'email', 'profile_image')
+                ->orderBy('full_name')
+                ->get();
+        } elseif ($user->isSupervisor()) {
+            $employees = User::select('id', 'full_name', 'email', 'profile_image')
+                ->where('id', $user->id)
+                ->orWhere('reporting_to', $user->id)
+                ->orderBy('full_name')
+                ->get();
+        }
+        $employees = $employees->map(function ($u) {
+            $u->profile_image_url = $u->profile_image && filter_var($u->profile_image, FILTER_VALIDATE_URL)
+                ? $u->profile_image
+                : ($u->profile_image ? asset('storage/' . $u->profile_image) : null);
+            return $u;
+        });
+
         $statuses = self::STATUSES;
         $stages = self::STAGES;
-        return view('tasks.index', compact('tasks', 'statuses', 'stages', 'counts'));
+        return view('tasks.index', compact('tasks', 'statuses', 'stages', 'counts', 'employees'));
     }
 
     /**
