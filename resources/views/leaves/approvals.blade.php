@@ -7,248 +7,481 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <main class="flex-1 overflow-y-auto p-4 lg:p-8">
             <div class="space-y-6">
+                {{-- Header --}}
                 <div class="flex items-center justify-between">
                     <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Leave Approvals</h2>
+                        <h2 class="text-3xl font-bold text-slate-800">Leave Approvals</h2>
                         <p class="text-slate-400 text-sm mt-1">Review and manage leave requests from your team.</p>
                     </div>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <a href="{{ request()->fullUrlWithQuery(['status' => 'all']) }}" 
-                       class="bg-white rounded-lg p-6 border {{ request('status', 'all') == 'all' ? 'border-blue-400 ring-2 ring-blue-100 shadow-md' : 'border-slate-100' }} shadow-sm cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-blue-200 hover:bg-blue-50">
-                        <div class="text-center">
-                             <p class="text-3xl font-bold text-blue-600">{{ $counts['all'] }}</p>
-                            <p class="text-xs text-slate-500 uppercase font-bold mt-2 tracking-wider">Visible Requests</p>
-                        </div>
-                    </a>
-                    
-                    <a href="{{ request()->fullUrlWithQuery(['status' => 'pending']) }}" 
-                       class="bg-white rounded-lg p-6 border {{ request('status') == 'pending' ? 'border-yellow-400 ring-2 ring-yellow-100 shadow-md' : 'border-slate-100' }} shadow-sm cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-yellow-200 hover:bg-yellow-50">
-                         <div class="text-center">
-                             <p class="text-3xl font-bold text-yellow-500">{{ $counts['pending'] }}</p>
-                            <p class="text-xs text-slate-500 uppercase font-bold mt-2 tracking-wider">Pending Here</p>
-                        </div>
-                    </a>
-
-                    <a href="{{ request()->fullUrlWithQuery(['status' => 'approved']) }}" 
-                       class="bg-white rounded-lg p-6 border {{ request('status') == 'approved' ? 'border-green-400 ring-2 ring-green-100 shadow-md' : 'border-slate-100' }} shadow-sm cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-green-200 hover:bg-green-50">
-                         <div class="text-center">
-                             <p class="text-3xl font-bold text-green-500">{{ $counts['approved'] }}</p>
-                            <p class="text-xs text-slate-500 uppercase font-bold mt-2 tracking-wider">Approved Here</p>
-                        </div>
-                    </a>
-
-                    <a href="{{ request()->fullUrlWithQuery(['status' => 'rejected']) }}" 
-                       class="bg-white rounded-lg p-6 border {{ request('status') == 'rejected' ? 'border-red-400 ring-2 ring-red-100 shadow-md' : 'border-slate-100' }} shadow-sm cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg hover:border-red-200 hover:bg-red-50">
-                         <div class="text-center">
-                             <p class="text-3xl font-bold text-red-500">{{ $counts['rejected'] }}</p>
-                            <p class="text-xs text-slate-500 uppercase font-bold mt-2 tracking-wider">Rejected Here</p>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Filters -->
-                <div class="flex items-center gap-4 bg-white p-4 rounded-lg border border-slate-200">
-                    <select class="rounded-md border-slate-300 text-sm focus:ring-blue-500 focus:border-blue-500 bg-slate-50">
-                        <option>2025</option>
-                        <option>2026</option>
-                    </select>
-                    <button class="px-4 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-50 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                        Filter
+                    @if(Auth::user()->isAdmin())
+                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg flex items-center gap-2 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Apply Leave
                     </button>
+                    @endif
+                </div>
+
+                {{-- Stats Cards --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    {{-- Total Requests Card --}}
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'all']) }}" class="block hover:scale-105 transition-transform">
+                        <div style="background-color: #60A5FA;" class="rounded-lg p-6 shadow-md cursor-pointer h-full">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Total Requests</p>
+                                    <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $counts['all'] ?? 0 }}</p>
+                                </div>
+                                <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    {{-- Pending Actions Card --}}
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'pending']) }}" class="block hover:scale-105 transition-transform">
+                        <div style="background-color: #FB923C;" class="rounded-lg p-6 shadow-md cursor-pointer h-full">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Pending Actions</p>
+                                    <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $counts['pending'] ?? 0 }}</p>
+                                </div>
+                                <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    {{-- Approved Card --}}
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'approved']) }}" class="block hover:scale-105 transition-transform">
+                        <div style="background-color: #4ADE80;" class="rounded-lg p-6 shadow-md cursor-pointer h-full">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Approved</p>
+                                    <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $counts['approved'] ?? 0 }}</p>
+                                </div>
+                                <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    {{-- Rejected Card --}}
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'rejected']) }}" class="block hover:scale-105 transition-transform">
+                        <div style="background-color: #F87171;" class="rounded-lg p-6 shadow-md cursor-pointer h-full">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Rejected</p>
+                                    <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $counts['rejected'] ?? 0 }}</p>
+                                </div>
+                                <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                {{-- Search & Filters --}}
+                <div class="bg-white rounded-lg border border-slate-200 p-4 flex items-center gap-4">
                     <div class="flex-1 relative">
-                        <svg class="w-5 h-5 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <form action="{{ route('leaves.approvals') }}" method="GET">
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name..." class="w-full pl-10 rounded-md border-slate-300 text-sm focus:ring-blue-500 focus:border-blue-500">
+                        <svg class="w-5 h-5 absolute left-3 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <form action="{{ route('leaves.approvals') }}" method="GET" class="flex gap-2">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, employee ID, or leave type..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <select name="year" onchange="this.form.submit()" class="px-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                                @for($y = now()->year - 1; $y <= now()->year + 1; $y++)
+                                    <option value="{{ $y }}" {{ (request('year') == $y || $y == now()->year) ? 'selected' : '' }}>Year {{ $y }}</option>
+                                @endfor
+                            </select>
                         </form>
                     </div>
                 </div>
 
-                <!-- Leaves List -->
-                <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+                {{-- Table --}}
+                <div class="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-slate-500">
-                            <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-50 border-b border-slate-200">
                                 <tr>
-                                    <th class="px-6 py-4 font-semibold">Name</th>
-                                    <th class="px-6 py-4 font-semibold">Leave Type</th>
-                                    <th class="px-6 py-4 font-semibold">Reason</th>
-                                    <th class="px-6 py-4 font-semibold">Dates</th>
-                                    <th class="px-6 py-4 font-semibold text-center">Progress</th>
-                                    <th class="px-6 py-4 font-semibold text-center">Status</th>
-                                    <th class="px-6 py-4 font-semibold text-right">Action</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700">Employee</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700">Leave Type / Reason</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700">Dates & Duration</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700">Approval Progress</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700">Status</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 @forelse($leaves as $leave)
-                                <tr class="hover:bg-slate-50/50">
-                                    <td class="px-6 py-4">
-                                        <div class="font-medium text-slate-900">{{ $leave->user->name }}</div>
-                                        <div class="text-[10px] text-slate-400 uppercase tracking-widest">{{ $leave->user->role->name ?? 'User' }}</div>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    {{-- Employee Column --}}
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center font-semibold text-sm">
+                                                {{ strtoupper(substr($leave->user->name, 0, 2)) }}
+                                            </div>
+                                            <div>
+                                                <p class="font-semibold text-slate-900">{{ $leave->user->name }}</p>
+                                                <p class="text-xs text-slate-500">{{ $leave->user->employee_id ?? 'N/A' }}</p>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td class="px-6 py-4 capitalize">{{ $leave->leave_type }}</td>
-                                    <td class="px-6 py-4 text-slate-800">{{ Str::limit($leave->reason, 20) }}</td>
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm text-slate-900">{{ $leave->start_date->format('d M') }} - {{ $leave->end_date->format('d M') }}</div>
-                                        <div class="text-xs text-slate-400">{{ $leave->days }} Days</div>
+
+                                    {{-- Leave Type / Reason --}}
+                                    <td class="px-6 py-5">
+                                        <p class="font-medium text-slate-900 capitalize">{{ $leave->leave_type }} Leave</p>
+                                        <p class="text-xs text-slate-500 italic max-w-xs truncate" title="{{ $leave->reason }}">{{ Str::limit($leave->reason, 35, '...') }}</p>
                                     </td>
-                                    
-                                    {{-- Progress Tracker Column --}}
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center justify-center gap-1">
+
+                                    {{-- Dates & Duration --}}
+                                    <td class="px-6 py-5">
+                                        <p class="text-slate-900 font-medium">{{ $leave->start_date->format('d M') }} - {{ $leave->end_date->format('d M') }}</p>
+                                        <p class="text-xs text-slate-500">{{ $leave->days }} Days</p>
+                                    </td>
+
+                                    {{-- Approval Progress --}}
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center justify-center gap-2">
                                             @php
                                                 $s = $leave->status;
-                                                $isRejected = $s === 'rejected';
-                                                
-                                                // Step 1: Employee (Always Done)
-                                                // Step 2: Supervisor (Done if partially_approved or approved)
-                                                // Step 3: Admin (Done if approved)
-                                                
-                                                $step1State = 'done'; // Employee
-                                                
-                                                $step2State = 'pending';
-                                                if ($s === 'approved_by_supervisor' || $s === 'approved') $step2State = 'done';
-                                                elseif ($isRejected) $step2State = 'rejected';
-                                                
-                                                $step3State = 'pending';
-                                                if ($s === 'approved') $step3State = 'done';
-                                                elseif ($isRejected && $s !== 'rejected') $step3State = 'rejected'; // Logic for admin rejection if it reached here? 
-                                                // Simplifying rejection: if rejected, show red on the current stopper? 
-                                                // For now, let's follow the simple "All Red" or specific state logic.
-                                                // Actually, if rejected, let's make the "stopper" red. 
-                                                // But simpler: 
+                                                $isRejected = ($s === 'rejected');
+                                                $selfDone = true;
+                                                $leadDone = in_array($s, ['approved_by_supervisor', 'approved']);
+                                                $leadRejected = $isRejected && !$leadDone;
+                                                $adminDone = ($s === 'approved');
+                                                $adminRejected = $isRejected && $leadDone;
                                             @endphp
-                                            
-                                            <!-- Employee Circle -->
-                                            <div class="flex flex-col items-center gap-1">
-                                                <div class="w-6 h-6 rounded-full flex items-center justify-center {{ $isRejected ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }}">
-                                                    @if($isRejected) 
-                                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                                    @else
-                                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                                    @endif
+
+                                            {{-- Self --}}
+                                            <div class="flex flex-col items-center gap-0.5">
+                                                <div class="w-7 h-7 rounded-full {{ $selfDone ? 'bg-green-500' : 'bg-slate-200' }} flex items-center justify-center">
+                                                    <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                                 </div>
-                                                <span class="text-[10px] font-medium {{ $isRejected ? 'text-red-600' : 'text-green-600' }}">Employee</span>
+                                                <span class="text-[10px] font-semibold text-slate-700">Self</span>
                                             </div>
 
-                                            <!-- Connector 1 -->
-                                            <div class="w-8 h-0.5 {{ ($s === 'approved_by_supervisor' || $s === 'approved') ? 'bg-green-500' : ($isRejected ? 'bg-red-300' : 'bg-slate-200') }}"></div>
+                                            {{-- Connector --}}
+                                            <div class="w-5 h-0.5 {{ $leadDone ? 'bg-green-500' : ($leadRejected ? 'bg-red-500' : 'bg-slate-200') }}"></div>
 
-                                            <!-- Supervisor Circle -->
-                                            <div class="flex flex-col items-center gap-1">
-                                                <div class="w-6 h-6 rounded-full flex items-center justify-center {{ ($s === 'approved_by_supervisor' || $s === 'approved') ? 'bg-green-100 text-green-600' : ($isRejected ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-300') }}">
-                                                    @if($s === 'approved_by_supervisor' || $s === 'approved')
-                                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                                    @elseif($isRejected)
-                                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            {{-- Lead --}}
+                                            <div class="flex flex-col items-center gap-0.5">
+                                                <div class="w-7 h-7 rounded-full {{ $leadDone ? 'bg-green-500' : ($leadRejected ? 'bg-red-500' : 'bg-slate-200') }} flex items-center justify-center">
+                                                    @if($leadDone)
+                                                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                    @elseif($leadRejected)
+                                                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                                     @else
-                                                        <div class="w-2 h-2 rounded-full bg-slate-300"></div>
+                                                        <div class="w-2 h-2 rounded-full bg-slate-400"></div>
                                                     @endif
                                                 </div>
-                                                <span class="text-[10px] font-medium {{ ($s === 'approved_by_supervisor' || $s === 'approved') ? 'text-green-600' : ($isRejected ? 'text-red-600' : 'text-slate-400') }}">Supervisor</span>
+                                                <span class="text-[10px] font-semibold text-slate-700">Lead</span>
                                             </div>
 
-                                            <!-- Connector 2 -->
-                                            <div class="w-8 h-0.5 {{ $s === 'approved' ? 'bg-green-500' : (($isRejected && $s !== 'pending') ? 'bg-red-300' : 'bg-slate-200') }}"></div>
+                                            {{-- Connector --}}
+                                            <div class="w-5 h-0.5 {{ $adminDone ? 'bg-green-500' : ($adminRejected ? 'bg-red-500' : 'bg-slate-200') }}"></div>
 
-                                            <!-- Admin Circle -->
-                                            <div class="flex flex-col items-center gap-1">
-                                                <div class="w-6 h-6 rounded-full flex items-center justify-center {{ $s === 'approved' ? 'bg-green-100 text-green-600' : ($isRejected ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-300') }}">
-                                                    @if($s === 'approved')
-                                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                                    @elseif($isRejected)
-                                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            {{-- Admin --}}
+                                            <div class="flex flex-col items-center gap-0.5">
+                                                <div class="w-7 h-7 rounded-full {{ $adminDone ? 'bg-green-500' : ($adminRejected ? 'bg-red-500' : 'bg-slate-200') }} flex items-center justify-center">
+                                                    @if($adminDone)
+                                                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                    @elseif($adminRejected)
+                                                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                                     @else
-                                                        <div class="w-2 h-2 rounded-full bg-slate-300"></div>
+                                                        <div class="w-2 h-2 rounded-full bg-slate-400"></div>
                                                     @endif
                                                 </div>
-                                                <span class="text-[10px] font-medium {{ $s === 'approved' ? 'text-green-600' : ($isRejected ? 'text-red-600' : 'text-slate-400') }}">Admin</span>
+                                                <span class="text-[10px] font-semibold text-slate-700">Admin</span>
                                             </div>
                                         </div>
                                     </td>
 
-                                    {{-- Status Column --}}
-                                    <td class="px-6 py-4 text-center">
-                                        @if($leave->status === 'approved')
-                                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
-                                                Final Approved
-                                            </span>
-                                         @elseif($leave->status === 'rejected')
-                                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
-                                                Rejected
-                                            </span>
-                                        @elseif($leave->status === 'approved_by_supervisor')
-                                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
-                                                Supervisor Approved
-                                            </span>
-                                            <div class="text-[10px] text-slate-400 mt-1">Waiting for Admin</div>
-                                        @else
-                                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                                                Pending
-                                            </span>
-                                            <div class="text-[10px] text-slate-400 mt-1">Employee Request</div>
-                                        @endif
+                                    {{-- Status --}}
+                                    <td class="px-6 py-5">
+                                        <div class="flex justify-center">
+                                            @if($leave->status === 'approved')
+                                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-300">Approved</span>
+                                            @elseif($leave->status === 'rejected')
+                                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-300">Rejected</span>
+                                            @elseif($leave->status === 'approved_by_supervisor')
+                                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700 border border-yellow-300">Pending Review</span>
+                                            @else
+                                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 border border-orange-300">Pending</span>
+                                            @endif
+                                        </div>
                                     </td>
 
-                                    <td class="px-6 py-4 text-right">
-                                        @php
-                                            $canApprove = false;
-                                            if (Auth::user()->isSupervisor() && $leave->status === 'pending') {
-                                                $canApprove = true;
-                                            } elseif (Auth::user()->isAdmin() && ($leave->status === 'pending' || $leave->status === 'approved_by_supervisor')) {
-                                                $canApprove = true;
-                                            }
-                                        @endphp
+                                    {{-- Action --}}
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center justify-center gap-2">
+                                            @php
+                                                $canApprove = false;
+                                                if (Auth::user()->isSupervisor() && $leave->status === 'pending') {
+                                                    $canApprove = true;
+                                                } elseif (Auth::user()->isAdmin() && in_array($leave->status, ['pending', 'approved_by_supervisor'])) {
+                                                    $canApprove = true;
+                                                }
+                                            @endphp
 
-                                        @if($canApprove)
-                                        <div class="flex items-center justify-end gap-2">
-                                            <form action="{{ route('leaves.status', $leave->id) }}" method="POST">
-                                                @csrf @method('PATCH')
-                                                <input type="hidden" name="status" value="approved">
-                                                <button type="submit" class="flex items-center justify-center w-8 h-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 border border-green-200 transition-colors" title="Approve">
-                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                            @if($canApprove)
+                                                <button onclick="openReviewModal({{ $leave->id }}, '{{ $leave->user->name }}', '{{ $leave->leave_type }}', '{{ \Carbon\Carbon::parse($leave->start_date)->format('M d, Y') }}', '{{ \Carbon\Carbon::parse($leave->end_date)->format('M d, Y') }}', '{{ $leave->reason }}', {{ $leave->days }})" class="px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                                                    REVIEW
                                                 </button>
-                                            </form>
-                                            <form action="{{ route('leaves.status', $leave->id) }}" method="POST">
-                                                @csrf @method('PATCH')
-                                                <input type="hidden" name="status" value="rejected">
-                                                <button type="submit" class="flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition-colors" title="Reject">
-                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            @elseif($leave->status === 'approved')
+                                                <span class="px-3 py-1.5 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg">Complete</span>
+                                            @elseif($leave->status === 'rejected')
+                                                <span class="px-3 py-1.5 text-xs font-semibold text-slate-500 bg-slate-50 border border-slate-200 rounded-lg">Archived</span>
+                                            @else
+                                                <button class="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors">
+                                                    REVIEW
                                                 </button>
-                                            </form>
+                                            @endif
                                         </div>
-                                        @else
-                                            <span class="text-xs text-slate-400 italic">
-                                                @if($leave->status === 'approved')
-                                                    Complete
-                                                @elseif($leave->status === 'approved_by_supervisor' && Auth::user()->isSupervisor())
-                                                    Pending Admin
-                                                @elseif($leave->status === 'rejected')
-                                                    Closed
-                                                @else
-                                                    No Action
-                                                @endif
-                                            </span>
-                                        @endif
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-8 text-center text-slate-400">No leave requests found.</td>
+                                    <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                                        <p class="text-sm">No leave requests found.</p>
+                                    </td>
                                 </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
-                    <div class="px-6 py-4 border-t border-slate-100">
-                        {{ $leaves->links() }}
+
+                    {{-- Pagination --}}
+                    <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs text-slate-600">
+                                Showing {{ $leaves->firstItem() ?? 0 }} to {{ $leaves->lastItem() ?? 0 }} of {{ $leaves->total() }} entries
+                            </p>
+                            {{ $leaves->links() }}
+                        </div>
                     </div>
                 </div>
+
+                {{-- Policy Update Box --}}
             </div>
         </main>
     </div>
 </div>
+
+{{-- Review Modal --}}
+<div id="reviewModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4">
+        {{-- Modal Header --}}
+        <div class="px-6 py-4 border-b border-slate-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-800">Review Leave Request</h3>
+                <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        {{-- Modal Body --}}
+        <div class="px-6 py-5 space-y-4">
+            <div>
+                <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Employee</p>
+                <p id="modalEmployeeName" class="text-sm font-semibold text-slate-800"></p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Leave Type</p>
+                    <p id="modalLeaveType" class="text-sm font-medium text-slate-700 capitalize"></p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Duration</p>
+                    <p id="modalDuration" class="text-sm font-medium text-slate-700"></p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Start Date</p>
+                    <p id="modalStartDate" class="text-sm font-medium text-slate-700"></p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">End Date</p>
+                    <p id="modalEndDate" class="text-sm font-medium text-slate-700"></p>
+                </div>
+            </div>
+            <div>
+                <p class="text-xs text-slate-500 uppercase tracking-wide mb-1">Reason</p>
+                <p id="modalReason" class="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg"></p>
+            </div>
+        </div>
+
+        {{-- Modal Footer --}}
+        <div class="px-6 py-5 bg-slate-50 rounded-b-2xl border-t border-slate-200">
+            <div class="flex items-center justify-end gap-3">
+                <button onclick="handleReject()" id="rejectBtn" class="px-6 py-2.5 text-sm font-semibold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2">
+                    <span id="rejectText">Reject</span>
+                    <svg id="rejectSpinner" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+                <button onclick="handleApprove()" id="approveBtn" class="px-6 py-2.5 text-sm font-semibold text-white bg-green-500 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2">
+                    <span id="approveText">Approve</span>
+                    <svg id="approveSpinner" class="hidden animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Success Toast - Positioned in middle of content area --}}
+<div id="successToast" class="hidden fixed z-[60] bg-white rounded-2xl shadow-2xl px-8 py-6 border-2 border-green-500" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-lg font-bold text-slate-800">Success!</p>
+            <p id="toastMessage" class="text-sm text-slate-600">Leave status updated successfully.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLeaveId = null;
+
+    function openReviewModal(leaveId, employeeName, leaveType, startDate, endDate, reason, days) {
+        currentLeaveId = leaveId;
+        document.getElementById('modalEmployeeName').textContent = employeeName;
+        document.getElementById('modalLeaveType').textContent = leaveType;
+        document.getElementById('modalDuration').textContent = days + ' day' + (days > 1 ? 's' : '');
+        document.getElementById('modalStartDate').textContent = startDate;
+        document.getElementById('modalEndDate').textContent = endDate;
+        document.getElementById('modalReason').textContent = reason || 'No reason provided';
+        document.getElementById('reviewModal').classList.remove('hidden');
+    }
+
+    function closeReviewModal() {
+        document.getElementById('reviewModal').classList.add('hidden');
+        currentLeaveId = null;
+    }
+
+    function showSuccessToast(message) {
+        const toast = document.getElementById('successToast');
+        const toastMessage = document.getElementById('toastMessage');
+        toastMessage.textContent = message;
+        toast.classList.remove('hidden');
+        
+        setTimeout(() => {
+            toast.classList.add('hidden');
+            location.reload();
+        }, 1500);
+    }
+
+    function setLoadingState(action, isLoading) {
+        if (action === 'approve') {
+            const btn = document.getElementById('approveBtn');
+            const text = document.getElementById('approveText');
+            const spinner = document.getElementById('approveSpinner');
+            const rejectBtn = document.getElementById('rejectBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            
+            if (isLoading) {
+                text.textContent = 'Processing...';
+                spinner.classList.remove('hidden');
+                btn.disabled = true;
+                rejectBtn.disabled = true;
+                cancelBtn.disabled = true;
+                btn.classList.add('opacity-75', 'cursor-not-allowed');
+            } else {
+                text.textContent = 'Approve';
+                spinner.classList.add('hidden');
+                btn.disabled = false;
+                rejectBtn.disabled = false;
+                cancelBtn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        } else if (action === 'reject') {
+            const btn = document.getElementById('rejectBtn');
+            const text = document.getElementById('rejectText');
+            const spinner = document.getElementById('rejectSpinner');
+            const approveBtn = document.getElementById('approveBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            
+            if (isLoading) {
+                text.textContent = 'Processing...';
+                spinner.classList.remove('hidden');
+                btn.disabled = true;
+                approveBtn.disabled = true;
+                cancelBtn.disabled = true;
+                btn.classList.add('opacity-75', 'cursor-not-allowed');
+            } else {
+                text.textContent = 'Reject';
+                spinner.classList.add('hidden');
+                btn.disabled = false;
+                approveBtn.disabled = false;
+                cancelBtn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        }
+    }
+
+    function handleApprove() {
+        if (!currentLeaveId) return;
+        
+        if (confirm('Are you sure you want to approve this leave request?')) {
+            setLoadingState('approve', true);
+            updateLeaveStatus(currentLeaveId, 'approved');
+        }
+    }
+
+    function handleReject() {
+        if (!currentLeaveId) return;
+        
+        if (confirm('Are you sure you want to reject this leave request?')) {
+            setLoadingState('reject', true);
+            updateLeaveStatus(currentLeaveId, 'rejected');
+        }
+    }
+
+    function updateLeaveStatus(leaveId, status) {
+        const action = status === 'approved' ? 'approve' : 'reject';
+        
+        fetch(`/leaves/${leaveId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ status: status })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            setLoadingState(action, false);
+            if (data.success) {
+                closeReviewModal();
+                showSuccessToast(data.message || 'Leave status updated successfully.');
+            } else {
+                alert(data.message || 'An error occurred');
+            }
+        })
+        .catch(error => {
+            setLoadingState(action, false);
+            console.error('Error:', error);
+            alert('An error occurred while processing the request. Please try again.');
+        });
+    }
+</script>
 @endsection

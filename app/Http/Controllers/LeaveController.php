@@ -399,6 +399,11 @@ class LeaveController extends Controller
             $this->telegramService->sendMessage($leave->user->telegram_chat_id, $message);
         }
 
+        // Return JSON for AJAX requests
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Leave status updated successfully.']);
+        }
+
         return redirect()->back()->with('success', 'Leave status updated successfully.');
     }
 
