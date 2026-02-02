@@ -22,62 +22,66 @@
                 </div>
 
                 {{-- Stats Cards --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     {{-- Total Requests Card --}}
-                    <a href="{{ request()->fullUrlWithQuery(['status' => 'all']) }}" class="block hover:scale-105 transition-transform">
-                        <div style="background-color: #60A5FA;" class="rounded-lg p-6 shadow-md cursor-pointer h-full">
-                            <div class="flex items-center justify-between">
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'all']) }}" class="block hover:shadow-lg transition-shadow">
+                        <div class="bg-white rounded-lg shadow border border-slate-100 cursor-pointer overflow-hidden">
+                            <div class="h-1 bg-blue-500"></div>
+                            <div class="p-5 flex items-start justify-between gap-3">
                                 <div>
-                                    <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Total Requests</p>
-                                    <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $counts['all'] ?? 0 }}</p>
+                                    <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Total Requests</p>
+                                    <p class="text-3xl font-bold text-blue-600">{{ $counts['all'] ?? 0 }}</p>
                                 </div>
-                                <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 </div>
                             </div>
                         </div>
                     </a>
 
                     {{-- Pending Actions Card --}}
-                    <a href="{{ request()->fullUrlWithQuery(['status' => 'pending']) }}" class="block hover:scale-105 transition-transform">
-                        <div style="background-color: #FB923C;" class="rounded-lg p-6 shadow-md cursor-pointer h-full">
-                            <div class="flex items-center justify-between">
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'pending']) }}" class="block hover:shadow-lg transition-shadow">
+                        <div class="bg-white rounded-lg shadow border border-slate-100 cursor-pointer overflow-hidden">
+                            <div class="h-1 bg-orange-500"></div>
+                            <div class="p-5 flex items-start justify-between gap-3">
                                 <div>
-                                    <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Pending Actions</p>
-                                    <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $counts['pending'] ?? 0 }}</p>
+                                    <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Pending</p>
+                                    <p class="text-3xl font-bold text-orange-500">{{ $counts['pending'] ?? 0 }}</p>
                                 </div>
-                                <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 </div>
                             </div>
                         </div>
                     </a>
 
                     {{-- Approved Card --}}
-                    <a href="{{ request()->fullUrlWithQuery(['status' => 'approved']) }}" class="block hover:scale-105 transition-transform">
-                        <div style="background-color: #4ADE80;" class="rounded-lg p-6 shadow-md cursor-pointer h-full">
-                            <div class="flex items-center justify-between">
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'approved']) }}" class="block hover:shadow-lg transition-shadow">
+                        <div class="bg-white rounded-lg shadow border border-slate-100 cursor-pointer overflow-hidden">
+                            <div class="h-1 bg-green-500"></div>
+                            <div class="p-5 flex items-start justify-between gap-3">
                                 <div>
-                                    <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Approved</p>
-                                    <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $counts['approved'] ?? 0 }}</p>
+                                    <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Approved</p>
+                                    <p class="text-3xl font-bold text-green-600">{{ $counts['approved'] ?? 0 }}</p>
                                 </div>
-                                <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 </div>
                             </div>
                         </div>
                     </a>
 
                     {{-- Rejected Card --}}
-                    <a href="{{ request()->fullUrlWithQuery(['status' => 'rejected']) }}" class="block hover:scale-105 transition-transform">
-                        <div style="background-color: #F87171;" class="rounded-lg p-6 shadow-md cursor-pointer h-full">
-                            <div class="flex items-center justify-between">
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'rejected']) }}" class="block hover:shadow-lg transition-shadow">
+                        <div class="bg-white rounded-lg shadow border border-slate-100 cursor-pointer overflow-hidden">
+                            <div class="h-1 bg-red-500"></div>
+                            <div class="p-5 flex items-start justify-between gap-3">
                                 <div>
-                                    <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Rejected</p>
-                                    <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $counts['rejected'] ?? 0 }}</p>
+                                    <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Rejected</p>
+                                    <p class="text-3xl font-bold text-red-600">{{ $counts['rejected'] ?? 0 }}</p>
                                 </div>
-                                <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 </div>
                             </div>
                         </div>
@@ -108,8 +112,8 @@
                                     <th class="px-6 py-4 font-semibold text-slate-700">Employee</th>
                                     <th class="px-6 py-4 font-semibold text-slate-700">Leave Type / Reason</th>
                                     <th class="px-6 py-4 font-semibold text-slate-700">Dates & Duration</th>
-                                    <th class="px-6 py-4 font-semibold text-slate-700">Approval Progress</th>
-                                    <th class="px-6 py-4 font-semibold text-slate-700">Status</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700 text-center">Approval Progress</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700 text-center">Status</th>
                                     <th class="px-6 py-4 font-semibold text-slate-700 text-center">Action</th>
                                 </tr>
                             </thead>
@@ -119,7 +123,7 @@
                                     {{-- Employee Column --}}
                                     <td class="px-6 py-5">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center font-semibold text-sm">
+                                            <div class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-base">
                                                 {{ strtoupper(substr($leave->user->name, 0, 2)) }}
                                             </div>
                                             <div>
@@ -131,8 +135,8 @@
 
                                     {{-- Leave Type / Reason --}}
                                     <td class="px-6 py-5">
-                                        <p class="font-medium text-slate-900 capitalize">{{ $leave->leave_type }} Leave</p>
-                                        <p class="text-xs text-slate-500 italic max-w-xs truncate" title="{{ $leave->reason }}">{{ Str::limit($leave->reason, 35, '...') }}</p>
+                                        <p class="font-semibold text-slate-900" title="{{ $leave->reason }}">{{ Str::limit($leave->reason, 35, '...') }}</p>
+                                        <p class="text-xs text-slate-400 capitalize">{{ $leave->leave_type }} Leave</p>
                                     </td>
 
                                     {{-- Dates & Duration --}}
@@ -199,7 +203,7 @@
                                     </td>
 
                                     {{-- Status --}}
-                                    <td class="px-6 py-5">
+                                    <td class="px-6 py-5 text-center">
                                         <div class="flex justify-center">
                                             @if($leave->status === 'approved')
                                                 <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-300">Approved</span>
@@ -390,21 +394,18 @@
             const text = document.getElementById('approveText');
             const spinner = document.getElementById('approveSpinner');
             const rejectBtn = document.getElementById('rejectBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
             
             if (isLoading) {
                 text.textContent = 'Processing...';
                 spinner.classList.remove('hidden');
                 btn.disabled = true;
                 rejectBtn.disabled = true;
-                cancelBtn.disabled = true;
                 btn.classList.add('opacity-75', 'cursor-not-allowed');
             } else {
                 text.textContent = 'Approve';
                 spinner.classList.add('hidden');
                 btn.disabled = false;
                 rejectBtn.disabled = false;
-                cancelBtn.disabled = false;
                 btn.classList.remove('opacity-75', 'cursor-not-allowed');
             }
         } else if (action === 'reject') {
@@ -412,21 +413,18 @@
             const text = document.getElementById('rejectText');
             const spinner = document.getElementById('rejectSpinner');
             const approveBtn = document.getElementById('approveBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
             
             if (isLoading) {
                 text.textContent = 'Processing...';
                 spinner.classList.remove('hidden');
                 btn.disabled = true;
                 approveBtn.disabled = true;
-                cancelBtn.disabled = true;
                 btn.classList.add('opacity-75', 'cursor-not-allowed');
             } else {
                 text.textContent = 'Reject';
                 spinner.classList.add('hidden');
                 btn.disabled = false;
                 approveBtn.disabled = false;
-                cancelBtn.disabled = false;
                 btn.classList.remove('opacity-75', 'cursor-not-allowed');
             }
         }

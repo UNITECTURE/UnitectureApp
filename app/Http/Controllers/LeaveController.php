@@ -31,17 +31,25 @@ class LeaveController extends Controller
         // Calculate Used Leaves (Approved & Paid)
         $usedLeaves = $leaves->where('status', 'approved')->where('leave_type', 'paid')->sum('days');
         
-                // Calculate Earned Leaves (Total eligible months × 1.25)
-                $joiningDate = \Carbon\Carbon::parse($user->joining_date);
-                $eligibilityDate = $joiningDate->copy()->addMonths(3)->startOfMonth();
-                $currentMonth = now()->startOfMonth();
-                $monthsEligible = $eligibilityDate->diffInMonths($currentMonth) + 1;
-                $earnedLeaves = $monthsEligible * 1.25;
+        // Calculate Earned Leaves based on joining date
+        $joiningDate = \Carbon\Carbon::parse($user->joining_date);
+        $eligibilityDate = $joiningDate->copy()->addMonths(3)->startOfMonth();
+        $currentMonth = now()->startOfMonth();
         
-                // If earned reaches 25, it resets to 0
-                if ($earnedLeaves >= 25) {
-                    $earnedLeaves = 0;
-                }
+        // Only calculate if eligible (3+ months from joining)
+        if ($currentMonth >= $eligibilityDate) {
+            // Total months from eligibility date to current month
+            $monthsEligible = $eligibilityDate->diffInMonths($currentMonth) + 1;
+            $earnedLeaves = $monthsEligible * 1.25;
+            
+            // If earned reaches 25, it resets to 0
+            if ($earnedLeaves >= 25) {
+                $earnedLeaves = 0;
+            }
+        } else {
+            // Not yet eligible
+            $earnedLeaves = 0;
+        }
         
         return view('leaves.index', compact('leaves', 'usedLeaves', 'earnedLeaves'));
     }

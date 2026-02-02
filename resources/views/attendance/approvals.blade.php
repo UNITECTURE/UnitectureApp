@@ -36,34 +36,62 @@
 
     <div class="flex-1 overflow-y-auto p-8">
             {{-- Summary Cards --}}
-            <div class="flex w-full gap-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 {{-- All --}}
-                <a href="{{ request()->fullUrlWithQuery(['status' => 'all']) }}" 
-                   class="flex-1 bg-blue-50 rounded-xl border {{ request('status', 'all') == 'all' ? 'border-blue-400 ring-2 ring-blue-200 shadow-md' : 'border-blue-100' }} p-4 flex flex-col items-center justify-center h-26 transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-blue-100 hover:shadow-lg hover:border-blue-300">
-                    <div class="text-2xl font-bold text-blue-600">{{ $summary['all'] }}</div>
-                    <div class="text-xs font-medium text-blue-600 mt-1">All</div>
-                </a>
+                <button type="button" onclick="document.querySelector('input[name=status][value=All]').click(); document.querySelector('form').submit();" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-blue-300 hover:shadow-md transition-all">
+                    <div class="h-1 bg-blue-500"></div>
+                    <div class="p-5 flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Total Requests</p>
+                            <p class="text-3xl font-bold text-blue-600">{{ $summary['all'] }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                    </div>
+                </button>
 
                 {{-- Pending --}}
-                <a href="{{ request()->fullUrlWithQuery(['status' => 'pending']) }}" 
-                   class="flex-1 bg-yellow-50 rounded-xl border {{ request('status') == 'pending' ? 'border-yellow-400 ring-2 ring-yellow-200 shadow-md' : 'border-yellow-100' }} p-4 flex flex-col items-center justify-center h-26 transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-yellow-100 hover:shadow-lg hover:border-yellow-300">
-                    <div class="text-2xl font-bold text-yellow-600">{{ $summary['pending'] }}</div>
-                    <div class="text-xs font-medium text-yellow-600 mt-1">Pending</div>
-                </a>
+                <button type="button" onclick="document.querySelector('input[name=status][value=Pending]').click(); document.querySelector('form').submit();" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-orange-300 hover:shadow-md transition-all">
+                    <div class="h-1 bg-orange-500"></div>
+                    <div class="p-5 flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Pending</p>
+                            <p class="text-3xl font-bold text-orange-500">{{ $summary['pending'] }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+                </button>
 
                 {{-- Approved --}}
-                <a href="{{ request()->fullUrlWithQuery(['status' => 'approved']) }}" 
-                   class="flex-1 bg-green-50 rounded-xl border {{ request('status') == 'approved' ? 'border-green-400 ring-2 ring-green-200 shadow-md' : 'border-green-100' }} p-4 flex flex-col items-center justify-center h-26 transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-green-100 hover:shadow-lg hover:border-green-300">
-                    <div class="text-2xl font-bold text-green-600">{{ $summary['approved'] }}</div>
-                    <div class="text-xs font-medium text-green-600 mt-1">Approved</div>
-                </a>
+                <button type="button" onclick="document.querySelector('input[name=status][value=Approved]').click(); document.querySelector('form').submit();" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-green-300 hover:shadow-md transition-all">
+                    <div class="h-1 bg-green-500"></div>
+                    <div class="p-5 flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Approved</p>
+                            <p class="text-3xl font-bold text-green-600">{{ $summary['approved'] }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+                </button>
 
                 {{-- Rejected --}}
-                <a href="{{ request()->fullUrlWithQuery(['status' => 'rejected']) }}" 
-                   class="flex-1 bg-red-50 rounded-xl border {{ request('status') == 'rejected' ? 'border-red-400 ring-2 ring-red-200 shadow-md' : 'border-red-100' }} p-4 flex flex-col items-center justify-center h-26 transition-all duration-200 hover:scale-105 cursor-pointer hover:bg-red-100 hover:shadow-lg hover:border-red-300">
-                    <div class="text-2xl font-bold text-red-500">{{ $summary['rejected'] }}</div>
-                    <div class="text-xs font-medium text-red-500 mt-1">Rejected</div>
-                </a>
+                <button type="button" onclick="document.querySelector('input[name=status][value=Rejected]').click(); document.querySelector('form').submit();" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-red-300 hover:shadow-md transition-all">
+                    <div class="h-1 bg-red-500"></div>
+                    <div class="p-5 flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Rejected</p>
+                            <p class="text-3xl font-bold text-red-600">{{ $summary['rejected'] }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l-2-2m0 0l-2-2m2 2l2-2m-2 2l-2 2m2-2l2 2"></path></svg>
+                        </div>
+                    </div>
+                </button>
             </div>
 
             {{-- Filter & Search Bar --}}

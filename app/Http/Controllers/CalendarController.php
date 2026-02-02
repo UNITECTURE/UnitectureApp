@@ -164,7 +164,7 @@ class CalendarController extends Controller
                     'start' => optional($task->start_date)->toDateString(),
                     'end' => optional($task->end_date)->toIso8601String(),
                     'allDay' => false,
-                    'color' => '#f97316', // orange
+                    'color' => '#3b82f6', // light blue
                     'type' => 'task',
                     'extendedProps' => [
                         'project' => $task->project?->name,

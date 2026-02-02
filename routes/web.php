@@ -74,6 +74,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
     Route::get('/my-team', [App\Http\Controllers\UserController::class, 'team'])->name('team.index');
 
+    // Settings
+    Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/password', [App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('settings.updatePassword');
+
     // Calendar
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
     Route::get('/api/calendar/events', [CalendarController::class, 'events'])->name('calendar.events');

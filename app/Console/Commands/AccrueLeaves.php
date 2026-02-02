@@ -53,18 +53,27 @@ class AccrueLeaves extends Command
         foreach ($users as $user) {
             $oldBalance = $user->leave_balance;
             
-            // Increment balance and update last accrued month
-            $user->increment('leave_balance', 1.25);
-            $user->update(['last_accrued_month' => $currentMonth]);
+            // Check if balance will exceed 25 after accrual
+            $newBalance = $user->leave_balance + 1.25;
             
-            $newBalance = $user->leave_balance;
-            
-            $this->line("✅ Accrued 1.25 for: <info>{$user->name}</info>");
-            $this->line("   [Joined: {$user->joining_date->format('Y-m-d')} | Balance: {$oldBalance} -> {$newBalance}]");
+            if ($newBalance >= 25) {
+                // Reset to 0 and log the reset
+                $user->update(['leave_balance' => 0, 'last_accrued_month' => $currentMonth]);
+                $this->line("🔄 Balance Reset for: <info>{$user->name}</info>");
+                $this->line("   [Previous Balance: {$oldBalance} | Reset to: 0 (reached 25 threshold)]");
+            } else {
+                // Normal accrual
+                $user->increment('leave_balance', 1.25);
+                $user->update(['last_accrued_month' => $currentMonth]);
+                
+                $newBalance = $user->leave_balance;
+                $this->line("✅ Accrued 1.25 for: <info>{$user->name}</info>");
+                $this->line("   [Joined: {$user->joining_date->format('Y-m-d')} | Balance: {$oldBalance} -> {$newBalance}]");
+            }
             $count++;
         }
 
-        $this->info("--- Successfully accrued leaves for {$count} users ---");
-        Log::info("Leaves accrued for {$count} users for month {$currentMonth}.");
+        $this->info("--- Successfully processed leaves for {$count} users ---");
+        Log::info("Leaves processed for {$count} users for month {$currentMonth}.");
     }
 }

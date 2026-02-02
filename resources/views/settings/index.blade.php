@@ -83,23 +83,79 @@
                         </div>
                         @endif
 
-                        <!-- General Settings (Placeholder) -->
-                        <div
-                            class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-6 opacity-60">
+                        {{-- Password Settings --}}
+                        <div class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-6">
                             <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                 </svg>
-                                Profile Settings
+                                Security Settings
                             </h3>
-                            <p class="text-sm text-slate-400">Profile management is coming soon.</p>
+                            <button onclick="document.getElementById('changePasswordModal').classList.remove('hidden')" class="text-red-600 hover:text-red-700 font-medium flex items-center gap-2">
+                                Change Password
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
                         </div>
 
                     </div>
                 </div>
             </main>
+        </div>
+    </div>
+
+    {{-- Change Password Modal --}}
+    <div id="changePasswordModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            {{-- Modal Header --}}
+            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-800">Change Password</h3>
+                <button onclick="document.getElementById('changePasswordModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            {{-- Modal Body --}}
+            <form action="{{ route('settings.updatePassword') }}" method="POST" class="p-6 space-y-4">
+                @csrf
+
+                {{-- Email (Read-only) --}}
+                <div>
+                    <label class="text-sm font-semibold text-slate-700 block mb-2">Email</label>
+                    <input type="email" value="{{ Auth::user()->email }}" disabled class="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-600 cursor-not-allowed">
+                </div>
+
+                {{-- New Password --}}
+                <div>
+                    <label for="new_password" class="text-sm font-semibold text-slate-700 block mb-2">New Password</label>
+                    <input type="password" id="new_password" name="new_password" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Enter new password">
+                    @error('new_password')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Confirm Password --}}
+                <div>
+                    <label for="new_password_confirmation" class="text-sm font-semibold text-slate-700 block mb-2">Confirm Password</label>
+                    <input type="password" id="new_password_confirmation" name="new_password_confirmation" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Confirm new password">
+                    @error('new_password_confirmation')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Success/Error Messages --}}
+                @if(session('success'))
+                    <div class="p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                {{-- Modal Footer --}}
+                <div class="flex gap-3 pt-4 border-t border-slate-200">
+                    <button type="submit" class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+                        Update Password
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 @endsection

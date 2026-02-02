@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex h-screen bg-slate-50 overflow-hidden" x-data="{ sidebarOpen: true }">
+<div class="flex h-screen bg-slate-50 overflow-hidden" x-data="{ sidebarOpen: true, filterStatus: 'all' }">
     <x-sidebar :role="Auth::user()->isAdmin() ? 'admin' : (Auth::user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -24,7 +24,7 @@
                 </div>
 
                 {{-- Stats Cards --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     {{-- Available Balance Card --}}
                     <div style="background-color: #2563EB;" class="rounded-lg p-6 shadow-md">
                         <div class="flex items-center justify-between">
@@ -39,43 +39,46 @@
                     </div>
 
                     {{-- Total Requests Card --}}
-                    <div style="background-color: #60A5FA;" class="rounded-lg p-6 shadow-md">
-                        <div class="flex items-center justify-between">
+                    <button @click="filterStatus = 'all'" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-md transition-all" :class="filterStatus === 'all' && 'border-blue-500 shadow-md'">
+                        <div class="h-1 bg-blue-500"></div>
+                        <div class="p-5 flex items-start justify-between gap-3">
                             <div>
-                                <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Total Requests</p>
-                                <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $leaves->count() }}</p>
+                                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Total Requests</p>
+                                <p class="text-3xl font-bold text-blue-600">{{ $leaves->count() }}</p>
                             </div>
-                            <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </div>
                         </div>
-                    </div>
+                    </button>
 
                     {{-- Pending Card --}}
-                    <div style="background-color: #FB923C;" class="rounded-lg p-6 shadow-md">
-                        <div class="flex items-center justify-between">
+                    <button @click="filterStatus = 'pending'" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden cursor-pointer hover:border-orange-300 hover:shadow-md transition-all" :class="filterStatus === 'pending' && 'border-orange-500 shadow-md'">
+                        <div class="h-1 bg-orange-500"></div>
+                        <div class="p-5 flex items-start justify-between gap-3">
                             <div>
-                                <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Pending</p>
-                                <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $leaves->where('status', 'pending')->count() }}</p>
+                                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Pending</p>
+                                <p class="text-3xl font-bold text-orange-500">{{ $leaves->where('status', 'pending')->count() }}</p>
                             </div>
-                            <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                         </div>
-                    </div>
+                    </button>
 
                     {{-- Approved Card --}}
-                    <div style="background-color: #4ADE80;" class="rounded-lg p-6 shadow-md">
-                        <div class="flex items-center justify-between">
+                    <button @click="filterStatus = 'approved'" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden cursor-pointer hover:border-green-300 hover:shadow-md transition-all" :class="filterStatus === 'approved' && 'border-green-500 shadow-md'">
+                        <div class="h-1 bg-green-500"></div>
+                        <div class="p-5 flex items-start justify-between gap-3">
                             <div>
-                                <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Approved</p>
-                                <p style="color: #FFFFFF;" class="text-6xl font-black">{{ $leaves->where('status', 'approved')->count() }}</p>
+                                <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Approved</p>
+                                <p class="text-3xl font-bold text-green-600">{{ $leaves->where('status', 'approved')->count() }}</p>
                             </div>
-                            <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                         </div>
-                    </div>
+                    </button>
                 </div>
 
                 @if($errors->any())
@@ -102,17 +105,17 @@
                                 <tr>
                                     <th class="px-6 py-4 font-semibold text-slate-700">Leave Type / Reason</th>
                                     <th class="px-6 py-4 font-semibold text-slate-700">Dates & Duration</th>
-                                    <th class="px-6 py-4 font-semibold text-slate-700">Approval Progress</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700 text-center">Approval Progress</th>
                                     <th class="px-6 py-4 font-semibold text-slate-700 text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 @forelse($leaves as $leave)
-                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                <tr class="hover:bg-slate-50/50 transition-colors" x-show="filterStatus === 'all' || (filterStatus === 'pending' && '{{ $leave->status }}' === 'pending') || (filterStatus === 'approved' && '{{ $leave->status }}' === 'approved')">
                                     {{-- Leave Type / Reason --}}
                                     <td class="px-6 py-5">
-                                        <p class="font-medium text-slate-900 capitalize">{{ $leave->leave_type }} Leave</p>
-                                        <p class="text-xs text-slate-500 italic max-w-xs truncate" title="{{ $leave->reason }}">{{ Str::limit($leave->reason, 35, '...') }}</p>
+                                        <p class="font-semibold text-slate-900" title="{{ $leave->reason }}">{{ Str::limit($leave->reason, 35, '...') }}</p>
+                                        <p class="text-xs text-slate-400 capitalize">{{ $leave->leave_type }} Leave</p>
                                     </td>
 
                                     {{-- Dates & Duration --}}
@@ -181,7 +184,7 @@
                                     </td>
 
                                     {{-- Status Column with Cancel Button --}}
-                                    <td class="px-6 py-5">
+                                    <td class="px-6 py-5 text-center">
                                         <div class="flex items-center justify-center gap-4">
                                             <div>
                                                 @if($leave->status === 'pending')
@@ -207,10 +210,9 @@
                                                 <form action="{{ route('leaves.cancel', $leave) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this leave request?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-full shadow-sm hover:opacity-90 transition-opacity" title="Cancel Leave" aria-label="Cancel Leave">
-                                                        <svg class="w-9 h-9" viewBox="0 0 64 64" role="img" aria-hidden="true">
-                                                            <circle cx="32" cy="32" r="30" fill="#EF4444" />
-                                                            <path d="M20 20 L44 44 M44 20 L20 44" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" />
+                                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-500 hover:bg-red-600 shadow-sm transition-colors" title="Cancel Leave" aria-label="Cancel Leave">
+                                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                         </svg>
                                                     </button>
                                                 </form>
