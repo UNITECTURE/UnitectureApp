@@ -128,8 +128,8 @@
                                                   }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                             </div>
 
-                                            <!-- Title -->
-                                            <h3 class="text-xs sm:text-sm font-bold text-slate-800 leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words" x-text="task.title"></h3>
+                                            <!-- Description -->
+                                            <h3 class="text-xs sm:text-sm font-bold text-slate-800 leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words" x-text="task.description || ''"></h3>
                                             
                                             <!-- Project -->
                                             <p class="text-[10px] sm:text-xs text-slate-400 font-medium mb-2 sm:mb-3 truncate" x-text="task.project?.name || 'No Project'"></p>
@@ -201,8 +201,7 @@
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="String(index + 1).padStart(2, '0')"></td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="task.project?.project_code || 'N/A'"></td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 min-w-[200px]">
-                                                <div class="font-medium text-slate-900 break-words" x-text="task.title"></div>
-                                                <div class="text-[10px] sm:text-xs text-slate-500 mt-1 line-clamp-1" x-text="(task.description || '').substring(0, 30) + '...'"></div>
+                                                <div class="font-medium text-slate-900 break-words line-clamp-2" x-text="task.description || ''"></div>
                                             </td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 whitespace-nowrap" @click.stop>
                                                 <select @change="updateStatus(task.id, $event.target.value)" 
@@ -285,7 +284,7 @@
                                           'bg-green-50 text-green-600': selectedTask.priority === 'low',
                                           'bg-slate-50 text-slate-600': selectedTask.priority === 'free'
                                       }" x-text="selectedTask.priority"></span>
-                                <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="selectedTask.title"></h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="selectedTask.description || ''"></h2>
                                 <p class="text-xs sm:text-sm text-slate-500 font-medium truncate" x-text="selectedTask.project?.name"></p>
                             </div>
                             <button @click="selectedTask = null"

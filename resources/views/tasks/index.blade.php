@@ -129,13 +129,10 @@
                                 <span class="text-xs font-medium text-slate-500 truncate" x-text="task.project?.name || 'No Project'"></span>
                             </div>
 
-                            <!-- Title -->
-                            <h3 class="text-base font-bold text-slate-800 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors"
-                                x-text="task.title">
-                            </h3>
-
                             <!-- Description -->
-                            <p class="text-xs text-slate-500 mb-3 line-clamp-2" x-text="task.description || ''"></p>
+                            <h3 class="text-base font-bold text-slate-800 mb-3 line-clamp-2 group-hover:text-indigo-600 transition-colors"
+                                x-text="task.description || ''">
+                            </h3>
 
                             <!-- Footer -->
                             <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-2">
@@ -214,7 +211,7 @@
                                               'bg-green-50 text-green-600': selectedTask.priority === 'low',
                                               'bg-slate-50 text-slate-600': selectedTask.priority === 'free'
                                           }" x-text="selectedTask.priority"></span>
-                                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="selectedTask.title"></h2>
+                                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="selectedTask.description || ''"></h2>
                                     <p class="text-xs sm:text-sm text-slate-500 font-medium truncate" x-text="selectedTask.project?.name"></p>
                                 </div>
                                 <button @click="selectedTask = null"
@@ -430,7 +427,6 @@
                     if (this.search) {
                         const q = this.search.toLowerCase();
                         filtered = filtered.filter(t =>
-                            (t.title && t.title.toLowerCase().includes(q)) ||
                             (t.description && t.description.toLowerCase().includes(q)) ||
                             (t.project && t.project.name && t.project.name.toLowerCase().includes(q))
                         );

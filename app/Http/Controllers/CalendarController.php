@@ -160,7 +160,7 @@ class CalendarController extends Controller
 
                 $events[] = [
                     'id' => 'task-' . $task->id,
-                    'title' => $task->title,
+                    'title' => \Illuminate\Support\Str::limit($task->description ?? '', 50),
                     'start' => optional($task->start_date)->toDateString(),
                     'end' => optional($task->end_date)->toIso8601String(),
                     'allDay' => false,

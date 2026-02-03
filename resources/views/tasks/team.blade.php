@@ -136,19 +136,11 @@
                                                   }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                             </div>
 
-                                            <!-- Title -->
-                                            <h3 class="text-sm font-bold text-slate-800 leading-tight mb-2 line-clamp-2" x-text="task.title"></h3>
+                                            <!-- Description -->
+                                            <h3 class="text-sm font-bold text-slate-800 leading-tight mb-2 line-clamp-2" x-text="task.description || ''"></h3>
                                             
                                             <!-- Project -->
                                             <p class="text-xs text-slate-400 font-medium mb-3 truncate" x-text="task.project?.name || 'No Project'"></p>
-
-                                            <!-- Time Estimate -->
-                                            <div class="flex items-center gap-1 text-xs text-slate-500 mb-3">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                                <span x-text="task.time_estimate || '12:00'"></span>
-                                            </div>
 
                                             <!-- Footer -->
                                             <div class="flex items-center justify-between border-t border-slate-50 pt-3 mt-2">
@@ -209,8 +201,7 @@
                                             <td class="px-6 py-3 font-bold text-slate-900" x-text="String(index + 1).padStart(2, '0')"></td>
                                             <td class="px-6 py-3 font-bold text-slate-900" x-text="task.project?.project_code || 'N/A'"></td>
                                             <td class="px-6 py-3">
-                                                <div class="font-medium text-slate-900" x-text="task.title"></div>
-                                                <div class="text-xs text-slate-500 mt-1" x-text="(task.description || '').substring(0, 30) + '...'"></div>
+                                                <div class="font-medium text-slate-900 line-clamp-2" x-text="task.description || ''"></div>
                                             </td>
                                             <td class="px-6 py-3" @click.stop>
                                                 <select @change="updateStatus(task.id, $event.target.value)" 
@@ -293,7 +284,7 @@
                                           'bg-green-50 text-green-600': selectedTask.priority === 'low',
                                           'bg-slate-50 text-slate-600': selectedTask.priority === 'free'
                                       }" x-text="selectedTask.priority"></span>
-                                <h2 class="text-xl font-bold text-slate-900" x-text="selectedTask.title"></h2>
+                                <h2 class="text-xl font-bold text-slate-900" x-text="selectedTask.description || ''"></h2>
                                 <p class="text-sm text-slate-500 font-medium" x-text="selectedTask.project?.name"></p>
                             </div>
                             <button @click="selectedTask = null"

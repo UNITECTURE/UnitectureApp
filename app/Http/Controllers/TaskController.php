@@ -294,7 +294,6 @@ class TaskController extends Controller
             // 'end_date' field in DB is datetime. We accept separate date and time inputs.
             'end_date_input' => 'nullable|date|after_or_equal:start_date',
             'end_time_input' => 'nullable|date_format:H:i',
-            'time_estimate' => 'nullable|string|max:50',
             'priority' => 'required|in:high,medium,low,free',
             // Optional initial comment from the creator when creating the task
             'comments' => 'nullable|string|max:2000',
@@ -323,8 +322,6 @@ class TaskController extends Controller
         // Prepare data for saving
         $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged', 'comments']);
         $data['end_date'] = $endDate;
-        // Use description as title if title is not provided
-        $data['title'] = $request->input('title', substr($request->description, 0, 255));
 
         $task = new Task($data);
         if ($request->has('status')) {
@@ -388,7 +385,7 @@ class TaskController extends Controller
                     $lines = [];
                     $lines[] = '🔔 <b>You were tagged on a task</b>';
                     $lines[] = '';
-                    $lines[] = '<b>Task:</b> ' . e($task->title);
+                    $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
 
                     if ($project) {
                         $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
@@ -420,7 +417,7 @@ class TaskController extends Controller
                     $lines = [];
                     $lines[] = '🔔 <b>Task created & people tagged</b>';
                     $lines[] = '';
-                    $lines[] = '<b>Task:</b> ' . e($task->title);
+                    $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
 
                     if ($project) {
                         $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
@@ -508,7 +505,7 @@ class TaskController extends Controller
                         $lines = [];
                         $lines[] = '🔔 <b>Task status updated</b>';
                         $lines[] = '';
-                        $lines[] = '<b>Task:</b> ' . e($task->title);
+                        $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
 
                         if ($project) {
                             $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
@@ -574,7 +571,7 @@ class TaskController extends Controller
                         $lines = [];
                         $lines[] = '🔔 <b>Task stage updated</b>';
                         $lines[] = '';
-                        $lines[] = '<b>Task:</b> ' . e($task->title);
+                        $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
 
                         if ($project) {
                             $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
