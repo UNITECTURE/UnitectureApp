@@ -137,8 +137,8 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Title -->
-                                            <h3 class="text-sm font-bold text-slate-800 leading-tight mb-2 line-clamp-2" x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></h3>
+                                            <!-- Description -->
+                                            <p class="text-sm font-bold text-slate-800 leading-tight mb-2 line-clamp-2" x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></p>
 
                                             <!-- Due time -->
                                             <div class="flex items-center gap-1 text-xs text-slate-500 mb-3">
@@ -207,8 +207,7 @@
                                             <td class="px-6 py-3 font-bold text-slate-900" x-text="String(index + 1).padStart(2, '0')"></td>
                                             <td class="px-6 py-3 font-bold text-slate-900" x-text="task.project?.project_code || 'N/A'"></td>
                                             <td class="px-6 py-3">
-                                                <div class="font-medium text-slate-900" x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></div>
-                                                <div class="text-xs text-slate-500 mt-1" x-text="(task.description || '').substring(0, 30) + '...'"></div>
+                                                <div class="font-medium text-slate-900 line-clamp-2" x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')"></div>
                                             </td>
                                             <td class="px-6 py-3" @click.stop>
                                                 <select @change="updateStatus(task.id, $event.target.value)" 

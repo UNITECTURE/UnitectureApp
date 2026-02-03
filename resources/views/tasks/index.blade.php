@@ -134,13 +134,10 @@
                                 </div>
                             </div>
 
-                            <!-- Title -->
-                            <h3 class="text-base font-bold text-slate-800 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors"
-                                x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')">
-                            </h3>
-
                             <!-- Description -->
-                            <p class="text-xs text-slate-500 mb-3 line-clamp-2" x-text="task.description || ''"></p>
+                            <p class="text-base font-bold text-slate-800 mb-3 line-clamp-2 group-hover:text-indigo-600 transition-colors"
+                                x-text="(task.description || '').substring(0, 120) + ((task.description || '').length > 120 ? '...' : '')">
+                            </p>
 
                             <!-- Footer -->
                             <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-2">
