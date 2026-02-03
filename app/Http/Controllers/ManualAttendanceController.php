@@ -20,8 +20,8 @@ class ManualAttendanceController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'date' => [
-                'required', 
-                'date', 
+                'required',
+                'date',
                 function ($attribute, $value, $fail) {
                     $date = Carbon::parse($value);
                     $today = Carbon::today();
@@ -31,16 +31,24 @@ class ManualAttendanceController extends Controller
                     if ($date->lt($minDate)) {
                         $fail("You can only apply for attendance for the past 4 days.");
                     }
-                // Future dates allowed within this month (checked by maxDate below)
+                    // Future dates allowed within this month (checked by maxDate below)
                     if ($date->gt($maxDate)) {
-                         $fail("You cannot apply for dates beyond the current month (" . $maxDate->format('M d') . ").");
+                        $fail("You cannot apply for dates beyond the current month (" . $maxDate->format('M d') . ").");
                     }
                 },
             ],
             'duration' => 'required|string',
-            'reason' => 'nullable|string',
             'start_time' => 'nullable|string',
             'end_time' => 'nullable|string',
+            'reason' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (str_word_count($value) > 30) {
+                        $fail('The ' . $attribute . ' must not exceed 30 words.');
+                    }
+                },
+            ],
         ]);
 
         $manualRequest = ManualAttendanceRequest::create([
@@ -87,7 +95,7 @@ class ManualAttendanceController extends Controller
         if ($requester && $requester->role_id === 2 && $approver->role_id !== 3) {
             return redirect()->back()->with('error', 'Only Super Admin can approve Admin requests.');
         }
-        
+
         // Update request status
         $manualRequest->update([
             'status' => 'approved',
@@ -103,19 +111,19 @@ class ManualAttendanceController extends Controller
         // Calculate Total Duration (Overwrite with Manual)
         // $existingMinutes = $this->parseDuration($attendance->duration); // Removed to prevent double counting
         $manualMinutes = $this->parseDuration($manualRequest->duration);
-        
+
         $totalMinutes = $manualMinutes;
-        
+
         $hours = floor($totalMinutes / 60);
         $mins = $totalMinutes % 60;
         $totalDurationString = "{$hours} Hrs {$mins} Mins";
 
         // Update Record
         $attendance->duration = $totalDurationString;
-        $attendance->status = 'present'; 
+        $attendance->status = 'present';
         $attendance->type = 'manual';
 
-        
+
         $attendance->save();
 
         // Notify Employee
@@ -129,25 +137,26 @@ class ManualAttendanceController extends Controller
 
     private function parseDuration(?string $durationStr)
     {
-        if (!$durationStr) return 0;
+        if (!$durationStr)
+            return 0;
         // Robust regex for "8h", "8 hrs", "8 Hours" etc (Case insensitive)
         preg_match('/(\d+)\s*[hH]/i', $durationStr, $hMatch);
         preg_match('/(\d+)\s*[mM]/i', $durationStr, $mMatch);
-        
-        $h = isset($hMatch[1]) ? (int)$hMatch[1] : 0;
-        $m = isset($mMatch[1]) ? (int)$mMatch[1] : 0;
-        
+
+        $h = isset($hMatch[1]) ? (int) $hMatch[1] : 0;
+        $m = isset($mMatch[1]) ? (int) $mMatch[1] : 0;
+
         return ($h * 60) + $m;
     }
 
     public function reject(Request $request, $id)
     {
         $manualRequest = ManualAttendanceRequest::findOrFail($id);
-        
+
         $manualRequest->update([
             'status' => 'rejected',
             'approved_by' => Auth::id() ?? 1,
-            'rejection_reason' => $request->input('reason', 'Rejected by supervisor'), 
+            'rejection_reason' => $request->input('reason', 'Rejected by supervisor'),
         ]);
 
         // Notify Employee
@@ -170,7 +179,7 @@ class ManualAttendanceController extends Controller
         }
 
         if ($manualRequest->status === 'cancelled') {
-             return redirect()->back()->with('info', 'Request is already cancelled.');
+            return redirect()->back()->with('info', 'Request is already cancelled.');
         }
 
         // Revert Attendance if needed
@@ -192,8 +201,8 @@ class ManualAttendanceController extends Controller
     {
         if ($manualRequest->status === 'approved') {
             $attendance = Attendance::where('user_id', $manualRequest->user_id)
-                            ->where('date', $manualRequest->date)
-                            ->first();
+                ->where('date', $manualRequest->date)
+                ->first();
 
             if ($attendance) {
                 // If clock_in and clock_out exist, revert to biometric calculation
@@ -204,7 +213,7 @@ class ManualAttendanceController extends Controller
 
                     $h = floor($diffMinutes / 60);
                     $m = $diffMinutes % 60;
-                    
+
                     $attendance->duration = "{$h} Hrs {$m} Mins";
                     $attendance->status = 'present';
                     $attendance->type = 'biometric'; // Revert type
