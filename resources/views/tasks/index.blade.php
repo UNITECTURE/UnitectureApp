@@ -115,18 +115,23 @@
                     <template x-for="task in filteredTasks" :key="task.id">
                         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
                             @click="openModal(task)">
-                            <!-- Header -->
+                            <!-- Header: time left (left), project + priority (right) -->
                             <div class="flex items-start justify-between mb-3 gap-2">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold shrink-0"
-                                    :class="{
-                                        'bg-red-100 text-red-700': task.priority === 'high',
-                                        'bg-orange-100 text-orange-700': task.priority === 'medium',
-                                        'bg-green-100 text-green-700': task.priority === 'low',
-                                        'bg-slate-100 text-slate-700': task.priority === 'free'
-                                    }"
-                                    x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
-                                </span>
-                                <span class="text-xs font-medium text-slate-500 truncate" x-text="task.project?.name || 'No Project'"></span>
+                                <span class="text-xs font-semibold shrink-0"
+                                    :class="dueInClass(task)"
+                                    x-text="dueIn(task)"></span>
+                                <div class="flex flex-col items-end gap-1 min-w-0">
+                                    <span class="text-xs font-medium text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
+                                        :class="{
+                                            'bg-red-100 text-red-700': task.priority === 'high',
+                                            'bg-orange-100 text-orange-700': task.priority === 'medium',
+                                            'bg-green-100 text-green-700': task.priority === 'low',
+                                            'bg-slate-100 text-slate-700': task.priority === 'free'
+                                        }"
+                                        x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
+                                    </span>
+                                </div>
                             </div>
 
                             <!-- Title -->
@@ -153,19 +158,9 @@
                                         </div>
                                     </template>
                                 </div>
-                                <div class="flex flex-col gap-0.5 text-xs font-medium text-slate-400 min-w-0">
-                                    <div class="flex items-center gap-1.5">
-                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                        <span class="truncate">Due: <span x-text="formatDate(task.end_date)"></span></span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5">
-                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        <span class="truncate">End: <span x-text="formatTime(task.end_date)"></span></span>
-                                    </div>
+                                <div class="flex flex-col gap-0.5 text-xs font-medium text-slate-400 min-w-0 text-right">
+                                    <span class="truncate">Due: <span x-text="formatDate(task.end_date)"></span></span>
+                                    <span class="truncate">End: <span x-text="formatTime(task.end_date)"></span></span>
                                 </div>
                             </div>
 
@@ -645,6 +640,29 @@
                     if (!dateString) return '-';
                     const date = new Date(dateString);
                     return full ? date.toLocaleString() : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                },
+
+                dueIn(task) {
+                    if (!task || !task.end_date) return 'No due date';
+                    const end = new Date(task.end_date);
+                    const now = new Date();
+                    if (end < now) return 'Overdue';
+                    const ms = end - now;
+                    const hours = Math.floor(ms / (1000 * 60 * 60));
+                    const days = Math.floor(hours / 24);
+                    if (days >= 1) return days + ' day' + (days !== 1 ? 's' : '') + ' left';
+                    if (hours >= 1) return hours + ' hour' + (hours !== 1 ? 's' : '') + ' left';
+                    const mins = Math.floor(ms / (1000 * 60));
+                    return (mins <= 0 ? 'Due now' : mins + ' min left');
+                },
+                dueInClass(task) {
+                    if (!task || !task.end_date) return 'text-slate-500';
+                    const end = new Date(task.end_date);
+                    if (end < new Date()) return 'text-red-600';
+                    const ms = end - new Date();
+                    const hours = ms / (1000 * 60 * 60);
+                    if (hours <= 24) return 'text-amber-600';
+                    return 'text-slate-600';
                 },
 
                 formatTime(dateString) {

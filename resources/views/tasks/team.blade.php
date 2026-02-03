@@ -123,26 +123,24 @@
                                         <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100 cursor-grab hover:shadow-md transition-all active:cursor-grabbing group relative"
                                             draggable="true" @dragstart="dragStart($event, task)" @click="openModal(task)">
                                             
-                                            <!-- Task Code -->
-                                            <div class="text-xs font-bold text-slate-500 mb-2" x-text="task.project?.project_code || 'N/A'"></div>
-                                            
-                                            <!-- Priority Badge -->
-                                            <div class="flex justify-between items-start mb-2">
-                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded border" :class="{
-                                                      'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                      'text-orange-600 bg-orange-50 border-orange-100': task.priority === 'medium',
-                                                      'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                      'text-slate-600 bg-slate-50 border-slate-100': task.priority === 'free'
-                                                  }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
+                                            <!-- Header: time left (left), project + priority (right) -->
+                                            <div class="flex items-start justify-between gap-2 mb-2">
+                                                <span class="text-[10px] font-bold shrink-0" :class="dueInClass(task)" x-text="dueIn(task)"></span>
+                                                <div class="flex flex-col items-end gap-0.5 min-w-0">
+                                                    <span class="text-[10px] text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
+                                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded border shrink-0" :class="{
+                                                          'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                          'text-orange-600 bg-orange-50 border-orange-100': task.priority === 'medium',
+                                                          'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                          'text-slate-600 bg-slate-50 border-slate-100': task.priority === 'free'
+                                                      }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
+                                                </div>
                                             </div>
 
                                             <!-- Title -->
                                             <h3 class="text-sm font-bold text-slate-800 leading-tight mb-2 line-clamp-2" x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></h3>
-                                            
-                                            <!-- Project -->
-                                            <p class="text-xs text-slate-400 font-medium mb-3 truncate" x-text="task.project?.name || 'No Project'"></p>
 
-                                            <!-- Time Estimate -->
+                                            <!-- Due time -->
                                             <div class="flex items-center gap-1 text-xs text-slate-500 mb-3">
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -727,6 +725,29 @@
                     if (!dateString) return '-';
                     const date = new Date(dateString);
                     return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+                },
+
+                dueIn(task) {
+                    if (!task || !task.end_date) return 'No due date';
+                    const end = new Date(task.end_date);
+                    const now = new Date();
+                    if (end < now) return 'Overdue';
+                    const ms = end - now;
+                    const hours = Math.floor(ms / (1000 * 60 * 60));
+                    const days = Math.floor(hours / 24);
+                    if (days >= 1) return days + ' day' + (days !== 1 ? 's' : '') + ' left';
+                    if (hours >= 1) return hours + ' hour' + (hours !== 1 ? 's' : '') + ' left';
+                    const mins = Math.floor(ms / (1000 * 60));
+                    return (mins <= 0 ? 'Due now' : mins + ' min left');
+                },
+                dueInClass(task) {
+                    if (!task || !task.end_date) return 'text-slate-500';
+                    const end = new Date(task.end_date);
+                    if (end < new Date()) return 'text-red-600';
+                    const ms = end - new Date();
+                    const hours = ms / (1000 * 60 * 60);
+                    if (hours <= 24) return 'text-amber-600';
+                    return 'text-slate-600';
                 },
 
                 getPriorityColor(priority) {

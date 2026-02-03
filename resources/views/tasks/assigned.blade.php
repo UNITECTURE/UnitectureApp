@@ -115,26 +115,24 @@
                                         <div class="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-slate-100 cursor-grab hover:shadow-md transition-all active:cursor-grabbing group relative"
                                             draggable="true" @dragstart="dragStart($event, task)" @click="openModal(task)">
                                             
-                                            <!-- Task Code -->
-                                            <div class="text-[10px] sm:text-xs font-bold text-slate-500 mb-1.5 sm:mb-2 truncate" x-text="task.project?.project_code || 'N/A'"></div>
-                                            
-                                            <!-- Priority Badge -->
-                                            <div class="flex justify-between items-start mb-1.5 sm:mb-2">
-                                                <span class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border" :class="{
-                                                      'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                      'text-orange-600 bg-orange-50 border-orange-100': task.priority === 'medium',
-                                                      'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                      'text-slate-600 bg-slate-50 border-slate-100': task.priority === 'free'
-                                                  }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
+                                            <!-- Header: time left (left), project + priority (right) -->
+                                            <div class="flex items-start justify-between gap-2 mb-1.5 sm:mb-2">
+                                                <span class="text-[9px] sm:text-[10px] font-bold shrink-0" :class="dueInClass(task)" x-text="dueIn(task)"></span>
+                                                <div class="flex flex-col items-end gap-0.5 min-w-0">
+                                                    <span class="text-[9px] sm:text-[10px] text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
+                                                    <span class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0" :class="{
+                                                          'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                          'text-orange-600 bg-orange-50 border-orange-100': task.priority === 'medium',
+                                                          'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                          'text-slate-600 bg-slate-50 border-slate-100': task.priority === 'free'
+                                                      }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
+                                                </div>
                                             </div>
 
                                             <!-- Title -->
                                             <h3 class="text-xs sm:text-sm font-bold text-slate-800 leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words" x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></h3>
-                                            
-                                            <!-- Project -->
-                                            <p class="text-[10px] sm:text-xs text-slate-400 font-medium mb-2 sm:mb-3 truncate" x-text="task.project?.name || 'No Project'"></p>
 
-                                            <!-- Due date & End time (from task.end_date) -->
+                                            <!-- Due date & End time -->
                                             <div class="flex flex-col gap-0.5 text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
                                                 <div class="flex items-center gap-1">
                                                     <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -695,6 +693,29 @@
                     if (!dateString) return 'N/A';
                     const date = new Date(dateString);
                     return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+                },
+
+                dueIn(task) {
+                    if (!task || !task.end_date) return 'No due date';
+                    const end = new Date(task.end_date);
+                    const now = new Date();
+                    if (end < now) return 'Overdue';
+                    const ms = end - now;
+                    const hours = Math.floor(ms / (1000 * 60 * 60));
+                    const days = Math.floor(hours / 24);
+                    if (days >= 1) return days + ' day' + (days !== 1 ? 's' : '') + ' left';
+                    if (hours >= 1) return hours + ' hour' + (hours !== 1 ? 's' : '') + ' left';
+                    const mins = Math.floor(ms / (1000 * 60));
+                    return (mins <= 0 ? 'Due now' : mins + ' min left');
+                },
+                dueInClass(task) {
+                    if (!task || !task.end_date) return 'text-slate-500';
+                    const end = new Date(task.end_date);
+                    if (end < new Date()) return 'text-red-600';
+                    const ms = end - new Date();
+                    const hours = ms / (1000 * 60 * 60);
+                    if (hours <= 24) return 'text-amber-600';
+                    return 'text-slate-600';
                 },
 
                 getPriorityColor(priority) {
