@@ -13,11 +13,9 @@ return new class extends Migration {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
-            $table->string('title'); // Matches "Enter Task Details" / Name
             $table->text('description')->nullable();
             $table->date('start_date');
             $table->date('end_date')->nullable();
-            $table->string('time_estimate')->nullable(); // "TIME" from image
             $table->enum('priority', ['high', 'medium', 'low', 'free'])->default('medium');
             $table->string('category_tags')->nullable(); // "8. TAG" (Text based tags)
             $table->enum('status', ['todo', 'in_progress', 'review', 'done'])->default('todo');
