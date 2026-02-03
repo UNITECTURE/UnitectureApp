@@ -48,17 +48,17 @@ class TaskController extends Controller
 
         if ($user->isEmployee()) {
             $tasks = $user->tasks()
-                ->with(['project', 'assignees'])
+                ->with(['project', 'assignees', 'taggedUsers'])
                 ->latest()
                 ->get();
         } else {
             // Supervisors and Admins see all tasks
-            $tasks = Task::with(['project', 'assignees', 'creator'])
+            $tasks = Task::with(['project', 'assignees', 'taggedUsers', 'creator'])
                 ->latest()
                 ->get();
         }
 
-        // Format assignees' profile images
+        // Format assignees' and tagged users' profile images
         $tasks = $tasks->map(function ($task) {
             $task->assignees = $task->assignees->map(function ($assignee) {
                 if ($assignee->profile_image) {
@@ -71,6 +71,18 @@ class TaskController extends Controller
                     $assignee->profile_image_url = null;
                 }
                 return $assignee;
+            });
+            $task->taggedUsers = $task->taggedUsers->map(function ($tagged) {
+                if ($tagged->profile_image) {
+                    if (filter_var($tagged->profile_image, FILTER_VALIDATE_URL)) {
+                        $tagged->profile_image_url = $tagged->profile_image;
+                    } else {
+                        $tagged->profile_image_url = asset('storage/' . $tagged->profile_image);
+                    }
+                } else {
+                    $tagged->profile_image_url = null;
+                }
+                return $tagged;
             });
             return $task;
         });
@@ -120,11 +132,11 @@ class TaskController extends Controller
 
         // Get tasks assigned to the user
         $tasks = $user->tasks()
-            ->with(['project', 'assignees'])
+            ->with(['project', 'assignees', 'taggedUsers'])
             ->latest()
             ->get();
 
-        // Format assignees' profile images
+        // Format assignees' and tagged users' profile images
         $tasks = $tasks->map(function ($task) {
             $task->assignees = $task->assignees->map(function ($assignee) {
                 if ($assignee->profile_image) {
@@ -137,6 +149,18 @@ class TaskController extends Controller
                     $assignee->profile_image_url = null;
                 }
                 return $assignee;
+            });
+            $task->taggedUsers = $task->taggedUsers->map(function ($tagged) {
+                if ($tagged->profile_image) {
+                    if (filter_var($tagged->profile_image, FILTER_VALIDATE_URL)) {
+                        $tagged->profile_image_url = $tagged->profile_image;
+                    } else {
+                        $tagged->profile_image_url = asset('storage/' . $tagged->profile_image);
+                    }
+                } else {
+                    $tagged->profile_image_url = null;
+                }
+                return $tagged;
             });
             return $task;
         });
@@ -167,11 +191,11 @@ class TaskController extends Controller
         $tasks = Task::whereHas('assignees', function ($query) use ($teamIds) {
                 $query->whereIn('users.id', $teamIds);
             })
-            ->with(['project', 'assignees'])
+            ->with(['project', 'assignees', 'taggedUsers'])
             ->latest()
             ->get();
 
-        // Format assignees' profile images
+        // Format assignees' and tagged users' profile images
         $tasks = $tasks->map(function ($task) {
             $task->assignees = $task->assignees->map(function ($assignee) {
                 if ($assignee->profile_image) {
@@ -184,6 +208,18 @@ class TaskController extends Controller
                     $assignee->profile_image_url = null;
                 }
                 return $assignee;
+            });
+            $task->taggedUsers = $task->taggedUsers->map(function ($tagged) {
+                if ($tagged->profile_image) {
+                    if (filter_var($tagged->profile_image, FILTER_VALIDATE_URL)) {
+                        $tagged->profile_image_url = $tagged->profile_image;
+                    } else {
+                        $tagged->profile_image_url = asset('storage/' . $tagged->profile_image);
+                    }
+                } else {
+                    $tagged->profile_image_url = null;
+                }
+                return $tagged;
             });
             return $task;
         });
@@ -294,7 +330,6 @@ class TaskController extends Controller
             // 'end_date' field in DB is datetime. We accept separate date and time inputs.
             'end_date_input' => 'nullable|date|after_or_equal:start_date',
             'end_time_input' => 'nullable|date_format:H:i',
-            'time_estimate' => 'nullable|string|max:50',
             'priority' => 'required|in:high,medium,low,free',
             // Optional initial comment from the creator when creating the task
             'comments' => 'nullable|string|max:2000',
@@ -323,8 +358,6 @@ class TaskController extends Controller
         // Prepare data for saving
         $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged', 'comments']);
         $data['end_date'] = $endDate;
-        // Use description as title if title is not provided
-        $data['title'] = $request->input('title', substr($request->description, 0, 255));
 
         $task = new Task($data);
         if ($request->has('status')) {
@@ -388,7 +421,7 @@ class TaskController extends Controller
                     $lines = [];
                     $lines[] = '🔔 <b>You were tagged on a task</b>';
                     $lines[] = '';
-                    $lines[] = '<b>Task:</b> ' . e($task->title);
+                    $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
 
                     if ($project) {
                         $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
@@ -420,7 +453,7 @@ class TaskController extends Controller
                     $lines = [];
                     $lines[] = '🔔 <b>Task created & people tagged</b>';
                     $lines[] = '';
-                    $lines[] = '<b>Task:</b> ' . e($task->title);
+                    $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
 
                     if ($project) {
                         $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
@@ -508,7 +541,7 @@ class TaskController extends Controller
                         $lines = [];
                         $lines[] = '🔔 <b>Task status updated</b>';
                         $lines[] = '';
-                        $lines[] = '<b>Task:</b> ' . e($task->title);
+                        $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
 
                         if ($project) {
                             $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
@@ -574,7 +607,7 @@ class TaskController extends Controller
                         $lines = [];
                         $lines[] = '🔔 <b>Task stage updated</b>';
                         $lines[] = '';
-                        $lines[] = '<b>Task:</b> ' . e($task->title);
+                        $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
 
                         if ($project) {
                             $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
@@ -658,8 +691,90 @@ class TaskController extends Controller
     }
 
     /**
-     * List comments for a task.
+     * Update assignees and tagged users on a task.
+     * Only supervisors and admins are allowed.
      */
+    public function updatePeople(Request $request, Task $task)
+    {
+        $user = Auth::user();
+        if (!$user->isSupervisor() && !$user->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+        if (!$this->canViewTask($user, $task)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'assignees' => 'nullable|array',
+            'assignees.*' => 'exists:users,id',
+            'tagged' => 'nullable|array',
+            'tagged.*' => 'exists:users,id',
+        ]);
+
+        $assigneeIds = array_values(array_unique($request->input('assignees', [])));
+        $taggedIds = array_values(array_unique($request->input('tagged', [])));
+
+        $oldTaggedIds = $task->taggedUsers->pluck('id')->all();
+
+        $task->assignees()->sync(
+            collect($assigneeIds)->mapWithKeys(fn ($id) => [$id => ['type' => 'assignee']])->all()
+        );
+        $task->taggedUsers()->sync(
+            collect($taggedIds)->mapWithKeys(fn ($id) => [$id => ['type' => 'tagged']])->all()
+        );
+
+        $newTaggedIds = array_diff($taggedIds, $oldTaggedIds);
+        if (!empty($newTaggedIds)) {
+            try {
+                /** @var \App\Services\TelegramService $telegram */
+                $telegram = app(TelegramService::class);
+                $actor = Auth::user();
+                $project = $task->project()->first();
+                $taggedUsers = User::whereIn('id', $newTaggedIds)
+                    ->whereNotNull('telegram_chat_id')
+                    ->get();
+                foreach ($taggedUsers as $taggedUser) {
+                    $lines = [];
+                    $lines[] = '🔔 <b>You were tagged on a task</b>';
+                    $lines[] = '';
+                    $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
+                    if ($project) {
+                        $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
+                    }
+                    if ($task->end_date) {
+                        $lines[] = '<b>Due:</b> ' . \Carbon\Carbon::parse($task->end_date)->format('d M Y H:i');
+                    }
+                    if ($actor) {
+                        $lines[] = '<b>Tagged by:</b> ' . e($actor->name);
+                    }
+                    $lines[] = '';
+                    $lines[] = 'Open the Unitecture app to view full details.';
+                    $telegram->sendMessage($taggedUser->telegram_chat_id, implode("\n", $lines));
+                }
+            } catch (\Throwable $e) {
+                \Log::error('Failed to send Telegram tag notifications: ' . $e->getMessage());
+            }
+        }
+
+        $task->load(['assignees', 'taggedUsers']);
+        $assignees = $task->assignees->map(function ($a) {
+            $a->profile_image_url = $a->profile_image && !filter_var($a->profile_image, FILTER_VALIDATE_URL)
+                ? asset('storage/' . $a->profile_image) : ($a->profile_image ?? null);
+            return $a;
+        });
+        $taggedUsers = $task->taggedUsers->map(function ($t) {
+            $t->profile_image_url = $t->profile_image && !filter_var($t->profile_image, FILTER_VALIDATE_URL)
+                ? asset('storage/' . $t->profile_image) : ($t->profile_image ?? null);
+            return $t;
+        });
+
+        return response()->json([
+            'message' => 'People updated successfully.',
+            'assignees' => $assignees,
+            'tagged_users' => $taggedUsers,
+        ]);
+    }
+
     /**
      * List comments for a task.
      */

@@ -133,6 +133,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
     Route::patch('/tasks/{task}/stage', [App\Http\Controllers\TaskController::class, 'updateStage'])->name('tasks.updateStage');
     Route::patch('/tasks/{task}/due', [App\Http\Controllers\TaskController::class, 'updateDue'])->name('tasks.updateDue');
+    Route::patch('/tasks/{task}/people', [App\Http\Controllers\TaskController::class, 'updatePeople'])->name('tasks.updatePeople');
     Route::get('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'show'])->name('tasks.show');
     Route::get('/api/tasks/employees', [App\Http\Controllers\TaskController::class, 'getEmployees'])->name('tasks.employees');
     Route::get('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'comments'])->name('tasks.comments.index');

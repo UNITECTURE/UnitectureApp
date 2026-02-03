@@ -131,7 +131,7 @@
 
                             <!-- Title -->
                             <h3 class="text-base font-bold text-slate-800 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors"
-                                x-text="task.title">
+                                x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')">
                             </h3>
 
                             <!-- Description -->
@@ -214,7 +214,7 @@
                                               'bg-green-50 text-green-600': selectedTask.priority === 'low',
                                               'bg-slate-50 text-slate-600': selectedTask.priority === 'free'
                                           }" x-text="selectedTask.priority"></span>
-                                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="selectedTask.title"></h2>
+                                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')"></h2>
                                     <p class="text-xs sm:text-sm text-slate-500 font-medium truncate" x-text="selectedTask.project?.name"></p>
                                 </div>
                                 <button @click="selectedTask = null"
@@ -277,30 +277,108 @@
                                                         :disabled="selectedTask.priority === 'free'"
                                                         class="w-full sm:w-24 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400">
                                                 </div>
-                                                <button type="button"
-                                                    @click="saveDue(selectedTask.id)"
-                                                    class="inline-flex items-center px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                                                    :disabled="!editEndDate">
-                                                    Update Due
-                                                </button>
                                             </div>
                                         </template>
                                     </div>
                                 <div class="sm:col-span-2">
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assignees</h3>
-                                    <div class="flex flex-wrap gap-2">
-                                        <template x-for="assignee in selectedTask.assignees" :key="assignee.id">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <template x-for="assignee in editAssignees" :key="assignee.id">
                                             <div class="flex items-center gap-1.5 sm:gap-2 bg-indigo-50 px-2 py-1 rounded-lg">
                                                 <img :src="getProfileImageUrl(assignee)"
                                                     :alt="assignee.full_name || assignee.name"
                                                     class="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover">
                                                 <span class="text-xs font-bold text-indigo-800 truncate max-w-[120px] sm:max-w-none"
                                                     x-text="assignee.full_name || assignee.name"></span>
+                                                <template x-if="canEditDue">
+                                                    <button type="button" @click="removeEditAssignee(assignee.id)"
+                                                        class="text-slate-500 hover:text-red-600 -mr-0.5">×</button>
+                                                </template>
                                             </div>
+                                        </template>
+                                        <template x-if="canEditDue">
+                                            <button type="button" @click="openAddPeopleModal()"
+                                                class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 text-lg leading-none">+</button>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tagged</h3>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <template x-for="user in editTagged" :key="user.id">
+                                            <div class="flex items-center gap-1.5 sm:gap-2 bg-slate-100 px-2 py-1 rounded-lg">
+                                                <img :src="getProfileImageUrl(user)" :alt="user.full_name || user.name"
+                                                    class="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover">
+                                                <span class="text-xs font-bold text-slate-700 truncate max-w-[120px] sm:max-w-none"
+                                                    x-text="user.full_name || user.name"></span>
+                                                <template x-if="canEditDue">
+                                                    <button type="button" @click="removeEditTagged(user.id)"
+                                                        class="text-slate-500 hover:text-red-600 -mr-0.5">×</button>
+                                                </template>
+                                            </div>
+                                        </template>
+                                        <template x-if="canEditDue">
+                                            <button type="button" @click="openTagModal()"
+                                                class="w-8 h-8 rounded-full bg-slate-500 text-white flex items-center justify-center hover:bg-slate-600 text-lg leading-none">+</button>
                                         </template>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Add people modal -->
+                            <template x-if="canEditDue">
+                                <div x-show="showAddPeopleModal" x-transition
+                                    class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/50"
+                                    style="display: none;" @click.self="showAddPeopleModal = false">
+                                    <div class="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col" @click.stop>
+                                        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                                            <h3 class="text-base font-bold text-slate-800">Add people</h3>
+                                            <button type="button" @click="showAddPeopleModal = false" class="text-slate-400 hover:text-slate-600">×</button>
+                                        </div>
+                                        <div class="flex-1 overflow-y-auto p-3 space-y-2">
+                                            <template x-for="emp in availableEmployees" :key="emp.id">
+                                                <label class="flex items-center gap-3 p-2 rounded-lg cursor-pointer"
+                                                    :class="isEditAssignee(emp.id) ? 'bg-indigo-50' : 'hover:bg-slate-50'">
+                                                    <input type="checkbox" :checked="isEditAssignee(emp.id)" @change="toggleEditAssignee(emp)" class="rounded border-slate-300 text-indigo-600">
+                                                    <img :src="getProfileImageUrl(emp)" class="w-8 h-8 rounded-full object-cover" :alt="emp.full_name">
+                                                    <span class="text-sm font-medium text-slate-700" x-text="emp.full_name"></span>
+                                                </label>
+                                            </template>
+                                        </div>
+                                        <div class="px-4 py-3 border-t border-slate-200 flex justify-end">
+                                            <button type="button" @click="showAddPeopleModal = false"
+                                                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Done</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <!-- Tag people modal -->
+                            <template x-if="canEditDue">
+                                <div x-show="showTagModal" x-transition
+                                    class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/50"
+                                    style="display: none;" @click.self="showTagModal = false">
+                                    <div class="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col" @click.stop>
+                                        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                                            <h3 class="text-base font-bold text-slate-800">Tag people</h3>
+                                            <button type="button" @click="showTagModal = false" class="text-slate-400 hover:text-slate-600">×</button>
+                                        </div>
+                                        <div class="flex-1 overflow-y-auto p-3 space-y-2">
+                                            <template x-for="emp in availableEmployees" :key="emp.id">
+                                                <label class="flex items-center gap-3 p-2 rounded-lg cursor-pointer"
+                                                    :class="isEditTagged(emp.id) ? 'bg-slate-100' : 'hover:bg-slate-50'">
+                                                    <input type="checkbox" :checked="isEditTagged(emp.id)" @change="toggleEditTagged(emp)" class="rounded border-slate-300 text-indigo-600">
+                                                    <img :src="getProfileImageUrl(emp)" class="w-8 h-8 rounded-full object-cover" :alt="emp.full_name">
+                                                    <span class="text-sm font-medium text-slate-700" x-text="emp.full_name"></span>
+                                                </label>
+                                            </template>
+                                        </div>
+                                        <div class="px-4 py-3 border-t border-slate-200 flex justify-end">
+                                            <button type="button" @click="showTagModal = false"
+                                                class="px-4 py-2 text-sm font-medium text-white bg-slate-600 rounded-lg hover:bg-slate-700">Done</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
 
                             <!-- Comments -->
                             <div class="px-4 sm:px-6 pb-4 sm:pb-6 space-y-3 border-t border-slate-100">
@@ -340,28 +418,26 @@
                                     </template>
                                 </div>
 
-                                <form @submit.prevent="submitComment(selectedTask.id)" class="space-y-2">
+                                <form @submit.prevent="saveAndClose()" class="space-y-2">
                                     <textarea x-model="newComment"
                                         class="w-full text-xs rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 px-3 py-2"
                                         rows="2"
                                         placeholder="Add a comment..."></textarea>
-                                    <div class="flex justify-end gap-2">
+                                    <div class="flex justify-end">
                                         <button type="button" @click="newComment = ''"
                                             class="text-[11px] font-medium text-slate-500 hover:text-slate-700">
                                             Clear
-                                        </button>
-                                        <button type="submit"
-                                            class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                                            :disabled="!newComment.trim()">
-                                            Post
                                         </button>
                                     </div>
                                 </form>
                             </div>
 
                             <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex justify-end rounded-b-xl sm:rounded-b-2xl">
-                                <button @click="selectedTask = null"
-                                    class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all">Done</button>
+                                <button type="button" @click="saveAndClose()"
+                                    class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    :disabled="saving">
+                                    Save & close
+                                </button>
                             </div>
                         </div>
                     </template>
@@ -392,6 +468,94 @@
                 commentsLoading: false,
                 newComment: '',
                 isPostingComment: false,
+                saving: false,
+                editAssignees: [],
+                editTagged: [],
+                initialAssigneeIds: [],
+                initialTaggedIds: [],
+                availableEmployees: [],
+                showAddPeopleModal: false,
+                showTagModal: false,
+
+                async saveAndClose() {
+                    const taskId = this.selectedTask?.id;
+                    if (!taskId) return;
+                    this.saving = true;
+                    try {
+                        if (this.canEditDue && this.editEndDate) await this.saveDue(taskId);
+                        if (this.newComment.trim()) await this.submitComment(taskId);
+                        if (this.canEditDue && this.peopleChanged()) await this.savePeople(taskId);
+                        this.selectedTask = null;
+                    } finally {
+                        this.saving = false;
+                    }
+                },
+
+                peopleChanged() {
+                    const a = this.editAssignees.map(e => e.id).sort().join(',');
+                    const b = this.initialAssigneeIds.slice().sort().join(',');
+                    const c = this.editTagged.map(e => e.id).sort().join(',');
+                    const d = this.initialTaggedIds.slice().sort().join(',');
+                    return a !== b || c !== d;
+                },
+                async savePeople(taskId) {
+                    try {
+                        const response = await fetch(`/tasks/${taskId}/people`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                assignees: this.editAssignees.map(e => e.id),
+                                tagged: this.editTagged.map(e => e.id)
+                            })
+                        });
+                        if (!response.ok) throw new Error();
+                        const data = await response.json();
+                        const task = this.tasks.find(t => t.id === taskId);
+                        if (task) {
+                            task.assignees = data.assignees || task.assignees;
+                            task.taggedUsers = data.tagged_users || task.taggedUsers;
+                        }
+                        if (this.selectedTask && this.selectedTask.id === taskId) {
+                            this.selectedTask.assignees = data.assignees || this.selectedTask.assignees;
+                            this.selectedTask.taggedUsers = data.tagged_users || this.selectedTask.taggedUsers;
+                        }
+                    } catch (e) {
+                        console.error('Failed to update people', e);
+                    }
+                },
+                openAddPeopleModal() {
+                    this.showAddPeopleModal = true;
+                    if (this.availableEmployees.length === 0) this.loadEmployeesForModal();
+                },
+                openTagModal() {
+                    this.showTagModal = true;
+                    if (this.availableEmployees.length === 0) this.loadEmployeesForModal();
+                },
+                async loadEmployeesForModal() {
+                    try {
+                        const response = await fetch('{{ route("tasks.employees") }}');
+                        const data = await response.json();
+                        this.availableEmployees = data;
+                    } catch (e) {
+                        console.error('Failed to load employees', e);
+                    }
+                },
+                isEditAssignee(employeeId) { return this.editAssignees.some(e => e.id === employeeId); },
+                toggleEditAssignee(emp) {
+                    if (this.isEditAssignee(emp.id)) this.editAssignees = this.editAssignees.filter(e => e.id !== emp.id);
+                    else this.editAssignees = [...this.editAssignees, emp];
+                },
+                removeEditAssignee(employeeId) { this.editAssignees = this.editAssignees.filter(e => e.id !== employeeId); },
+                isEditTagged(employeeId) { return this.editTagged.some(e => e.id === employeeId); },
+                toggleEditTagged(emp) {
+                    if (this.isEditTagged(emp.id)) this.editTagged = this.editTagged.filter(e => e.id !== emp.id);
+                    else this.editTagged = [...this.editTagged, emp];
+                },
+                removeEditTagged(employeeId) { this.editTagged = this.editTagged.filter(e => e.id !== employeeId); },
 
                 toggleEmployeeFilter(employeeId) {
                     const idx = this.filterEmployeeIds.indexOf(employeeId);
@@ -430,7 +594,7 @@
                     if (this.search) {
                         const q = this.search.toLowerCase();
                         filtered = filtered.filter(t =>
-                            (t.title && t.title.toLowerCase().includes(q)) ||
+                            (t.description && t.description.toLowerCase().includes(q)) ||
                             (t.description && t.description.toLowerCase().includes(q)) ||
                             (t.project && t.project.name && t.project.name.toLowerCase().includes(q))
                         );
@@ -605,8 +769,11 @@
 
                 openModal(task) {
                     this.selectedTask = task;
+                    this.editAssignees = (task.assignees || []).map(a => ({ ...a }));
+                    this.editTagged = (task.taggedUsers || []).map(t => ({ ...t }));
+                    this.initialAssigneeIds = (task.assignees || []).map(a => a.id);
+                    this.initialTaggedIds = (task.taggedUsers || []).map(t => t.id);
 
-                    // Initialize editable due date/time from task end_date
                     if (task.end_date) {
                         const d = new Date(task.end_date);
                         if (!isNaN(d.getTime())) {
