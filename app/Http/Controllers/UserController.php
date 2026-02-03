@@ -86,6 +86,32 @@ class UserController extends Controller
     }
 
     /**
+     * Show user management page (Admin only)
+     */
+    public function manageUsers()
+    {
+        $users = User::with('role')->orderBy('created_at', 'desc')->get();
+        return view('users.manage', compact('users'));
+    }
+
+    /**
+     * Delete a user (Admin only)
+     */
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Prevent deleting yourself
+        if ($user->id === \Illuminate\Support\Facades\Auth::id()) {
+            return redirect()->route('users.manage')->with('error', 'You cannot delete your own account.');
+        }
+        
+        $user->delete();
+        
+        return redirect()->route('users.manage')->with('success', 'User deleted successfully.');
+    }
+
+    /**
      * Calculate leave balance based on joining date
      * Counts only complete calendar months after 3-month probation
      * Accrues 1.25 days per month
