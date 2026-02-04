@@ -2,4 +2,7 @@ deployment:
   tasks:
     - cd /home/dhairyasheel123/public_html/hrms
     - composer install --no-dev --optimize-autoloader --no-interaction
-    - php artisan optimize:clear
+    - php artisan view:clear
+    - php artisan route:clear
+    - php artisan config:clear
+    - php artisan cache:clear
