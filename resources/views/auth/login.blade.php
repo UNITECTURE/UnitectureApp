@@ -16,7 +16,7 @@
         <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
             <div class="mb-6 text-center">
                 <h1 class="text-3xl font-bold text-gray-900">Unitecture</h1>
-                <p class="text-gray-600 mt-2">Welcome back Raj! Please login to your account.</p>
+                <p class="text-blue-600 mt-2">Welcome back Rajwardhan! Please login to your account.</p>
             </div>
 
             <form method="POST" action="{{ route('login') }}">
