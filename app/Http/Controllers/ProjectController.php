@@ -50,7 +50,7 @@ class ProjectController extends Controller
     public function create()
     {
         // Ensure user is supervisor
-        if (!Auth::user()->isSupervisor()) {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -62,7 +62,7 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->isSupervisor()) {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized action.');
         }
 

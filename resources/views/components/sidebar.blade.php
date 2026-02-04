@@ -74,7 +74,8 @@
             </a>
 
             {{-- Tasks --}}
-            @if($role !== 'admin')
+            {{-- Removed role check: Now visible to Everyone (Super Admin, Supervisor, Employee) --}}
+
             <div x-data="{ 
                 open: localStorage.getItem('sidebar_tasks_open') === 'true', 
                 init() { this.$watch('open', val => localStorage.setItem('sidebar_tasks_open', val)) } 
@@ -109,7 +110,7 @@
                         class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
                         {{ 'All Tasks' }}
                     </a>
-                    
+
                     <a href="{{ route('tasks.assigned') }}"
                         class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.assigned') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -120,19 +121,20 @@
                     </a>
 
                     @if($role === 'supervisor')
-                    <a href="{{ route('tasks.team') }}"
-                        class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.team') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
-                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
-                        {{ 'My Team Tasks' }}
-                    </a>
+                        <a href="{{ route('tasks.team') }}"
+                            class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.team') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                </path>
+                            </svg>
+                            {{ 'My Team Tasks' }}
+                        </a>
                     @endif
-                    
+
                 </div>
             </div>
-            @endif
+            {{-- End Tasks --}}
 
             {{-- Attendance & Leave --}}
             <div x-data="{ 
@@ -193,14 +195,16 @@
                         <div x-show="subOpen" x-transition class="mt-1 ml-4 space-y-1 border-l border-slate-700"
                             style="display: none;">
                             @if($role === 'admin')
-                                @if(Auth::user()->role_id !== 3)
-                                    <a href="{{ route('admin.attendance.self') }}"
-                                        class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('admin.attendance.self') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'Self Attendance' }}</a>
-                                @endif
+                                <a href="{{ route('admin.attendance.self') }}"
+                                    class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('admin.attendance.self') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'My Attendance' }}</a>
+
                                 <a href="{{ route('admin.attendance.all') }}"
                                     class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('admin.attendance.all') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'All Attendance' }}</a>
-                                <a href="{{ route('attendance.manual') }}"
-                                    class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('attendance.manual') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'Manual Request' }}</a>
+
+                                @if(Auth::user()->role_id !== 3)
+                                    <a href="{{ route('attendance.manual') }}"
+                                        class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('attendance.manual') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'Manual Request' }}</a>
+                                @endif
                             @elseif($role === 'supervisor')
                                 <a href="{{ route('supervisor.attendance.self') }}"
                                     class="block pl-4 py-1 text-sm transition-colors truncate {{ request()->routeIs('supervisor.attendance.self') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px] hover:text-blue-300' : 'text-slate-400 hover:text-white' }}">{{ 'My Attendance' }}</a>
@@ -222,9 +226,9 @@
             {{-- Approvals --}}
             @if($role === 'admin' || $role === 'supervisor')
                 <div x-data="{ 
-                        open: localStorage.getItem('sidebar_approvals_open') === 'true', 
-                        init() { this.$watch('open', val => localStorage.setItem('sidebar_approvals_open', val)) } 
-                    }" class="space-y-1">
+                                open: localStorage.getItem('sidebar_approvals_open') === 'true', 
+                                init() { this.$watch('open', val => localStorage.setItem('sidebar_approvals_open', val)) } 
+                            }" class="space-y-1">
                     <div @click="sidebarOpen ? (open = !open) : (sidebarOpen = true)"
                         class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
                         :class="!sidebarOpen ? 'justify-center' : ''">
@@ -276,9 +280,9 @@
                         @endif
                         <a href="{{ route('leaves.approvals') }}"
                             class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'Leave' }}</a>
-                        
+
                         @if($role === 'admin')
-                             <a href="{{ route('admin.attendance.exception') }}"
+                            <a href="{{ route('admin.attendance.exception') }}"
                                 class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('admin.attendance.exception') ? 'text-white bg-slate-800' : 'text-slate-400' }}">{{ 'Exception' }}</a>
                         @endif
                     </div>
@@ -286,22 +290,22 @@
             @endif
 
             @if($role === 'supervisor')
-            <a href="{{ route('team.index') }}"
-                class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative {{ request()->routeIs('team.index') ? 'bg-slate-800 text-white' : '' }}"
-                :class="!sidebarOpen ? 'justify-center' : ''">
-                <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
-                    :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                    </path>
-                </svg>
-                <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'My Team' }}</span>
+                <a href="{{ route('team.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative {{ request()->routeIs('team.index') ? 'bg-slate-800 text-white' : '' }}"
+                    :class="!sidebarOpen ? 'justify-center' : ''">
+                    <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
+                        :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
+                    </svg>
+                    <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'My Team' }}</span>
 
-                {{-- Tooltip for collapsed state --}}
-                <div x-show="!sidebarOpen"
-                    class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
-                    My Team</div>
-            </a>
+                    {{-- Tooltip for collapsed state --}}
+                    <div x-show="!sidebarOpen"
+                        class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
+                        My Team</div>
+                </a>
             @endif
 
             {{-- Settings --}}
@@ -321,7 +325,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                        <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Settings' }}</span>
+                        <span x-show="sidebarOpen" x-transition
+                            class="truncate whitespace-nowrap">{{ 'Settings' }}</span>
                     </div>
                     <svg x-show="sidebarOpen"
                         class="w-4 h-4 text-slate-500 transition-transform duration-200 ml-auto flex-shrink-0"
@@ -351,8 +356,8 @@
                             class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'General Settings' }}</a>
                     @endif
                 </div>
-    </div>
-    </nav>
+            </div>
+        </nav>
     </div>
 
     {{-- User Profile --}}
@@ -387,6 +392,7 @@
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
+
     .sidebar-nav-scroll::-webkit-scrollbar {
         display: none;
     }
