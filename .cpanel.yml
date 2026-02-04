@@ -1,15 +1,5 @@
 deployment:
   tasks:
-    - export APP_DIR=/home/dhairyasheel123/public_html/hrms
-    - cd $APP_DIR
-
-    # Install PHP dependencies only
+    - cd /home/dhairyasheel123/public_html/hrms
     - composer install --no-dev --optimize-autoloader --no-interaction
-
-    # Clear Laravel caches
     - php artisan optimize:clear
-
-    # Permissions
-    - chmod -R 755 storage bootstrap/cache
-
-    - echo "Deployment completed"
