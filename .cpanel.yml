@@ -1,6 +1,57 @@
 ---
+# Laravel Deployment Configuration for cPanel
+# Repository is deployed to public_html/hrms
+# Subdomain points to public_html/hrms/public
+
 deployment:
   tasks:
-    - export DEPLOY_DIR=/home/username/public_html
-    - echo "Deploying to $DEPLOY_DIR"
-    - rsync -av --exclude='.git*' ./ $DEPLOY_DIR/
+    # Set deployment paths
+    - export CPANEL_USER=dhairyasheel123
+    - export APP_DIR=/home/$CPANEL_USER/public_html/hrms
+    - export DEPLOY_DIR=$APP_DIR
+    
+    # Create necessary directories if they don't exist
+    - mkdir -p $APP_DIR/storage/framework/sessions
+    - mkdir -p $APP_DIR/storage/framework/views
+    - mkdir -p $APP_DIR/storage/framework/cache
+    - mkdir -p $APP_DIR/storage/logs
+    - mkdir -p $APP_DIR/bootstrap/cache
+    
+    # Deploy files excluding sensitive/unnecessary directories
+    - rsync -av --delete \
+        --exclude='.git' \
+        --exclude='.gitignore' \
+        --exclude='.env' \
+        --exclude='.env.*' \
+        --exclude='node_modules' \
+        --exclude='vendor' \
+        --exclude='storage/logs/*' \
+        --exclude='storage/framework/cache/*' \
+        --exclude='storage/framework/sessions/*' \
+        --exclude='storage/framework/views/*' \
+        --exclude='bootstrap/cache/*' \
+        --exclude='.idea' \
+        --exclude='.vscode' \
+        --exclude='tests' \
+        --exclude='*.zip' \
+        ./ $APP_DIR/
+    
+    # Install PHP dependencies
+    - cd $APP_DIR && composer install --no-dev --optimize-autoloader --no-interaction
+    
+    # Install Node dependencies and build assets
+    - cd $APP_DIR && npm ci --production
+    - cd $APP_DIR && npm run build
+    
+    # Set proper permissions for Laravel
+    - chmod -R 755 $APP_DIR/storage
+    - chmod -R 755 $APP_DIR/bootstrap/cache
+    - chmod -R 755 $APP_DIR/public
+    
+    # Run Laravel optimizations (optional, uncomment if needed)
+    # - cd $APP_DIR && php artisan config:cache
+    # - cd $APP_DIR && php artisan route:cache
+    # - cd $APP_DIR && php artisan view:cache
+    
+    # Display deployment completion message
+    - echo "Deployment completed successfully to $APP_DIR"
