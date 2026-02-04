@@ -133,7 +133,7 @@ class ProcessAttendance extends Command
                     $firstPunch = Carbon::parse($logs->first()->punch_time);
                     $lastPunch = Carbon::parse($logs->last()->punch_time);
 
-                    $biometricDurationMinutes = abs($lastPunch->diffInMinutes($firstPunch));
+                    $biometricDurationMinutes = $lastPunch->diffInMinutes($firstPunch);
                 }
             }
         }
