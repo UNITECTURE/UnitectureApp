@@ -349,6 +349,10 @@
                     @if($role === 'admin')
                         <a href="{{ route('settings.index') }}"
                             class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('settings.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'General Settings' }}</a>
+                        <a href="{{ route('teams.index') }}"
+                            class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('teams.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Teams' }}</a>
+                        <a href="{{ route('users.manage') }}"
+                            class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('users.manage') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Manage Users' }}</a>
                         <a href="{{ route('users.create') }}"
                             class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('users.create') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Add New User' }}</a>
                     @else

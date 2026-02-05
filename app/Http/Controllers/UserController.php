@@ -24,12 +24,17 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
             'reporting_to' => 'nullable|exists:users,id',
+            'secondary_supervisor_id' => 'nullable|exists:users,id',
             'joining_date' => 'required|date',
             'status' => 'required|in:active,inactive',
             'telegram_chat_id' => 'nullable|string|max:50',
             'biometric_id' => 'nullable|string|max:20|unique:users,biometric_id',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        // Employees must have a primary supervisor
+        if ((int) $request->role_id === 0 && empty($request->reporting_to)) {
+            return back()->withErrors(['reporting_to' => 'Employees must have a primary supervisor.'])->withInput();
+        }
 
         $imageUrl = null;
         if ($request->hasFile('profile_image')) {
@@ -64,6 +69,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'role_id' => $request->role_id,
             'reporting_to' => $request->reporting_to,
+            'secondary_supervisor_id' => $request->secondary_supervisor_id,
             'joining_date' => $request->joining_date,
             'status' => $request->status,
             'telegram_chat_id' => $request->telegram_chat_id,
@@ -77,10 +83,11 @@ class UserController extends Controller
     public function team()
     {
         $user = \Illuminate\Support\Facades\Auth::user();
-        // Fetch users reporting to the current user
+        // Primary + secondary subordinates (both can be assigned tasks)
         $team = User::where('reporting_to', $user->id)
-                    ->with('role') 
-                    ->get();
+            ->orWhere('secondary_supervisor_id', $user->id)
+            ->with(['role', 'primarySupervisor', 'secondarySupervisor'])
+            ->get();
         
         return view('team.index', compact('team'));
     }
@@ -90,8 +97,60 @@ class UserController extends Controller
      */
     public function manageUsers()
     {
-        $users = User::with('role')->orderBy('created_at', 'desc')->get();
+        if (!\Illuminate\Support\Facades\Auth::user()->isAdmin()) {
+            abort(403, 'Only admins can manage users.');
+        }
+        $users = User::with(['role', 'primarySupervisor', 'secondarySupervisor'])->orderBy('created_at', 'desc')->get();
         return view('users.manage', compact('users'));
+    }
+
+    /**
+     * Show all teams: each supervisor with their members (Admin only).
+     */
+    public function teamsIndex()
+    {
+        if (!\Illuminate\Support\Facades\Auth::user()->isAdmin()) {
+            abort(403, 'Only admins can view teams.');
+        }
+        $supervisors = User::where('role_id', 1) // supervisor role
+            ->with([
+                'subordinates' => fn ($q) => $q->with(['role', 'secondarySupervisor']),
+                'secondarySubordinates' => fn ($q) => $q->with(['role', 'primarySupervisor']),
+            ])
+            ->orderBy('full_name')
+            ->get();
+        $supervisorsList = User::whereIn('role_id', [1, 2])->orderBy('full_name')->get(); // for secondary dropdown
+        return view('teams.index', compact('supervisors', 'supervisorsList'));
+    }
+
+    /**
+     * Assign or update secondary supervisor for an employee (Admin only).
+     */
+    public function updateSecondarySupervisor(Request $request, User $user)
+    {
+        if (!\Illuminate\Support\Facades\Auth::user()->isAdmin()) {
+            abort(403, 'Only admins can assign secondary supervisor.');
+        }
+        $request->validate([
+            'secondary_supervisor_id' => 'nullable|exists:users,id',
+        ]);
+        $user->secondary_supervisor_id = $request->secondary_supervisor_id ?: null;
+        $user->save();
+        return redirect()->route('teams.index')->with('success', 'Secondary supervisor updated for ' . $user->full_name . '.');
+    }
+
+    /**
+     * Remove employee from team: clear primary and secondary supervisor (Admin only).
+     */
+    public function removeFromTeam(User $user)
+    {
+        if (!\Illuminate\Support\Facades\Auth::user()->isAdmin()) {
+            abort(403, 'Only admins can remove members from teams.');
+        }
+        $user->reporting_to = null;
+        $user->secondary_supervisor_id = null;
+        $user->save();
+        return redirect()->route('teams.index')->with('success', $user->full_name . ' has been removed from their team(s).');
     }
 
     /**

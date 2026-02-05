@@ -105,6 +105,7 @@ class TaskController extends Controller
             $employees = User::select('id', 'full_name', 'email', 'profile_image')
                 ->where('id', $user->id)
                 ->orWhere('reporting_to', $user->id)
+                ->orWhere('secondary_supervisor_id', $user->id)
                 ->orderBy('full_name')
                 ->get();
         }
@@ -184,8 +185,10 @@ class TaskController extends Controller
 
         $user = Auth::user();
         
-        // Get team member IDs (subordinates)
-        $teamIds = User::where('reporting_to', $user->id)->pluck('id');
+        // Get team member IDs (primary + secondary subordinates)
+        $teamIds = User::where('reporting_to', $user->id)
+            ->orWhere('secondary_supervisor_id', $user->id)
+            ->pluck('id');
         
         // Get tasks assigned to team members
         $tasks = Task::whereHas('assignees', function ($query) use ($teamIds) {
@@ -247,11 +250,13 @@ class TaskController extends Controller
 
         $currentUser = Auth::user();
         if ($currentUser->isAdmin()) {
+            // Admin and Super Admin can assign tasks to all users, including supervisors
             $users = User::orderBy('full_name')->get();
         } else {
-            // Supervisor: Show themselves + their subordinates
+            // Supervisor: themselves + primary subordinates + secondary subordinates
             $users = User::where('id', $currentUser->id)
                 ->orWhere('reporting_to', $currentUser->id)
+                ->orWhere('secondary_supervisor_id', $currentUser->id)
                 ->orderBy('full_name')
                 ->get();
         }
@@ -270,14 +275,16 @@ class TaskController extends Controller
 
         $currentUser = Auth::user();
         if ($currentUser->isAdmin()) {
+            // Admin and Super Admin can assign tasks to all users, including supervisors
             $users = User::select('id', 'full_name', 'email', 'profile_image')
                 ->orderBy('full_name')
                 ->get();
         } else {
-            // Supervisor: Show themselves + their subordinates
+            // Supervisor: themselves + primary + secondary subordinates
             $users = User::select('id', 'full_name', 'email', 'profile_image')
                 ->where('id', $currentUser->id)
                 ->orWhere('reporting_to', $currentUser->id)
+                ->orWhere('secondary_supervisor_id', $currentUser->id)
                 ->orderBy('full_name')
                 ->get();
         }

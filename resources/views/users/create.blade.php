@@ -157,18 +157,32 @@
                                     </select>
                                 </div>
 
-                                <!-- Reporting To -->
+                                <!-- Primary Supervisor (required for employees) -->
                                 <div class="space-y-2">
-                                    <label for="reporting_to" class="text-sm font-semibold text-slate-700">Reporting To
-                                        (Manager)</label>
+                                    <label for="reporting_to" class="text-sm font-semibold text-slate-700">Primary Supervisor</label>
                                     <select name="reporting_to" id="reporting_to"
                                         class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
-                                        <option value="">No Manager</option>
+                                        <option value="">No primary supervisor</option>
                                         @foreach($managers as $manager)
                                             <option value="{{ $manager->id }}">{{ $manager->name }}
                                                 ({{ ucfirst($manager->role->name) }})</option>
                                         @endforeach
                                     </select>
+                                    <p class="text-xs text-slate-500">Required for employees. Optional for supervisors/admins.</p>
+                                </div>
+
+                                <!-- Secondary Supervisor (optional, for employees only) -->
+                                <div class="space-y-2" id="secondary_supervisor_wrap">
+                                    <label for="secondary_supervisor_id" class="text-sm font-semibold text-slate-700">Secondary Supervisor</label>
+                                    <select name="secondary_supervisor_id" id="secondary_supervisor_id"
+                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
+                                        <option value="">None</option>
+                                        @foreach($managers as $manager)
+                                            <option value="{{ $manager->id }}">{{ $manager->name }}
+                                                ({{ ucfirst($manager->role->name) }})</option>
+                                        @endforeach
+                                    </select>
+                                    <p class="text-xs text-slate-500">Optional. Both supervisors can assign tasks to this employee.</p>
                                 </div>
 
                                 <!-- Joining Date -->
