@@ -250,6 +250,7 @@ class TaskController extends Controller
 
         $currentUser = Auth::user();
         if ($currentUser->isAdmin()) {
+            // Admin and Super Admin can assign tasks to all users, including supervisors
             $users = User::orderBy('full_name')->get();
         } else {
             // Supervisor: themselves + primary subordinates + secondary subordinates
@@ -274,6 +275,7 @@ class TaskController extends Controller
 
         $currentUser = Auth::user();
         if ($currentUser->isAdmin()) {
+            // Admin and Super Admin can assign tasks to all users, including supervisors
             $users = User::select('id', 'full_name', 'email', 'profile_image')
                 ->orderBy('full_name')
                 ->get();
