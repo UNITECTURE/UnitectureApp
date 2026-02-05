@@ -73,8 +73,7 @@
                     Calendar</div>
             </a>
 
-            {{-- Tasks --}}
-            @if($role !== 'admin')
+            {{-- Tasks (Admin, Super Admin, Supervisor, and Employee can all access) --}}
             <div x-data="{ 
                 open: localStorage.getItem('sidebar_tasks_open') === 'true', 
                 init() { this.$watch('open', val => localStorage.setItem('sidebar_tasks_open', val)) } 
@@ -132,7 +131,6 @@
                     
                 </div>
             </div>
-            @endif
 
             {{-- Attendance & Leave --}}
             <div x-data="{ 
