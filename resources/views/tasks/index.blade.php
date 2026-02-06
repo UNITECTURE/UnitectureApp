@@ -251,7 +251,7 @@
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Stage</h3>
                                         <select @change="updateStage(selectedTask.id, $event.target.value)"
                                             class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                            <template x-for="stage in stages" :key="stage">
+                                            <template x-for="stage in stageOptions" :key="stage">
                                                 <option :value="stage" :selected="selectedTask.stage === stage"
                                                     x-text="formatStage(stage)"></option>
                                             </template>
@@ -498,6 +498,17 @@
                     return this.statuses.filter(status => allowedForEmployees.includes(status));
                 },
 
+                get stageOptions() {
+                    // Supervisors/Admins can see all stages
+                    if (this.canEditDue) {
+                        return this.stages;
+                    }
+
+                    // Employees can only toggle between these stages; 'overdue' is automatic
+                    const allowedStagesForEmployees = ['pending', 'in_progress', 'completed'];
+                    return this.stages.filter(stage => allowedStagesForEmployees.includes(stage));
+                },
+
                 async saveAndClose() {
                     const taskId = this.selectedTask?.id;
                     if (!taskId) return;
@@ -550,6 +561,7 @@
                 },
                 getStatusBadgeColor(status) {
                     const colors = {
+                        'not_started': 'bg-slate-100 text-slate-700',
                         'wip': 'bg-blue-100 text-blue-700',
                         'correction': 'bg-amber-100 text-amber-700',
                         'completed': 'bg-green-100 text-green-700',

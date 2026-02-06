@@ -9,7 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('secondary_supervisor_id')->nullable()->after('reporting_to')->constrained('users')->onDelete('set null');
+            if (!Schema::hasColumn('users', 'secondary_supervisor_id')) {
+                $table->foreignId('secondary_supervisor_id')->nullable()->after('reporting_to')->constrained('users')->onDelete('set null');
+            }
         });
     }
 
