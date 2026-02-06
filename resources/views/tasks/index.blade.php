@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }})">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -139,39 +139,49 @@
                                 x-text="(task.description || '').substring(0, 120) + ((task.description || '').length > 120 ? '...' : '')">
                             </p>
 
-                            <!-- Footer -->
-                            <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-2">
-                                <div class="flex -space-x-2 shrink-0">
-                                    <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
-                                        <img :src="getProfileImageUrl(assignee)"
-                                            :alt="assignee.full_name || assignee.name"
-                                            :title="assignee.full_name || assignee.name"
-                                            class="w-7 h-7 rounded-full border-2 border-white object-cover shadow-sm">
-                                    </template>
-                                    <template x-if="task.assignees.length > 3">
-                                        <div class="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
-                                            :title="'+' + (task.assignees.length - 3) + ' more'"
-                                            x-text="'+' + (task.assignees.length - 3)">
-                                        </div>
-                                    </template>
+                            <!-- Stage + Status row -->
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-xs font-medium text-slate-500">
+                                    <span>Stage: </span>
+                                    <span class="font-semibold text-slate-700" x-text="formatStage(task.stage)"></span>
                                 </div>
-                                <div class="flex flex-col gap-0.5 text-xs font-medium text-slate-400 min-w-0 text-right">
-                                    <span class="truncate">Due: <span x-text="formatDate(task.end_date)"></span></span>
-                                    <span class="truncate">End: <span x-text="formatTime(task.end_date)"></span></span>
-                                </div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                                    :class="getStatusBadgeColor(task.status)"
+                                    x-text="formatStatus(task.status)">
+                                </span>
                             </div>
 
-                            <!-- Status Badge -->
-                            <div class="mt-3">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold"
-                                    :class="{
-                                        'bg-yellow-100 text-yellow-700': task.stage === 'pending',
-                                        'bg-blue-100 text-blue-700': task.stage === 'in_progress',
-                                        'bg-green-100 text-green-700': task.stage === 'completed',
-                                        'bg-red-100 text-red-700': task.stage === 'overdue'
-                                    }"
-                                    x-text="formatStage(task.stage)">
-                                </span>
+                            <!-- Footer: assignees + due date (left), time left (right) -->
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-3">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="flex -space-x-2 shrink-0">
+                                        <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
+                                            <img :src="getProfileImageUrl(assignee)"
+                                                :alt="assignee.full_name || assignee.name"
+                                                :title="assignee.full_name || assignee.name"
+                                                class="w-7 h-7 rounded-full border-2 border-white object-cover shadow-sm">
+                                        </template>
+                                        <template x-if="task.assignees.length > 3">
+                                            <div class="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
+                                                :title="'+' + (task.assignees.length - 3) + ' more'"
+                                                x-text="'+' + (task.assignees.length - 3)">
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="text-xs font-medium text-slate-500 truncate">
+                                        <span>Due </span>
+                                        <span x-text="formatDate(task.end_date)"></span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-1.5 text-xs font-semibold shrink-0"
+                                    :class="dueInClass(task)">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span x-text="dueIn(task)"></span>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -231,7 +241,7 @@
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</h3>
                                         <select @change="updateStatus(selectedTask.id, $event.target.value)"
                                             class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                            <template x-for="status in statuses" :key="status">
+                                            <template x-for="status in statusOptions" :key="status">
                                                 <option :value="status" :selected="selectedTask.status === status"
                                                     x-text="formatStatus(status)"></option>
                                             </template>
@@ -424,7 +434,14 @@
                                 </form>
                             </div>
 
-                            <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex justify-end rounded-b-xl sm:rounded-b-2xl">
+                            <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-b-xl sm:rounded-b-2xl">
+                                <button
+                                    x-show="canEditDue && selectedTask && selectedTask.created_by === currentUserId"
+                                    type="button"
+                                    @click="deleteTask(selectedTask.id)"
+                                    class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
+                                    Delete task
+                                </button>
                                 <button type="button" @click="saveAndClose()"
                                     class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     :disabled="saving">
@@ -441,7 +458,7 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter) => ({
+            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter, currentUserId) => ({
                 tasks: initialTasks,
                 statuses: allStatuses,
                 stages: allStages,
@@ -468,6 +485,18 @@
                 availableEmployees: [],
                 showAddPeopleModal: false,
                 showTagModal: false,
+                currentUserId: currentUserId,
+
+                get statusOptions() {
+                    // Supervisors/Admins (who can edit due dates) see all statuses
+                    if (this.canEditDue) {
+                        return this.statuses;
+                    }
+
+                    // Employees are limited to these statuses
+                    const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
+                    return this.statuses.filter(status => allowedForEmployees.includes(status));
+                },
 
                 async saveAndClose() {
                     const taskId = this.selectedTask?.id;
@@ -481,6 +510,56 @@
                     } finally {
                         this.saving = false;
                     }
+                },
+
+                recomputeCounts() {
+                    this.counts = {
+                        all: this.tasks.length,
+                        pending: this.tasks.filter(t => t.stage === 'pending').length,
+                        in_progress: this.tasks.filter(t => t.stage === 'in_progress').length,
+                        completed: this.tasks.filter(t => t.stage === 'completed').length,
+                        overdue: this.tasks.filter(t => t.stage === 'overdue').length,
+                    };
+                },
+
+                async deleteTask(taskId) {
+                    if (!taskId) return;
+                    if (!confirm('Are you sure you want to delete this task? This action cannot be undone.')) return;
+                    try {
+                        const response = await fetch(`/tasks/${taskId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        });
+                        if (!response.ok) {
+                            const text = await response.text();
+                            console.error('Delete failed:', text);
+                            throw new Error('Failed to delete task');
+                        }
+                        this.tasks = this.tasks.filter(t => t.id !== taskId);
+                        if (this.selectedTask && this.selectedTask.id === taskId) {
+                            this.selectedTask = null;
+                        }
+                        this.recomputeCounts();
+                    } catch (e) {
+                        console.error('Failed to delete task', e);
+                        alert('Failed to delete task. You may not have permission or there was a server error.');
+                    }
+                },
+                getStatusBadgeColor(status) {
+                    const colors = {
+                        'wip': 'bg-blue-100 text-blue-700',
+                        'correction': 'bg-amber-100 text-amber-700',
+                        'completed': 'bg-green-100 text-green-700',
+                        'revision': 'bg-orange-100 text-orange-700',
+                        'closed': 'bg-slate-100 text-slate-700',
+                        'hold': 'bg-purple-100 text-purple-700',
+                        'under_review': 'bg-yellow-100 text-yellow-700',
+                        'awaiting_resources': 'bg-amber-100 text-amber-700',
+                    };
+                    return colors[status] || 'bg-slate-100 text-slate-700';
                 },
 
                 peopleChanged() {

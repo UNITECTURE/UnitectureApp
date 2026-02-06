@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="teamTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ auth()->user()->isAdmin() || auth()->user()->isSupervisor() ? 'true' : 'false' }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="teamTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ auth()->user()->isAdmin() || auth()->user()->isSupervisor() ? 'true' : 'false' }}, {{ auth()->id() }})">
         <x-sidebar :role="auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isSupervisor() ? 'supervisor' : 'employee')" />
         
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
@@ -14,19 +14,19 @@
                             <p class="text-slate-500 text-sm font-medium mt-1">Track and manage tasks assigned to your team members</p>
                         </div>
 
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2">
                             <!-- View Toggle -->
-                            <div class="flex bg-white border border-slate-300 p-1 rounded-lg gap-1">
+                            <div class="flex bg-white border border-slate-200 shadow-sm p-0.5 rounded-lg gap-0.5">
                                 <button @click="view = 'vertical'" 
-                                    class="p-2 rounded transition-all"
-                                    :class="view === 'vertical' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:text-slate-900'">
+                                    class="p-2 rounded-md transition-all duration-200 relative"
+                                    :class="view === 'vertical' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M5 3a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V3zM5 13a2 2 0 012-2h6a2 2 0 012 2v2a2 2 0 01-2 2H7a2 2 0 01-2-2v-2z"></path>
                                     </svg>
                                 </button>
                                 <button @click="view = 'horizontal'" 
-                                    class="p-2 rounded transition-all"
-                                    :class="view === 'horizontal' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:text-slate-900'">
+                                    class="p-2 rounded-md transition-all duration-200 relative"
+                                    :class="view === 'horizontal' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
                                     </svg>
@@ -34,7 +34,7 @@
                             </div>
 
                             <a href="{{ route('tasks.index') }}"
-                                class="text-slate-600 hover:text-slate-900 p-2 rounded-lg hover:bg-slate-100 transition-all">
+                                class="text-slate-600 hover:text-indigo-600 p-2 rounded-lg hover:bg-indigo-50 transition-all duration-200 border border-transparent hover:border-indigo-200 shadow-sm hover:shadow">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"></path>
                                 </svg>
@@ -515,7 +515,14 @@
                             </form>
                         </div>
 
-                        <div class="bg-slate-50 px-6 py-4 flex justify-end rounded-b-2xl">
+                        <div class="bg-slate-50 px-6 py-4 flex items-center justify-between rounded-b-2xl">
+                            <button
+                                x-show="canEditDue && selectedTask && selectedTask.created_by === currentUserId"
+                                type="button"
+                                @click="deleteTask(selectedTask.id)"
+                                class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
+                                Delete task
+                            </button>
                             <button type="button" @click="saveAndClose()"
                                 class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 :disabled="saving">
@@ -531,7 +538,7 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('teamTasks', (initialTasks, statuses, stages, canEditDue) => ({
+            Alpine.data('teamTasks', (initialTasks, statuses, stages, canEditDue, currentUserId) => ({
                 tasks: initialTasks,
                 statuses: statuses,
                 stages: stages,
@@ -555,6 +562,7 @@
                 availableEmployees: [],
                 showAddPeopleModal: false,
                 showTagModal: false,
+                currentUserId: currentUserId,
 
                 async saveAndClose() {
                     const taskId = this.selectedTask?.id;
@@ -567,6 +575,32 @@
                         this.selectedTask = null;
                     } finally {
                         this.saving = false;
+                    }
+                },
+
+                async deleteTask(taskId) {
+                    if (!taskId) return;
+                    if (!confirm('Are you sure you want to delete this task? This action cannot be undone.')) return;
+                    try {
+                        const response = await fetch(`/tasks/${taskId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        });
+                        if (!response.ok) {
+                            const text = await response.text();
+                            console.error('Delete failed:', text);
+                            throw new Error('Failed to delete task');
+                        }
+                        this.tasks = this.tasks.filter(t => t.id !== taskId);
+                        if (this.selectedTask && this.selectedTask.id === taskId) {
+                            this.selectedTask = null;
+                        }
+                    } catch (e) {
+                        console.error('Failed to delete task', e);
+                        alert('Failed to delete task. You may not have permission or there was a server error.');
                     }
                 },
 
@@ -762,6 +796,7 @@
                 getStatusSelectColor(status) {
                     const colors = {
                         'wip': 'bg-blue-100 text-blue-700',
+                        'correction': 'bg-amber-100 text-amber-700',
                         'completed': 'bg-green-100 text-green-700',
                         'revision': 'bg-orange-100 text-orange-700',
                         'closed': 'bg-slate-100 text-slate-700',

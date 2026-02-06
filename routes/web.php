@@ -139,6 +139,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tasks/team', [App\Http\Controllers\TaskController::class, 'teamTasks'])->name('tasks.team');
     Route::get('/tasks/create', [App\Http\Controllers\TaskController::class, 'create'])->name('tasks.create');
     Route::post('/tasks', [App\Http\Controllers\TaskController::class, 'store'])->name('tasks.store');
+    Route::delete('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::patch('/tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
     Route::patch('/tasks/{task}/stage', [App\Http\Controllers\TaskController::class, 'updateStage'])->name('tasks.updateStage');
     Route::patch('/tasks/{task}/due', [App\Http\Controllers\TaskController::class, 'updateDue'])->name('tasks.updateDue');
