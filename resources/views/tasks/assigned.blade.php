@@ -206,7 +206,7 @@
                                                     class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                                     :class="getStatusSelectColor(task.status)"
                                                     :value="task.status">
-                                                    <template x-for="status in statuses" :key="status">
+                                                    <template x-for="status in statusOptions" :key="status">
                                                         <option :value="status" x-text="formatStatus(status)"></option>
                                                     </template>
                                                 </select>
@@ -216,7 +216,7 @@
                                                     class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                                     :class="getStageSelectColor(task.stage)"
                                                     :value="task.stage">
-                                                    <template x-for="stage in stages" :key="stage">
+                                                    <template x-for="stage in stageOptions" :key="stage">
                                                         <option :value="stage" x-text="formatStage(stage)"></option>
                                                     </template>
                                                 </select>
@@ -307,7 +307,7 @@
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</h3>
                                     <select @change="updateStatus(selectedTask.id, $event.target.value)"
                                         class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                        <template x-for="status in statuses" :key="status">
+                                        <template x-for="status in statusOptions" :key="status">
                                             <option :value="status" :selected="selectedTask.status === status"
                                                 x-text="formatStatus(status)"></option>
                                         </template>
@@ -317,7 +317,7 @@
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Stage</h3>
                                     <select @change="updateStage(selectedTask.id, $event.target.value)"
                                         class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                        <template x-for="stage in stages" :key="stage">
+                                        <template x-for="stage in stageOptions" :key="stage">
                                             <option :value="stage" :selected="selectedTask.stage === stage"
                                                 x-text="formatStage(stage)"></option>
                                         </template>
@@ -545,6 +545,28 @@
                 showTagModal: false,
                 currentUserId: currentUserId,
 
+                get statusOptions() {
+                    // Supervisors/Admins (who can edit due dates) see all statuses
+                    if (this.canEditDue) {
+                        return this.statuses;
+                    }
+
+                    // Employees are limited to these statuses
+                    const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
+                    return this.statuses.filter(status => allowedForEmployees.includes(status));
+                },
+
+                get stageOptions() {
+                    // Supervisors/Admins can see all stages
+                    if (this.canEditDue) {
+                        return this.stages;
+                    }
+
+                    // Employees can only toggle between these stages; 'overdue' is automatic
+                    const allowedStagesForEmployees = ['pending', 'in_progress', 'completed'];
+                    return this.stages.filter(stage => allowedStagesForEmployees.includes(stage));
+                },
+
                 async saveAndClose() {
                     const taskId = this.selectedTask?.id;
                     if (!taskId) return;
@@ -698,6 +720,11 @@
                     const task = JSON.parse(data);
                     const validTask = this.tasks.find(t => t.id === task.id);
                     
+                    // Employees should not be able to manually move tasks into "overdue"
+                    if (!this.canEditDue && newStage === 'overdue') {
+                        return;
+                    }
+
                     if (validTask && validTask.stage !== newStage) {
                         await this.updateStage(validTask.id, newStage);
                     }

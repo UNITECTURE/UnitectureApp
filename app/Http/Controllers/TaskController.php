@@ -516,8 +516,16 @@ class TaskController extends Controller
      */
     public function updateStatus(Request $request, Task $task)
     {
+        // Supervisors/Admins can use the full status enum.
+        // Employees are restricted to: under_review, completed, wip, revision.
+        $user = Auth::user();
+        $allowedStatuses = self::STATUSES;
+        if ($user->isEmployee()) {
+            $allowedStatuses = ['under_review', 'completed', 'wip', 'revision'];
+        }
+
         $validated = $request->validate([
-            'status' => 'required|string|in:' . implode(',', self::STATUSES),
+            'status' => 'required|string|in:' . implode(',', $allowedStatuses),
         ]);
 
         $oldStatus = $task->status;
@@ -582,8 +590,16 @@ class TaskController extends Controller
      */
     public function updateStage(Request $request, Task $task)
     {
+        // Supervisors/Admins can use the full stage enum.
+        // Employees may only move between: pending, in_progress, completed.
+        $user = Auth::user();
+        $allowedStages = self::STAGES;
+        if ($user->isEmployee()) {
+            $allowedStages = ['pending', 'in_progress', 'completed'];
+        }
+
         $validated = $request->validate([
-            'stage' => 'required|string|in:' . implode(',', self::STAGES),
+            'stage' => 'required|string|in:' . implode(',', $allowedStages),
         ]);
 
         $oldStage = $task->stage;
