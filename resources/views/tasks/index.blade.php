@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }})">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -429,7 +429,14 @@
                                 </form>
                             </div>
 
-                            <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex justify-end rounded-b-xl sm:rounded-b-2xl">
+                            <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-b-xl sm:rounded-b-2xl">
+                                <button
+                                    x-show="canEditDue && selectedTask && selectedTask.created_by === currentUserId"
+                                    type="button"
+                                    @click="deleteTask(selectedTask.id)"
+                                    class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
+                                    Delete task
+                                </button>
                                 <button type="button" @click="saveAndClose()"
                                     class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     :disabled="saving">
@@ -446,7 +453,7 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter) => ({
+            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter, currentUserId) => ({
                 tasks: initialTasks,
                 statuses: allStatuses,
                 stages: allStages,
@@ -473,6 +480,7 @@
                 availableEmployees: [],
                 showAddPeopleModal: false,
                 showTagModal: false,
+                currentUserId: currentUserId,
 
                 async saveAndClose() {
                     const taskId = this.selectedTask?.id;
@@ -485,6 +493,43 @@
                         this.selectedTask = null;
                     } finally {
                         this.saving = false;
+                    }
+                },
+
+                recomputeCounts() {
+                    this.counts = {
+                        all: this.tasks.length,
+                        pending: this.tasks.filter(t => t.stage === 'pending').length,
+                        in_progress: this.tasks.filter(t => t.stage === 'in_progress').length,
+                        completed: this.tasks.filter(t => t.stage === 'completed').length,
+                        overdue: this.tasks.filter(t => t.stage === 'overdue').length,
+                    };
+                },
+
+                async deleteTask(taskId) {
+                    if (!taskId) return;
+                    if (!confirm('Are you sure you want to delete this task? This action cannot be undone.')) return;
+                    try {
+                        const response = await fetch(`/tasks/${taskId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        });
+                        if (!response.ok) {
+                            const text = await response.text();
+                            console.error('Delete failed:', text);
+                            throw new Error('Failed to delete task');
+                        }
+                        this.tasks = this.tasks.filter(t => t.id !== taskId);
+                        if (this.selectedTask && this.selectedTask.id === taskId) {
+                            this.selectedTask = null;
+                        }
+                        this.recomputeCounts();
+                    } catch (e) {
+                        console.error('Failed to delete task', e);
+                        alert('Failed to delete task. You may not have permission or there was a server error.');
                     }
                 },
                 getStatusBadgeColor(status) {

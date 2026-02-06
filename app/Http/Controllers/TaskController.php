@@ -644,6 +644,33 @@ class TaskController extends Controller
     }
 
     /**
+     * Delete a task (and its relations).
+     *
+     * Supervisors can delete only tasks they created.
+     * Admins can delete any task.
+     */
+    public function destroy(Task $task)
+    {
+        $user = Auth::user();
+
+        if (!$user->isAdmin() && !$user->isSupervisor()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if (!$user->isAdmin() && $task->created_by !== $user->id) {
+            abort(403, 'You can only delete tasks that you created.');
+        }
+
+        $task->delete();
+
+        if (request()->wantsJson()) {
+            return response()->json(['message' => 'Task deleted successfully.']);
+        }
+
+        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+    }
+
+    /**
      * Update the task due date and time.
      * Only supervisors and admins are allowed to edit this.
      */
