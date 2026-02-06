@@ -26,22 +26,32 @@
                 {{-- Stats Cards --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     {{-- Available Balance Card --}}
-                    <div style="background-color: #2563EB;" class="rounded-lg p-6 shadow-md">
-                        <div class="flex items-center justify-between">
+                    <div style="background-color: #2563EB;" class="rounded-lg p-5 shadow-md">
+                        <div class="flex items-center justify-between mb-3">
                             <div>
-                                <p style="color: #FFFFFF;" class="text-sm font-bold mb-2">Available Balance</p>
-                                <p style="color: #FFFFFF;" class="text-6xl font-black">{{ number_format($earnedLeaves - $usedLeaves, 1) }}</p>
+                                <p style="color: #FFFFFF;" class="text-xs font-bold mb-2 uppercase tracking-wider">Available Balance</p>
+                                <p style="color: #FFFFFF;" class="text-3xl font-bold">{{ number_format($earnedLeaves - $usedLeaves, 1) }}</p>
                             </div>
-                            <div style="background-color: rgba(255,255,255,0.3);" class="w-16 h-16 rounded-full flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div style="background-color: rgba(255,255,255,0.3);" class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-4 pt-3 border-t border-white/20">
+                            <div>
+                                <p style="color: rgba(255,255,255,0.7);" class="text-xs">Earned</p>
+                                <p style="color: #FFFFFF;" class="text-sm font-semibold">{{ number_format($earnedLeaves, 1) }}</p>
+                            </div>
+                            <div>
+                                <p style="color: rgba(255,255,255,0.7);" class="text-xs">Used</p>
+                                <p style="color: #FFFFFF;" class="text-sm font-semibold">{{ number_format($usedLeaves, 1) }}</p>
                             </div>
                         </div>
                     </div>
 
                     {{-- Total Requests Card --}}
-                    <button @click="filterStatus = 'all'" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-md transition-all" :class="filterStatus === 'all' && 'border-blue-500 shadow-md'">
-                        <div class="h-1 bg-blue-500"></div>
+                    <button @click="filterStatus = 'all'" class="relative bg-white rounded-lg shadow border border-slate-100 overflow-hidden cursor-pointer hover:border-blue-300 hover:shadow-md transition-all" :class="filterStatus === 'all' && 'border-blue-500 shadow-md'">
                         <div class="p-5 flex items-start justify-between gap-3">
+                            <div class="h-1 bg-blue-500 absolute top-0 left-0 right-0"></div>
                             <div>
                                 <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Total Requests</p>
                                 <p class="text-3xl font-bold text-blue-600">{{ $leaves->count() }}</p>
@@ -53,9 +63,9 @@
                     </button>
 
                     {{-- Pending Card --}}
-                    <button @click="filterStatus = 'pending'" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden cursor-pointer hover:border-orange-300 hover:shadow-md transition-all" :class="filterStatus === 'pending' && 'border-orange-500 shadow-md'">
-                        <div class="h-1 bg-orange-500"></div>
+                    <button @click="filterStatus = 'pending'" class="relative bg-white rounded-lg shadow border border-slate-100 overflow-hidden cursor-pointer hover:border-orange-300 hover:shadow-md transition-all" :class="filterStatus === 'pending' && 'border-orange-500 shadow-md'">
                         <div class="p-5 flex items-start justify-between gap-3">
+                            <div class="h-1 bg-orange-500 absolute top-0 left-0 right-0"></div>
                             <div>
                                 <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Pending</p>
                                 <p class="text-3xl font-bold text-orange-500">{{ $leaves->where('status', 'pending')->count() }}</p>
@@ -67,9 +77,9 @@
                     </button>
 
                     {{-- Approved Card --}}
-                    <button @click="filterStatus = 'approved'" class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden cursor-pointer hover:border-green-300 hover:shadow-md transition-all" :class="filterStatus === 'approved' && 'border-green-500 shadow-md'">
-                        <div class="h-1 bg-green-500"></div>
+                    <button @click="filterStatus = 'approved'" class="relative bg-white rounded-lg shadow border border-slate-100 overflow-hidden cursor-pointer hover:border-green-300 hover:shadow-md transition-all" :class="filterStatus === 'approved' && 'border-green-500 shadow-md'">
                         <div class="p-5 flex items-start justify-between gap-3">
+                            <div class="h-1 bg-green-500 absolute top-0 left-0 right-0"></div>
                             <div>
                                 <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Approved</p>
                                 <p class="text-3xl font-bold text-green-600">{{ $leaves->where('status', 'approved')->count() }}</p>

@@ -225,6 +225,7 @@ class LeaveController extends Controller
             'partially_approved' => (clone $statsQuery)->where('status', 'approved_by_supervisor')->count(),
             'approved' => (clone $statsQuery)->where('status', 'approved')->count(),
             'rejected' => (clone $statsQuery)->where('status', 'rejected')->count(),
+            'cancelled' => (clone $statsQuery)->where('status', 'cancelled')->count(),
         ];
 
         Log::info('Leave Approvals Accessed', [
