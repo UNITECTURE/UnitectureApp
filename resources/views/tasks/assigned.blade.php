@@ -730,6 +730,7 @@
                 getStatusSelectColor(status) {
                     const colors = {
                         'wip': 'bg-blue-100 text-blue-700',
+                        'correction': 'bg-amber-100 text-amber-700',
                         'completed': 'bg-green-100 text-green-700',
                         'revision': 'bg-orange-100 text-orange-700',
                         'closed': 'bg-slate-100 text-slate-700',

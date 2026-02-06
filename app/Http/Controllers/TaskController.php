@@ -17,6 +17,7 @@ class TaskController extends Controller
      */
     const STATUSES = [
         'wip',
+        'correction',
         'completed',
         'revision',
         'closed',
