@@ -125,9 +125,9 @@
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
                                         :class="{
                                             'bg-red-100 text-red-700': task.priority === 'high',
-                                            'bg-orange-100 text-orange-700': task.priority === 'medium',
+                                            'bg-yellow-100 text-yellow-700': task.priority === 'medium',
                                             'bg-green-100 text-green-700': task.priority === 'low',
-                                            'bg-slate-100 text-slate-700': task.priority === 'free'
+                                            'bg-purple-100 text-purple-700': task.priority === 'free'
                                         }"
                                         x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
                                     </span>
@@ -202,9 +202,9 @@
                                     <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                         :class="{
                                               'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                              'bg-orange-50 text-orange-600': selectedTask.priority === 'medium',
+                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
                                               'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                              'bg-slate-50 text-slate-600': selectedTask.priority === 'free'
+                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
                                           }" x-text="selectedTask.priority"></span>
                                     <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')"></h2>
                                     <p class="text-xs sm:text-sm text-slate-500 font-medium truncate" x-text="selectedTask.project?.name"></p>

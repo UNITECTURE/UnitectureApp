@@ -136,8 +136,8 @@
                                                     class="sr-only peer">
                                                 <div class="flex items-center gap-2">
                                                     <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
-                                                        :class="priority === 'medium' ? 'border-blue-500' : 'border-slate-300 group-hover:border-blue-300'">
-                                                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500 transition-transform duration-200"
+                                                        :class="priority === 'medium' ? 'border-yellow-500' : 'border-slate-300 group-hover:border-yellow-300'">
+                                                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500 transition-transform duration-200"
                                                             :class="priority === 'medium' ? 'scale-100' : 'scale-0'"></div>
                                                     </div>
                                                     <span class="text-sm font-medium text-slate-700">Moderate</span>
@@ -160,8 +160,8 @@
                                                     class="sr-only peer">
                                                 <div class="flex items-center gap-2">
                                                     <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
-                                                        :class="priority === 'free' ? 'border-slate-500' : 'border-slate-300 group-hover:border-slate-400'">
-                                                        <div class="w-2.5 h-2.5 rounded-full bg-slate-500 transition-transform duration-200"
+                                                        :class="priority === 'free' ? 'border-purple-500' : 'border-slate-300 group-hover:border-purple-300'">
+                                                        <div class="w-2.5 h-2.5 rounded-full bg-purple-500 transition-transform duration-200"
                                                             :class="priority === 'free' ? 'scale-100' : 'scale-0'"></div>
                                                     </div>
                                                     <span class="text-sm font-medium text-slate-700">Free</span>
@@ -208,7 +208,7 @@
                                         </template>
 
                                         <!-- Plus Button -->
-                                        <button type="button" @click="showEmployeeModal = true"
+                                        <button type="button" @click="openEmployeeModal()"
                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors shadow-sm">
                                             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -240,29 +240,23 @@
                                         x-transition:leave-end="opacity-0"
                                         class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm"
                                         style="display: none;"
-                                        @click.self="showEmployeeModal = false">
+                                        @click.self="cancelEmployeeModal()">
                                         <div class="bg-white rounded-lg sm:rounded-xl shadow-2xl w-full max-w-md max-h-[85vh] sm:max-h-[80vh] overflow-hidden flex flex-col"
                                             @click.stop>
                                             <!-- Modal Header -->
-                                            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex items-center justify-center relative">
+                                            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex items-center justify-center">
                                                 <h3 class="text-base sm:text-lg font-bold text-slate-800">Select Employees</h3>
-                                                <button type="button" @click="showEmployeeModal = false"
-                                                    class="absolute right-3 sm:right-4 text-slate-400 hover:text-slate-600 transition-colors">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                    </svg>
-                                                </button>
                                             </div>
 
                                             <!-- Employee List (check/uncheck to add or remove) -->
                                             <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
                                                 <template x-for="employee in availableEmployees" :key="employee.id">
                                                     <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
-                                                        :class="isEmployeeSelected(employee.id) ? 'bg-blue-50' : 'hover:bg-slate-50'">
+                                                        :class="isEmployeeDraftSelected(employee.id) ? 'bg-blue-50' : 'hover:bg-slate-50'">
                                                         <input type="checkbox" 
                                                             :value="employee.id"
-                                                            :checked="isEmployeeSelected(employee.id)"
-                                                            @change="toggleEmployee(employee)"
+                                                            :checked="isEmployeeDraftSelected(employee.id)"
+                                                            @change="toggleEmployeeDraft(employee)"
                                                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded shrink-0">
                                                         <img :src="getProfileImageUrl(employee)"
                                                             :alt="employee.full_name"
@@ -275,11 +269,11 @@
 
                                             <!-- Modal Footer -->
                                             <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 flex justify-end gap-2 sm:gap-3">
-                                                <button type="button" @click="showEmployeeModal = false"
+                                                <button type="button" @click="cancelEmployeeModal()"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
                                                     Cancel
                                                 </button>
-                                                <button type="button" @click="showEmployeeModal = false"
+                                                <button type="button" @click="confirmEmployeeModal()"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
                                                     Done
                                                 </button>
@@ -294,11 +288,31 @@
                                     <textarea name="comments" id="comments" rows="4" x-model="comments"
                                         class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 text-slate-800 bg-slate-50 placeholder:text-slate-400 transition-all duration-200"
                                         placeholder="Start writing here..."></textarea>
-                                    <div class="flex items-center gap-2 mt-2">
-                                        <button type="button" @click="showTagModal = true"
-                                            class="text-blue-500 hover:text-blue-600 text-sm font-medium flex items-center gap-1 transition-colors"
+                                </div>
+
+                                <!-- Tagged People Section -->
+                                <div>
+                                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Tagged People</label>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <!-- Tagged Employees (Profile Photos) -->
+                                        <template x-for="employee in taggedEmployees" :key="'display-tagged-' + employee.id">
+                                            <div class="relative group">
+                                                <img :src="getProfileImageUrl(employee)"
+                                                    :alt="employee.full_name"
+                                                    class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-blue-200 shadow-sm object-cover cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
+                                                    :title="employee.full_name">
+                                                <button type="button" @click="toggleTaggedEmployee(employee)"
+                                                    class="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600">
+                                                    ×
+                                                </button>
+                                            </div>
+                                        </template>
+
+                                        <!-- Add Tag Button -->
+                                        <button type="button" @click="openTagModal()"
+                                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors shadow-sm"
                                             title="Tag people (they will be notified)">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                             </svg>
                                         </button>
@@ -316,29 +330,23 @@
                                         x-transition:leave-end="opacity-0"
                                         class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm"
                                         style="display: none;"
-                                        @click.self="showTagModal = false">
+                                        @click.self="cancelTagModal()">
                                         <div class="bg-white rounded-lg sm:rounded-xl shadow-2xl w-full max-w-md max-h-[85vh] sm:max-h-[80vh] overflow-hidden flex flex-col"
                                             @click.stop>
                                             <!-- Modal Header -->
-                                            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex items-center justify-center relative">
+                                            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex items-center justify-center">
                                                 <h3 class="text-base sm:text-lg font-bold text-slate-800">Tag People</h3>
-                                                <button type="button" @click="showTagModal = false"
-                                                    class="absolute right-3 sm:right-4 text-slate-400 hover:text-slate-600 transition-colors">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                    </svg>
-                                                </button>
                                             </div>
 
                                             <!-- Employee List (check/uncheck to tag or deselect) -->
                                             <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
                                                 <template x-for="employee in availableEmployees" :key="employee.id">
                                                     <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
-                                                        :class="isTaggedEmployee(employee.id) ? 'bg-blue-50' : 'hover:bg-slate-50'">
+                                                        :class="isTaggedDraftSelected(employee.id) ? 'bg-blue-50' : 'hover:bg-slate-50'">
                                                         <input type="checkbox" 
                                                             :value="employee.id"
-                                                            :checked="isTaggedEmployee(employee.id)"
-                                                            @change="toggleTaggedEmployee(employee)"
+                                                            :checked="isTaggedDraftSelected(employee.id)"
+                                                            @change="toggleTaggedDraft(employee)"
                                                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded shrink-0">
                                                         <img :src="getProfileImageUrl(employee)"
                                                             :alt="employee.full_name"
@@ -351,11 +359,11 @@
 
                                             <!-- Modal Footer -->
                                             <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 flex justify-end gap-2 sm:gap-3">
-                                                <button type="button" @click="showTagModal = false"
+                                                <button type="button" @click="cancelTagModal()"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
                                                     Cancel
                                                 </button>
-                                                <button type="button" @click="showTagModal = false"
+                                                <button type="button" @click="confirmTagModal()"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
                                                     Done
                                                 </button>
@@ -391,6 +399,8 @@
                 todayDate: todayDate,
                 selectedEmployees: [],
                 taggedEmployees: [],
+                selectedEmployeesDraft: [],
+                taggedEmployeesDraft: [],
                 availableEmployees: [],
                 showEmployeeModal: false,
                 showTagModal: false,
@@ -486,6 +496,34 @@
                     return this.selectedEmployees.some(e => e.id === employeeId);
                 },
 
+                openEmployeeModal() {
+                    this.selectedEmployeesDraft = [...this.selectedEmployees];
+                    this.showEmployeeModal = true;
+                },
+
+                cancelEmployeeModal() {
+                    this.selectedEmployeesDraft = [...this.selectedEmployees];
+                    this.showEmployeeModal = false;
+                },
+
+                confirmEmployeeModal() {
+                    this.selectedEmployees = [...this.selectedEmployeesDraft];
+                    this.showEmployeeModal = false;
+                },
+
+                toggleEmployeeDraft(employee) {
+                    const index = this.selectedEmployeesDraft.findIndex(e => e.id === employee.id);
+                    if (index > -1) {
+                        this.selectedEmployeesDraft.splice(index, 1);
+                    } else {
+                        this.selectedEmployeesDraft.push(employee);
+                    }
+                },
+
+                isEmployeeDraftSelected(employeeId) {
+                    return this.selectedEmployeesDraft.some(e => e.id === employeeId);
+                },
+
                 toggleTaggedEmployee(employee) {
                     const index = this.taggedEmployees.findIndex(e => e.id === employee.id);
                     if (index > -1) {
@@ -493,6 +531,34 @@
                     } else {
                         this.taggedEmployees.push(employee);
                     }
+                },
+
+                openTagModal() {
+                    this.taggedEmployeesDraft = [...this.taggedEmployees];
+                    this.showTagModal = true;
+                },
+
+                cancelTagModal() {
+                    this.taggedEmployeesDraft = [...this.taggedEmployees];
+                    this.showTagModal = false;
+                },
+
+                confirmTagModal() {
+                    this.taggedEmployees = [...this.taggedEmployeesDraft];
+                    this.showTagModal = false;
+                },
+
+                toggleTaggedDraft(employee) {
+                    const index = this.taggedEmployeesDraft.findIndex(e => e.id === employee.id);
+                    if (index > -1) {
+                        this.taggedEmployeesDraft.splice(index, 1);
+                    } else {
+                        this.taggedEmployeesDraft.push(employee);
+                    }
+                },
+
+                isTaggedDraftSelected(employeeId) {
+                    return this.taggedEmployeesDraft.some(e => e.id === employeeId);
                 },
 
                 isTaggedEmployee(employeeId) {
