@@ -115,23 +115,18 @@
                     <template x-for="task in filteredTasks" :key="task.id">
                         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
                             @click="openModal(task)">
-                            <!-- Header: time left (left), project + priority (right) -->
-                            <div class="flex items-start justify-between mb-3 gap-2">
-                                <span class="text-xs font-semibold shrink-0"
-                                    :class="dueInClass(task)"
-                                    x-text="dueIn(task)"></span>
-                                <div class="flex flex-col items-end gap-1 min-w-0">
-                                    <span class="text-xs font-medium text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
-                                        :class="{
-                                            'bg-red-100 text-red-700': task.priority === 'high',
-                                            'bg-orange-100 text-orange-700': task.priority === 'medium',
-                                            'bg-green-100 text-green-700': task.priority === 'low',
-                                            'bg-slate-100 text-slate-700': task.priority === 'free'
-                                        }"
-                                        x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
-                                    </span>
-                                </div>
+                            <!-- Header: project (left), priority (right) -->
+                            <div class="flex items-center justify-between mb-3 gap-2">
+                                <span class="text-xs font-medium text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
+                                    :class="{
+                                        'bg-red-100 text-red-700': task.priority === 'high',
+                                        'bg-orange-100 text-orange-700': task.priority === 'medium',
+                                        'bg-green-100 text-green-700': task.priority === 'low',
+                                        'bg-slate-100 text-slate-700': task.priority === 'free'
+                                    }"
+                                    x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
+                                </span>
                             </div>
 
                             <!-- Description -->
@@ -139,39 +134,49 @@
                                 x-text="(task.description || '').substring(0, 120) + ((task.description || '').length > 120 ? '...' : '')">
                             </p>
 
-                            <!-- Footer -->
-                            <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-2">
-                                <div class="flex -space-x-2 shrink-0">
-                                    <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
-                                        <img :src="getProfileImageUrl(assignee)"
-                                            :alt="assignee.full_name || assignee.name"
-                                            :title="assignee.full_name || assignee.name"
-                                            class="w-7 h-7 rounded-full border-2 border-white object-cover shadow-sm">
-                                    </template>
-                                    <template x-if="task.assignees.length > 3">
-                                        <div class="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
-                                            :title="'+' + (task.assignees.length - 3) + ' more'"
-                                            x-text="'+' + (task.assignees.length - 3)">
-                                        </div>
-                                    </template>
+                            <!-- Stage + Status row -->
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-xs font-medium text-slate-500">
+                                    <span>Stage: </span>
+                                    <span class="font-semibold text-slate-700" x-text="formatStage(task.stage)"></span>
                                 </div>
-                                <div class="flex flex-col gap-0.5 text-xs font-medium text-slate-400 min-w-0 text-right">
-                                    <span class="truncate">Due: <span x-text="formatDate(task.end_date)"></span></span>
-                                    <span class="truncate">End: <span x-text="formatTime(task.end_date)"></span></span>
-                                </div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                                    :class="getStatusBadgeColor(task.status)"
+                                    x-text="formatStatus(task.status)">
+                                </span>
                             </div>
 
-                            <!-- Status Badge -->
-                            <div class="mt-3">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold"
-                                    :class="{
-                                        'bg-yellow-100 text-yellow-700': task.stage === 'pending',
-                                        'bg-blue-100 text-blue-700': task.stage === 'in_progress',
-                                        'bg-green-100 text-green-700': task.stage === 'completed',
-                                        'bg-red-100 text-red-700': task.stage === 'overdue'
-                                    }"
-                                    x-text="formatStage(task.stage)">
-                                </span>
+                            <!-- Footer: assignees + due date (left), time left (right) -->
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-3">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="flex -space-x-2 shrink-0">
+                                        <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
+                                            <img :src="getProfileImageUrl(assignee)"
+                                                :alt="assignee.full_name || assignee.name"
+                                                :title="assignee.full_name || assignee.name"
+                                                class="w-7 h-7 rounded-full border-2 border-white object-cover shadow-sm">
+                                        </template>
+                                        <template x-if="task.assignees.length > 3">
+                                            <div class="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
+                                                :title="'+' + (task.assignees.length - 3) + ' more'"
+                                                x-text="'+' + (task.assignees.length - 3)">
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="text-xs font-medium text-slate-500 truncate">
+                                        <span>Due </span>
+                                        <span x-text="formatDate(task.end_date)"></span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-1.5 text-xs font-semibold shrink-0"
+                                    :class="dueInClass(task)">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span x-text="dueIn(task)"></span>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -481,6 +486,18 @@
                     } finally {
                         this.saving = false;
                     }
+                },
+                getStatusBadgeColor(status) {
+                    const colors = {
+                        'wip': 'bg-blue-100 text-blue-700',
+                        'completed': 'bg-green-100 text-green-700',
+                        'revision': 'bg-orange-100 text-orange-700',
+                        'closed': 'bg-slate-100 text-slate-700',
+                        'hold': 'bg-purple-100 text-purple-700',
+                        'under_review': 'bg-yellow-100 text-yellow-700',
+                        'awaiting_resources': 'bg-amber-100 text-amber-700',
+                    };
+                    return colors[status] || 'bg-slate-100 text-slate-700';
                 },
 
                 peopleChanged() {
