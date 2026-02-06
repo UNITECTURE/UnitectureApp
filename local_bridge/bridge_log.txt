@@ -213,3 +213,4163 @@ Traceback (most recent call last):
     import schedule
 ModuleNotFoundError: No module named 'schedule'
 [05-02-2026 17:36:03.77] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:00:20.62] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:00:26.31] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:00:32.69] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:00:40.29] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:00:47.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:00:53.45] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:00:58.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:04.33] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:10.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:16.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:23.77] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:30.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:36.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:42.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:48.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:54.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:01:59.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:02:06.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:02:12.37] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:02:18.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:02:24.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:02:30.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:02:36.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:02:42.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:02:48.35] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:02:53.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:00.57] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:06.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:11.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:17.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:23.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:28.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:34.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:39.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:46.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:52.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:03:57.98] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:04.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:10.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:16.24] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:22.28] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:28.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:34.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:40.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:46.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:52.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:04:58.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:04.00] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:10.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:16.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:22.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:28.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:33.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:38.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:45.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:50.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:05:56.98] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:03.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:08.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:13.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:20.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:26.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:32.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:37.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:43.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:49.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:06:54.82] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:00.00] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:06.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:11.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:17.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:23.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:29.31] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:35.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:40.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:47.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:52.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:07:58.60] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:04.38] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:10.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:16.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:22.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:28.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:34.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:40.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:45.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:51.28] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:08:57.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:03.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:08.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:14.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:23.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:28.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:34.30] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:41.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:46.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:52.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:09:58.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:03.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:10.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:15.90] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:21.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:27.20] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:33.39] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:38.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:43.79] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:48.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:53.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:10:58.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:11:04.20] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:11:09.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:11:14.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:11:21.31] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:11:32.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:11:39.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:11:46.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:11:52.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:11:59.35] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:05.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:11.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:16.84] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:21.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:27.70] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:35.30] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:40.65] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:45.98] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:51.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:12:58.20] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:04.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:10.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:16.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:22.47] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:27.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:32.76] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:37.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:42.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:49.49] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:13:54.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:14:00.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:14:07.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:14:14.58] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:14:20.90] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:14:27.48] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:14:35.72] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:14:43.34] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:14:54.53] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:15:08.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:15:17.51] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:15:25.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:15:35.51] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:15:42.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:15:48.20] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:15:53.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:00.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:06.45] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:12.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:18.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:24.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:30.42] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:35.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:41.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:48.79] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:16:56.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:17:03.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:17:09.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:17:15.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:17:24.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:17:36.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:17:43.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:17:52.67] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:17:59.53] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:06.36] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:14.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:19.75] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:24.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:30.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:36.34] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:41.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:48.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:53.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:18:58.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:04.90] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:10.15] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:15.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:21.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:26.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:32.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:38.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:44.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:49.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:19:55.40] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:20:01.41] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:20:09.80] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:20:17.65] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:20:26.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:20:34.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:20:43.30] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:20:48.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:20:54.15] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:20:59.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:21:08.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:21:16.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:21:22.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:21:33.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:21:43.67] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:21:57.64] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:22:10.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:22:21.42] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:22:27.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:22:32.80] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:22:38.42] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:22:43.82] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:22:48.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:22:54.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:23:03.27] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:23:08.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:23:13.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:23:23.59] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:23:29.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:23:35.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:23:45.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:23:56.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:02.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:07.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:14.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:20.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:28.32] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:34.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:42.80] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:47.73] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:52.78] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:24:57.71] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:25:03.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:25:09.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:25:14.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:25:21.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:25:27.47] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:25:33.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:25:38.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:25:44.37] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:25:55.20] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:26:03.42] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:26:12.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:26:18.45] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:26:30.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:26:36.70] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:26:43.71] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:26:55.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:01.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:07.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:12.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:18.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:24.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:29.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:36.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:42.50] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:48.23] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:27:53.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:00.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:06.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:12.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:18.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:24.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:30.42] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:36.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:42.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:48.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:28:54.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:00.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:06.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:12.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:18.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:24.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:30.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:36.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:42.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:48.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:29:53.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:00.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:06.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:12.36] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:18.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:23.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:29.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:35.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:41.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:47.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:30:54.28] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:00.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:08.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:15.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:20.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:29.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:35.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:41.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:46.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:51.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:31:57.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:03.36] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:09.29] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:18.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:23.78] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:29.57] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:34.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:41.38] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:47.22] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:53.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:32:59.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:33:05.37] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:33:12.45] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:33:19.57] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:33:25.45] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:33:31.90] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:33:38.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:33:44.57] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:33:53.67] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:33:58.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:34:06.34] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:34:12.56] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:34:18.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:34:25.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:34:30.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:34:37.77] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:34:44.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:34:51.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:34:59.34] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:35:05.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:35:14.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:35:22.26] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:35:28.31] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:35:34.52] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:35:40.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:35:47.59] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:35:54.51] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:00.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:07.70] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:13.35] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:20.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:26.42] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:31.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:37.15] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:42.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:49.27] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:36:55.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:01.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:06.84] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:12.42] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:17.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:22.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:29.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:34.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:40.32] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:46.26] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:51.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:37:57.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:02.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:09.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:15.40] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:21.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:26.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:32.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:37.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:43.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:48.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:38:55.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:01.27] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:06.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:12.23] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:17.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:24.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:30.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:36.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:41.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:47.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:53.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:39:59.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:05.29] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:11.33] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:17.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:22.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:29.41] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:34.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:40.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:46.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:52.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:40:57.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:02.83] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:08.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:13.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:20.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:26.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:31.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:38.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:44.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:49.90] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:41:55.22] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:01.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:07.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:13.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:19.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:25.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:31.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:37.37] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:43.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:49.50] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:42:55.15] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:00.79] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:06.32] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:11.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:17.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:24.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:30.15] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:36.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:42.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:48.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:43:54.31] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:00.32] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:06.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:12.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:18.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:24.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:31.47] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:36.78] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:41.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:47.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:52.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:44:59.22] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:05.47] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:11.44] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:17.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:22.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:28.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:34.43] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:40.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:46.22] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:52.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:45:58.31] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:46:04.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:46:09.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:46:16.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:46:22.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:46:28.71] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:46:34.52] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:46:40.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:46:54.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:47:06.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:47:16.79] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:47:22.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:47:28.22] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:47:34.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:47:49.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:47:55.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:04.73] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:10.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:16.36] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:21.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:28.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:34.22] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:40.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:46.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:52.65] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:48:58.64] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:49:04.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:49:11.38] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:49:38.32] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:50:13.37] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:50:19.31] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:50:34.44] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:50:44.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:50:50.27] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:50:56.30] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:02.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:07.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:13.29] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:18.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:23.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:30.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:36.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:42.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:48.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:51:53.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:00.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:05.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:11.44] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:17.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:23.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:30.55] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:36.68] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:42.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:47.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:53.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:52:58.98] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:05.14] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:11.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:16.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:22.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:28.28] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:34.22] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:40.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:46.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:52.23] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:53:58.20] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:04.30] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:10.45] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:16.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:22.40] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:27.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:33.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:38.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:44.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:49.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:54:56.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:02.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:08.47] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:14.00] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:20.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:25.84] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:31.29] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:37.20] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:43.61] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:48.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:55:55.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:00.82] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:06.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:12.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:18.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:24.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:30.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:35.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:40.80] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:47.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:52.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:56:59.38] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:04.81] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:09.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:15.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:21.26] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:27.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:33.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:38.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:44.62] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:49.84] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:54.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:57:59.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:05.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:10.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:17.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:23.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:29.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:35.27] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:41.22] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:47.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:52.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:58:58.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:04.35] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:09.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:15.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:21.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:27.38] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:33.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:38.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:43.90] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:48.82] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:53.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 16:59:58.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:03.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:08.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:14.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:19.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:25.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:31.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:36.83] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:42.13] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:47.69] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:52.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:00:58.30] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:03.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:08.84] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:13.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:19.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:25.24] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:30.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:36.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:41.77] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:46.84] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:52.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:01:58.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:03.84] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:08.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:13.98] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:19.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:26.26] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:32.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:38.56] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:43.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:50.15] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:02:56.00] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:02.00] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:08.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:14.42] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:19.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:26.90] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:34.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:40.64] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:45.70] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:51.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:03:57.53] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:02.99] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:09.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:15.31] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:20.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:25.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:31.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:36.88] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:41.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:46.83] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:51.69] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:04:57.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:03.50] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:09.29] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:15.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:21.15] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:27.22] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:32.73] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:38.43] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:44.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:49.83] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:54.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:05:59.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:06.33] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:11.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:17.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:22.90] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:28.39] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:34.53] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:39.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:47.50] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:53.31] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:06:58.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:07:04.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:07:09.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:07:15.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:07:20.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:07:26.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:07:32.30] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:07:37.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:07:43.60] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:50:17.79] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:50:24.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:50:29.55] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:50:34.66] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:50:39.58] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:50:44.56] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:50:49.53] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:50:54.61] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:50:59.53] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:04.57] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:09.66] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:14.54] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:19.60] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:24.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:29.70] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:34.59] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:40.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:45.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:52.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:51:57.79] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:03.28] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:08.98] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:14.80] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:20.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:26.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:31.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:37.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:43.00] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:49.00] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:54.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:52:59.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:05.71] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:10.65] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:15.90] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:21.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:27.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:33.28] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:39.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:45.44] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:50.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:53:57.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:02.66] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:07.62] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:13.55] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:19.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:26.54] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:31.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:37.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:44.27] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:49.78] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:54:54.78] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:00.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:06.67] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:11.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:17.71] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:23.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:29.40] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:35.95] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:42.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:47.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:53.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:55:59.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:05.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:10.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:16.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:22.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:27.82] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:33.47] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:39.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:45.20] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:50.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:56:56.66] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:02.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:08.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:13.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:20.25] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:26.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:32.29] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:38.19] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:44.08] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:50.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:57:56.60] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:01.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:07.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:14.27] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:20.40] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:26.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:32.00] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:38.00] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:44.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:51.26] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:58:57.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:03.34] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:08.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:14.44] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:19.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:24.81] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:29.78] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:35.32] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:40.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:45.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:52.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 17:59:58.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:06.24] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:11.79] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:17.42] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:22.61] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:27.63] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:33.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:38.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:44.32] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:50.17] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:00:56.10] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:03.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:09.67] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:15.57] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:20.61] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:25.87] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:30.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:36.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:41.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:47.73] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:01:52.93] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:01.83] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:08.75] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:14.68] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:20.43] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:25.76] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:31.12] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:37.34] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:42.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:48.20] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:02:54.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:00.50] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:05.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:11.76] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:17.47] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:23.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:28.98] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:35.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:41.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:47.16] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:53.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:03:59.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:06.55] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:11.89] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:16.82] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:21.91] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:27.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:32.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:40.68] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:48.21] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:53.83] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:04:59.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:05:04.94] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:05:10.85] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:05:16.05] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:05:21.86] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:05:28.24] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:05:36.53] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:05:42.32] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:05:48.11] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:05:54.23] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:00.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:06.06] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:12.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:18.07] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:24.04] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:30.03] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:36.61] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:42.18] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:47.92] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:52.98] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:06:58.96] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:05.33] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:11.01] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:17.97] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:23.80] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:29.26] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:35.02] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:40.78] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:46.44] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:52.09] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:07:59.23] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[06-02-2026 18:08:07.02] Bridge crashed or stopped. Restarting in 5 seconds... 

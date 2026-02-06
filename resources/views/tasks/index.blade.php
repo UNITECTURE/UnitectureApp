@@ -165,7 +165,7 @@
                             <div class="mt-3">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold"
                                     :class="{
-                                        'bg-slate-100 text-slate-700': task.stage === 'pending',
+                                        'bg-yellow-100 text-yellow-700': task.stage === 'pending',
                                         'bg-blue-100 text-blue-700': task.stage === 'in_progress',
                                         'bg-green-100 text-green-700': task.stage === 'completed',
                                         'bg-red-100 text-red-700': task.stage === 'overdue'

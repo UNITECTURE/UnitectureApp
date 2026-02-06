@@ -73,9 +73,7 @@
                     Calendar</div>
             </a>
 
-            {{-- Tasks --}}
-            {{-- Removed role check: Now visible to Everyone (Super Admin, Supervisor, Employee) --}}
-
+            {{-- Tasks (Admin, Super Admin, Supervisor, and Employee can all access) --}}
             <div x-data="{ 
                 open: localStorage.getItem('sidebar_tasks_open') === 'true', 
                 init() { this.$watch('open', val => localStorage.setItem('sidebar_tasks_open', val)) } 
@@ -134,7 +132,6 @@
 
                 </div>
             </div>
-            {{-- End Tasks --}}
 
             {{-- Attendance & Leave --}}
             <div x-data="{ 
