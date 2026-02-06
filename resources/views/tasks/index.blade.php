@@ -236,7 +236,7 @@
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</h3>
                                         <select @change="updateStatus(selectedTask.id, $event.target.value)"
                                             class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                            <template x-for="status in statuses" :key="status">
+                                            <template x-for="status in statusOptions" :key="status">
                                                 <option :value="status" :selected="selectedTask.status === status"
                                                     x-text="formatStatus(status)"></option>
                                             </template>
@@ -481,6 +481,17 @@
                 showAddPeopleModal: false,
                 showTagModal: false,
                 currentUserId: currentUserId,
+
+                get statusOptions() {
+                    // Supervisors/Admins (who can edit due dates) see all statuses
+                    if (this.canEditDue) {
+                        return this.statuses;
+                    }
+
+                    // Employees are limited to these statuses
+                    const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
+                    return this.statuses.filter(status => allowedForEmployees.includes(status));
+                },
 
                 async saveAndClose() {
                     const taskId = this.selectedTask?.id;
