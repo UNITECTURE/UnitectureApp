@@ -133,7 +133,7 @@ class ProcessAttendance extends Command
                     $firstPunch = Carbon::parse($logs->first()->punch_time);
                     $lastPunch = Carbon::parse($logs->last()->punch_time);
 
-                    $biometricDurationMinutes = $firstPunch->diffInMinutes($lastPunch);
+                    $biometricDurationMinutes = abs($lastPunch->diffInMinutes($firstPunch));
                 }
             }
         }
@@ -188,6 +188,7 @@ class ProcessAttendance extends Command
         }
 
         // Format Total Duration
+        $totalMinutes = abs($totalMinutes); // Ensure positive value
         $hours = floor($totalMinutes / 60);
         $mins = $totalMinutes % 60;
         $durationString = "{$hours} Hrs {$mins} Mins";

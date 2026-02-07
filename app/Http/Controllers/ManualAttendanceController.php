@@ -209,7 +209,7 @@ class ManualAttendanceController extends Controller
                 if ($attendance->clock_in && $attendance->clock_out) {
                     $start = Carbon::parse($attendance->clock_in);
                     $end = Carbon::parse($attendance->clock_out);
-                    $diffMinutes = $start->diffInMinutes($end);
+                    $diffMinutes = abs($start->diffInMinutes($end));
 
                     $h = floor($diffMinutes / 60);
                     $m = $diffMinutes % 60;
