@@ -38,7 +38,58 @@ class Task extends Model
     {
         static::saving(function (self $task) {
             $task->syncPriorityFromDeadline();
+            $task->syncStageFromStatusAndDueDate();
         });
+    }
+
+    /**
+     * Sync stage from status and due date. Stages cannot be set manually:
+     * - completed: when status is 'closed' (supervisor only)
+     * - overdue: when end_date is past (unless status is closed)
+     * - in_progress: when status is 'wip'
+     * - pending: default
+     */
+    public function syncStageFromStatusAndDueDate(?Carbon $now = null): void
+    {
+        $now = $now ?? now();
+
+        if ($this->status === 'closed') {
+            $this->stage = 'completed';
+            return;
+        }
+
+        if ($this->end_date) {
+            $due = $this->end_date instanceof Carbon ? $this->end_date : Carbon::parse($this->end_date);
+            if ($due->isPast()) {
+                $this->stage = 'overdue';
+                return;
+            }
+        }
+
+        if ($this->status === 'wip') {
+            $this->stage = 'in_progress';
+            return;
+        }
+
+        $this->stage = 'pending';
+    }
+
+    /**
+     * Bulk sync stage to 'overdue' for tasks past their due date.
+     * Completed tasks are left unchanged.
+     */
+    public static function bulkSyncOverdueStages(?Carbon $now = null): int
+    {
+        $now = $now ?? now();
+
+        return (int) DB::table('tasks')
+            ->whereNotNull('end_date')
+            ->where('end_date', '<', $now->toDateTimeString())
+            ->where('status', '!=', 'closed')
+            ->where(function ($q) {
+                $q->whereNull('stage')->orWhere('stage', '!=', 'overdue');
+            })
+            ->update(['stage' => 'overdue']);
     }
 
     /**

@@ -244,13 +244,10 @@
                                     </div>
                                     <div>
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Stage</h3>
-                                        <select @change="updateStage(selectedTask.id, $event.target.value)"
-                                            class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                            <template x-for="stage in stageOptions" :key="stage">
-                                                <option :value="stage" :selected="selectedTask.stage === stage"
-                                                    x-text="formatStage(stage)"></option>
-                                            </template>
-                                        </select>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                            :class="getStageBadgeColor(selectedTask.stage)"
+                                            x-text="formatStage(selectedTask.stage)"></span>
+                                        <p class="text-[11px] text-slate-400 mt-1">Stage is set automatically based on status and due date.</p>
                                     </div>
                                     <div class="sm:col-span-2">
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due Date</h3>
@@ -482,6 +479,16 @@
                 showTagModal: false,
                 currentUserId: currentUserId,
 
+                getStageBadgeColor(stage) {
+                    const colors = {
+                        'overdue': 'bg-red-100 text-red-700',
+                        'pending': 'bg-yellow-100 text-yellow-700',
+                        'in_progress': 'bg-blue-100 text-blue-700',
+                        'completed': 'bg-green-100 text-green-700',
+                    };
+                    return colors[stage] || 'bg-slate-100 text-slate-700';
+                },
+
                 get statusOptions() {
                     // Supervisors/Admins (who can edit due dates) see all statuses
                     if (this.canEditDue) {
@@ -491,17 +498,6 @@
                     // Employees are limited to these statuses
                     const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
                     return this.statuses.filter(status => allowedForEmployees.includes(status));
-                },
-
-                get stageOptions() {
-                    // Supervisors/Admins can see all stages
-                    if (this.canEditDue) {
-                        return this.stages;
-                    }
-
-                    // Employees can only toggle between these stages; 'overdue' is automatic
-                    const allowedStagesForEmployees = ['pending', 'in_progress', 'completed'];
-                    return this.stages.filter(stage => allowedStagesForEmployees.includes(stage));
                 },
 
                 async saveAndClose() {
@@ -789,42 +785,20 @@
                         });
 
                         if (!response.ok) throw new Error();
+                        const data = await response.json();
+                        if (data.stage) {
+                            task.stage = data.stage;
+                            if (this.selectedTask && this.selectedTask.id === taskId) {
+                                this.selectedTask.stage = data.stage;
+                            }
+                        }
+                        this.recomputeCounts();
                     } catch (e) {
                         task.status = oldStatus;
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask.status = oldStatus;
                         }
                         console.error('Failed to update status');
-                    }
-                },
-
-                async updateStage(taskId, newStage) {
-                    const task = this.tasks.find(t => t.id === taskId);
-                    if (!task) return;
-                    const oldStage = task.stage;
-                    task.stage = newStage;
-
-                    if (this.selectedTask && this.selectedTask.id === taskId) {
-                        this.selectedTask.stage = newStage;
-                    }
-
-                    try {
-                        const response = await fetch(`/tasks/${taskId}/stage`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify({ stage: newStage })
-                        });
-
-                        if (!response.ok) throw new Error();
-                    } catch (e) {
-                        task.stage = oldStage;
-                        if (this.selectedTask && this.selectedTask.id === taskId) {
-                            this.selectedTask.stage = oldStage;
-                        }
-                        console.error('Failed to update stage');
                     }
                 },
 

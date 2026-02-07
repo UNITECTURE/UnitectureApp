@@ -41,8 +41,9 @@ class TaskController extends Controller
      */
     public function index()
     {
-        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
         Task::bulkSyncPrioritiesFromDeadlines();
+        Task::bulkSyncOverdueStages();
 
         // For now, show all tasks if admin/supervisor, or assigned tasks if employee
         $user = Auth::user();
@@ -127,8 +128,9 @@ class TaskController extends Controller
      */
     public function assigned()
     {
-        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
         Task::bulkSyncPrioritiesFromDeadlines();
+        Task::bulkSyncOverdueStages();
 
         $user = Auth::user();
 
@@ -181,8 +183,9 @@ class TaskController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
         Task::bulkSyncPrioritiesFromDeadlines();
+        Task::bulkSyncOverdueStages();
 
         $user = Auth::user();
         
@@ -347,9 +350,6 @@ class TaskController extends Controller
             if ($request->has('status')) {
                 $request->validate(['status' => 'in:' . implode(',', self::STATUSES)]);
             }
-            if ($request->has('stage')) {
-                $request->validate(['stage' => 'in:' . implode(',', self::STAGES)]);
-            }
         }
 
         // Combine Date and Time for end_date
@@ -371,21 +371,7 @@ class TaskController extends Controller
         if ($request->has('status')) {
             $task->status = $request->status;
         }
-        if ($request->has('stage')) {
-            $task->stage = $request->stage;
-        } else {
-            // Set default stage based on end_date
-            if ($endDate) {
-                $endDateTime = \Carbon\Carbon::parse($endDate);
-                if ($endDateTime->isPast()) {
-                    $task->stage = 'overdue';
-                } else {
-                    $task->stage = 'pending';
-                }
-            } else {
-                $task->stage = 'pending';
-            }
-        }
+        // Stage is set automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->created_by = Auth::id();
         $task->save();
 
@@ -530,6 +516,7 @@ class TaskController extends Controller
 
         $oldStatus = $task->status;
         $task->status = $validated['status'];
+        // Stage is synced automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->save();
 
         // Notify assignees and tagged users via Telegram about status change
@@ -582,81 +569,22 @@ class TaskController extends Controller
             }
         }
 
-        return response()->json(['message' => 'Status updated successfully', 'status' => $task->status]);
+        return response()->json([
+            'message' => 'Status updated successfully',
+            'status' => $task->status,
+            'stage' => $task->stage,
+        ]);
     }
 
     /**
-     * Update the task stage.
+     * Update the task stage. Stages cannot be changed manually; they are set automatically
+     * based on status and due date (pending, in_progress when wip, completed when closed, overdue when past due).
      */
     public function updateStage(Request $request, Task $task)
     {
-        // Supervisors/Admins can use the full stage enum.
-        // Employees may only move between: pending, in_progress, completed.
-        $user = Auth::user();
-        $allowedStages = self::STAGES;
-        if ($user->isEmployee()) {
-            $allowedStages = ['pending', 'in_progress', 'completed'];
-        }
-
-        $validated = $request->validate([
-            'stage' => 'required|string|in:' . implode(',', $allowedStages),
-        ]);
-
-        $oldStage = $task->stage;
-        $task->stage = $validated['stage'];
-        $task->save();
-
-        // Notify assignees and tagged users via Telegram about stage change
-        if ($oldStage !== $task->stage) {
-            try {
-                /** @var \App\Services\TelegramService $telegram */
-                $telegram = app(TelegramService::class);
-                $actor = Auth::user();
-                $project = $task->project()->first();
-
-                $task->loadMissing(['assignees', 'taggedUsers', 'creator']);
-                $recipientIds = $task->assignees->pluck('id')
-                    ->merge($task->taggedUsers->pluck('id'))
-                    ->push(optional($task->creator)->id)
-                    ->filter()
-                    ->unique()
-                    ->all();
-
-                if (!empty($recipientIds)) {
-                    $recipients = User::whereIn('id', $recipientIds)
-                        ->whereNotNull('telegram_chat_id')
-                        ->get();
-
-                    foreach ($recipients as $user) {
-                        $lines = [];
-                        $lines[] = '🔔 <b>Task stage updated</b>';
-                        $lines[] = '';
-                        $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
-
-                        if ($project) {
-                            $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
-                        }
-
-                        $lines[] = '<b>New Stage:</b> ' . ucfirst(str_replace('_', ' ', $task->stage));
-
-                        if ($actor) {
-                            $lines[] = '<b>Updated by:</b> ' . e($actor->name);
-                        }
-
-                        $lines[] = '';
-                        $lines[] = 'Open the Unitecture app to view full details.';
-
-                        $message = implode("\n", $lines);
-
-                        $telegram->sendMessage($user->telegram_chat_id, $message);
-                    }
-                }
-            } catch (\Throwable $e) {
-                \Log::error('Failed to send Telegram task stage notifications: ' . $e->getMessage());
-            }
-        }
-
-        return response()->json(['message' => 'Stage updated successfully', 'stage' => $task->stage]);
+        return response()->json([
+            'message' => 'Stages cannot be changed manually. They are set automatically based on status and due date.',
+        ], 403);
     }
 
     /**
@@ -723,15 +651,7 @@ class TaskController extends Controller
         }
 
         $task->end_date = $endDateTime;
-
-        // Recalculate stage based on new end date if not manually overridden
-        $endCarbon = \Carbon\Carbon::parse($endDateTime);
-        if ($endCarbon->isPast() && $task->stage !== 'completed') {
-            $task->stage = 'overdue';
-        } elseif (!$endCarbon->isPast() && $task->stage === 'overdue') {
-            $task->stage = 'pending';
-        }
-
+        // Stage is synced automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->save();
 
         return response()->json([
