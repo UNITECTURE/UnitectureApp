@@ -95,10 +95,7 @@
                 <div x-show="view === 'vertical'" class="h-full overflow-x-auto overflow-y-hidden p-3 sm:p-4 md:p-6">
                     <div class="flex h-full gap-3 sm:gap-4 md:gap-6 items-start pb-4 w-full" style="min-width: max-content;">
                         <template x-for="stage in stages" :key="stage">
-                            <div class="flex-1 min-w-[280px] sm:min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-lg sm:rounded-xl border border-slate-200 max-h-full"
-                                @dragover.prevent="dragOverStage = stage" @dragleave="dragOverStage = null"
-                                @drop="drop($event, stage); dragOverStage = null"
-                                :class="{ 'ring-2 ring-indigo-400 ring-inset bg-indigo-50': dragOverStage === stage }">
+                            <div class="flex-1 min-w-[280px] sm:min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-lg sm:rounded-xl border border-slate-200 max-h-full">
                                 
                                 <!-- Column Header -->
                                 <div class="p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-xl">
@@ -120,8 +117,8 @@
                                 <!-- Cards Container -->
                                 <div class="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar" style="min-height: 100px;">
                                     <template x-for="task in tasksByStage(stage)" :key="task.id">
-                                        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100 cursor-grab hover:shadow-md transition-all active:cursor-grabbing group relative"
-                                            draggable="true" @dragstart="dragStart($event, task)" @click="openModal(task)">
+                                        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100 cursor-pointer hover:shadow-md transition-all group relative"
+                                            @click="openModal(task)">
                                             
                                             <!-- Header: time left (left), project + priority (right) -->
                                             <div class="flex items-start justify-between gap-2 mb-2">
@@ -219,15 +216,10 @@
                                                     </template>
                                                 </select>
                                             </td>
-                                            <td class="px-6 py-3" @click.stop>
-                                                <select @change="updateStage(task.id, $event.target.value)" 
-                                                    class="text-xs font-bold px-2 py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                            <td class="px-6 py-3">
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold"
                                                     :class="getStageSelectColor(task.stage)"
-                                                    :value="task.stage">
-                                                    <template x-for="stage in stages" :key="stage">
-                                                        <option :value="stage" x-text="formatStage(stage)"></option>
-                                                    </template>
-                                                </select>
+                                                    x-text="formatStage(task.stage)"></span>
                                             </td>
                                             <td class="px-6 py-3">
                                                 <div class="flex -space-x-2">
@@ -323,13 +315,10 @@
                                 </div>
                                 <div>
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Stage</h3>
-                                    <select @change="updateStage(selectedTask.id, $event.target.value)"
-                                        class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                        <template x-for="stage in stages" :key="stage">
-                                            <option :value="stage" :selected="selectedTask.stage === stage"
-                                                x-text="formatStage(stage)"></option>
-                                        </template>
-                                    </select>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                        :class="getStageSelectColor(selectedTask.stage)"
+                                        x-text="formatStage(selectedTask.stage)"></span>
+                                    <p class="text-[11px] text-slate-400 mt-1">Stage is set automatically based on status and due date.</p>
                                 </div>
                                 <div>
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due Date</h3>
@@ -546,7 +535,6 @@
                 view: 'vertical',
                 selectedStage: null,
                 selectedTask: null,
-                dragOverStage: null,
                 canEditDue: canEditDue,
                 editEndDate: '',
                 editEndTime: '',
@@ -717,26 +705,6 @@
                         : this.tasks;
                 },
 
-                dragStart(event, task) {
-                    event.dataTransfer.effectAllowed = 'move';
-                    event.dataTransfer.setData('text/plain', JSON.stringify(task));
-                    event.target.classList.add('opacity-50');
-                },
-
-                async drop(event, newStage) {
-                    const data = event.dataTransfer.getData('text/plain');
-                    if (!data) return;
-                    
-                    const task = JSON.parse(data);
-                    const validTask = this.tasks.find(t => t.id === task.id);
-                    
-                    if (validTask && validTask.stage !== newStage) {
-                        await this.updateStage(validTask.id, newStage);
-                    }
-                    
-                    document.querySelectorAll('.opacity-50').forEach(el => el.classList.remove('opacity-50'));
-                },
-
                 formatStatus(status) {
                     return status.replace(/_/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 },
@@ -852,42 +820,19 @@
                         });
 
                         if (!response.ok) throw new Error();
+                        const data = await response.json();
+                        if (data.stage) {
+                            task.stage = data.stage;
+                            if (this.selectedTask && this.selectedTask.id === taskId) {
+                                this.selectedTask.stage = data.stage;
+                            }
+                        }
                     } catch (e) {
                         task.status = oldStatus;
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask.status = oldStatus;
                         }
                         alert('Failed to update status');
-                    }
-                },
-
-                async updateStage(taskId, newStage) {
-                    const task = this.tasks.find(t => t.id === taskId);
-                    if (!task) return;
-                    const oldStage = task.stage;
-                    task.stage = newStage;
-
-                    if (this.selectedTask && this.selectedTask.id === taskId) {
-                        this.selectedTask.stage = newStage;
-                    }
-
-                    try {
-                        const response = await fetch(`/tasks/${taskId}/stage`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify({ stage: newStage })
-                        });
-
-                        if (!response.ok) throw new Error();
-                    } catch (e) {
-                        task.stage = oldStage;
-                        if (this.selectedTask && this.selectedTask.id === taskId) {
-                            this.selectedTask.stage = oldStage;
-                        }
-                        alert('Failed to update stage');
                     }
                 },
 
