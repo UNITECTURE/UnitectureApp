@@ -430,7 +430,7 @@
                                 <button
                                     x-show="canEditDue && selectedTask && selectedTask.created_by === currentUserId"
                                     type="button"
-                                    @click="deleteTask(selectedTask.id)"
+                                    @click="showDeleteConfirm = true; taskToDelete = selectedTask"
                                     class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
                                     Delete task
                                 </button>
@@ -444,6 +444,33 @@
                     </template>
                     </div>
             </template>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div x-show="showDeleteConfirm" x-cloak
+                class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+                x-transition.opacity
+                @click.self="showDeleteConfirm = false; taskToDelete = null">
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6" @click.stop>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Delete task?</h3>
+                    <p class="text-sm text-slate-600 mb-4" x-show="taskToDelete">
+                        Are you sure you want to delete this task? This action cannot be undone.
+                    </p>
+                    <p class="text-xs text-slate-500 mb-4 line-clamp-2" x-show="taskToDelete" x-text="taskToDelete ? ((taskToDelete.description || '').substring(0, 100) + ((taskToDelete.description || '').length > 100 ? '...' : '')) : ''"></p>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" @click="showDeleteConfirm = false; taskToDelete = null"
+                            :disabled="deleteInProgress"
+                            class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 disabled:opacity-50">
+                            Cancel
+                        </button>
+                        <button type="button" @click="confirmDeleteTask()"
+                            :disabled="deleteInProgress"
+                            class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50">
+                            <span x-show="!deleteInProgress">Delete</span>
+                            <span x-show="deleteInProgress">Deleting...</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -463,6 +490,9 @@
                 sidebarOpen: true,
                 filterStatus: 'all',
                 selectedTask: null,
+                showDeleteConfirm: false,
+                taskToDelete: null,
+                deleteInProgress: false,
                 editEndDate: '',
                 editEndTime: '',
                 taskComments: [],
@@ -524,30 +554,40 @@
                     };
                 },
 
+                confirmDeleteTask() {
+                    const task = this.taskToDelete;
+                    if (!task || !task.id) return;
+                    this.deleteTask(task.id);
+                },
                 async deleteTask(taskId) {
                     if (!taskId) return;
-                    if (!confirm('Are you sure you want to delete this task? This action cannot be undone.')) return;
+                    this.deleteInProgress = true;
                     try {
                         const response = await fetch(`/tasks/${taskId}`, {
                             method: 'DELETE',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                                 'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
                             },
                         });
+                        const data = await response.json().catch(() => ({}));
                         if (!response.ok) {
-                            const text = await response.text();
-                            console.error('Delete failed:', text);
-                            throw new Error('Failed to delete task');
+                            const msg = data.message || (response.status === 403 ? 'You do not have permission to delete this task.' : 'Failed to delete task.');
+                            throw new Error(msg);
                         }
                         this.tasks = this.tasks.filter(t => t.id !== taskId);
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask = null;
                         }
+                        this.showDeleteConfirm = false;
+                        this.taskToDelete = null;
                         this.recomputeCounts();
                     } catch (e) {
-                        console.error('Failed to delete task', e);
-                        alert('Failed to delete task. You may not have permission or there was a server error.');
+                        console.error('Delete failed:', e);
+                        alert(e.message || 'Failed to delete task. You may not have permission or there was a server error.');
+                    } finally {
+                        this.deleteInProgress = false;
                     }
                 },
                 getStatusBadgeColor(status) {
