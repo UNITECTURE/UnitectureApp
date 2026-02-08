@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="teamTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ auth()->user()->isAdmin() || auth()->user()->isSupervisor() ? 'true' : 'false' }}, {{ auth()->id() }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="teamTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ auth()->user()->isAdmin() || auth()->user()->isSupervisor() ? 'true' : 'false' }}, {{ auth()->id() }}, {{ json_encode($employees ?? []) }})">
         <x-sidebar :role="auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isSupervisor() ? 'supervisor' : 'employee')" />
         
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
@@ -50,41 +50,42 @@
                         </div>
                     </div>
 
-                    <!-- Filter Buttons -->
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <button @click="selectedStage = null"
-                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border whitespace-nowrap"
-                            :class="selectedStage === null ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            All Tasks (<span x-text="tasks.length"></span>)
-                        </button>
-
-                        <button @click="selectedStage = 'overdue'"
-                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
-                            :class="selectedStage === 'overdue' ? 'bg-red-100 border-red-500 text-red-700' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            <span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>
-                            Overdue
-                        </button>
-
-                        <button @click="selectedStage = 'pending'"
-                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
-                            :class="selectedStage === 'pending' ? 'bg-yellow-100 border-yellow-500 text-yellow-700' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 shrink-0"></span>
-                            Pending
-                        </button>
-
-                        <button @click="selectedStage = 'in_progress'"
-                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
-                            :class="selectedStage === 'in_progress' ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
-                            In Progress
-                        </button>
-
-                        <button @click="selectedStage = 'completed'"
-                            class="px-4 py-2 rounded-full text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
-                            :class="selectedStage === 'completed' ? 'bg-green-100 border-green-500 text-green-700' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            <span class="w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
-                            Completed
-                        </button>
+                    <!-- Toolbar: Filter by Employee + Task Count -->
+                    <div class="flex items-center gap-4 flex-wrap">
+                        <span class="text-sm font-medium text-slate-600">
+                            <span x-text="tasks.length"></span> task<span x-show="tasks.length !== 1">s</span>
+                        </span>
+                        <div class="relative" x-data="{ open: false }">
+                            <button type="button" @click="open = !open"
+                                class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-lg text-sm font-semibold bg-white text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                                <span>Filter by employee</span>
+                                <span x-show="filterEmployeeIds.length > 0" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full" x-text="filterEmployeeIds.length"></span>
+                                <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div x-show="open" @click.outside="open = false"
+                                x-transition
+                                class="absolute left-0 mt-2 w-72 max-h-80 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg z-20 py-2">
+                                <div class="px-3 py-2 border-b border-slate-100">
+                                    <button type="button" @click="filterEmployeeIds = []; open = false"
+                                        class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Clear filter</button>
+                                </div>
+                                <template x-for="emp in employees" :key="emp.id">
+                                    <label class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 cursor-pointer">
+                                        <input type="checkbox" :checked="filterEmployeeIds.includes(emp.id)"
+                                            @change="toggleEmployeeFilter(emp.id)"
+                                            class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                        <img :src="emp.profile_image_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(emp.full_name || emp.name || '') + '&background=6366f1&color=fff&size=64')"
+                                            class="w-6 h-6 rounded-full object-cover" :alt="emp.full_name">
+                                        <span class="text-sm font-medium text-slate-700 truncate" x-text="emp.full_name || emp.name || 'Unknown'"></span>
+                                    </label>
+                                </template>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -508,7 +509,7 @@
                             <button
                                 x-show="canEditDue && selectedTask && selectedTask.created_by === currentUserId"
                                 type="button"
-                                @click="deleteTask(selectedTask.id)"
+                                @click="showDeleteConfirm = true; taskToDelete = selectedTask"
                                 class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
                                 Delete task
                             </button>
@@ -522,19 +523,50 @@
                 </template>
             </div>
         </template>
+
+        <!-- Delete Confirmation Modal -->
+        <div x-show="showDeleteConfirm" x-cloak
+            class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+            x-transition.opacity
+            @click.self="showDeleteConfirm = false; taskToDelete = null">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6" @click.stop>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Delete task?</h3>
+                <p class="text-sm text-slate-600 mb-4" x-show="taskToDelete">
+                    Are you sure you want to delete this task? This action cannot be undone.
+                </p>
+                <p class="text-xs text-slate-500 mb-4 line-clamp-2" x-show="taskToDelete" x-text="taskToDelete ? ((taskToDelete.description || '').substring(0, 100) + ((taskToDelete.description || '').length > 100 ? '...' : '')) : ''"></p>
+                <div class="flex justify-end gap-3">
+                    <button type="button" @click="showDeleteConfirm = false; taskToDelete = null"
+                        :disabled="deleteInProgress"
+                        class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 disabled:opacity-50">
+                        Cancel
+                    </button>
+                    <button type="button" @click="confirmDeleteTask()"
+                        :disabled="deleteInProgress"
+                        class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50">
+                        <span x-show="!deleteInProgress">Delete</span>
+                        <span x-show="deleteInProgress">Deleting...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('teamTasks', (initialTasks, statuses, stages, canEditDue, currentUserId) => ({
+            Alpine.data('teamTasks', (initialTasks, statuses, stages, canEditDue, currentUserId, initialEmployees) => ({
                 tasks: initialTasks,
                 statuses: statuses,
                 stages: stages,
+                employees: initialEmployees || [],
+                filterEmployeeIds: [],
                 sidebarOpen: true,
                 view: 'vertical',
-                selectedStage: null,
                 selectedTask: null,
+                showDeleteConfirm: false,
+                taskToDelete: null,
+                deleteInProgress: false,
                 canEditDue: canEditDue,
                 editEndDate: '',
                 editEndTime: '',
@@ -566,29 +598,39 @@
                     }
                 },
 
+                confirmDeleteTask() {
+                    const task = this.taskToDelete;
+                    if (!task || !task.id) return;
+                    this.deleteTask(task.id);
+                },
                 async deleteTask(taskId) {
                     if (!taskId) return;
-                    if (!confirm('Are you sure you want to delete this task? This action cannot be undone.')) return;
+                    this.deleteInProgress = true;
                     try {
                         const response = await fetch(`/tasks/${taskId}`, {
                             method: 'DELETE',
                             headers: {
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                                 'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
                             },
                         });
+                        const data = await response.json().catch(() => ({}));
                         if (!response.ok) {
-                            const text = await response.text();
-                            console.error('Delete failed:', text);
-                            throw new Error('Failed to delete task');
+                            const msg = data.message || (response.status === 403 ? 'You do not have permission to delete this task.' : 'Failed to delete task.');
+                            throw new Error(msg);
                         }
                         this.tasks = this.tasks.filter(t => t.id !== taskId);
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask = null;
                         }
+                        this.showDeleteConfirm = false;
+                        this.taskToDelete = null;
                     } catch (e) {
-                        console.error('Failed to delete task', e);
-                        alert('Failed to delete task. You may not have permission or there was a server error.');
+                        console.error('Delete failed:', e);
+                        alert(e.message || 'Failed to delete task. You may not have permission or there was a server error.');
+                    } finally {
+                        this.deleteInProgress = false;
                     }
                 },
 
@@ -695,14 +737,27 @@
                     this.taskComments = this.normalizeComments(this.taskComments);
                 },
 
+                toggleEmployeeFilter(employeeId) {
+                    const idx = this.filterEmployeeIds.indexOf(employeeId);
+                    if (idx === -1) {
+                        this.filterEmployeeIds = [...this.filterEmployeeIds, employeeId];
+                    } else {
+                        this.filterEmployeeIds = this.filterEmployeeIds.filter(id => id !== employeeId);
+                    }
+                },
+
                 tasksByStage(stage) {
                     return this.filteredTasks().filter(t => t.stage === stage);
                 },
 
                 filteredTasks() {
-                    return this.selectedStage 
-                        ? this.tasks.filter(t => t.stage === this.selectedStage)
-                        : this.tasks;
+                    let list = this.tasks;
+                    if (this.filterEmployeeIds && this.filterEmployeeIds.length > 0) {
+                        list = list.filter(t =>
+                            t.assignees && t.assignees.some(a => this.filterEmployeeIds.includes(a.id))
+                        );
+                    }
+                    return list;
                 },
 
                 formatStatus(status) {
