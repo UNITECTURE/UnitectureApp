@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }})">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -13,61 +13,93 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
             <!-- Header & Toolbar -->
-            <header class="bg-white border-b border-slate-100 py-5 px-4 sm:px-6 shrink-0 z-10">
+            <header class="bg-white border-b border-slate-100 py-6 px-4 sm:px-6 shrink-0 z-10">
                 <div class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-3">
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Tasks</h1>
-                        <p class="text-slate-500 text-sm font-medium">Manage and track your assigned tasks</p>
-                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Tasks</h1>
+                            <p class="text-slate-500 text-sm font-medium">Manage and track your assigned tasks</p>
+                        </div>
 
-                    @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
-                        <a href="{{ route('tasks.create') }}"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md w-fit transition-all">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>Add Task</span>
-                        </a>
-                    @endif
+                        <div class="flex items-center gap-2">
+                            <!-- View Toggle: Overview, Vertical (Kanban), Horizontal (List) -->
+                            <div class="flex bg-white border border-slate-200 shadow-sm p-0.5 rounded-lg gap-0.5">
+                                <button type="button" @click="view = 'overview'"
+                                    class="p-2 rounded-md transition-all duration-200"
+                                    :class="view === 'overview' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
+                                    title="Overview">
+                                    <img src="{{ asset('images/overview.svg') }}" class="w-5 h-5" alt="Overview" />
+                                </button>
+                                <button type="button" @click="view = 'vertical'"
+                                    class="p-2 rounded-md transition-all duration-200"
+                                    :class="view === 'vertical' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
+                                    title="Kanban">
+                                    <img src="{{ asset('images/kanban.svg') }}" class="w-5 h-5" alt="Kanban" />
+                                </button>
+                                <button type="button" @click="view = 'horizontal'"
+                                    class="p-2 rounded-md transition-all duration-200"
+                                    :class="view === 'horizontal' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
+                                    title="List">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
+                                <a href="{{ route('tasks.create') }}"
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md w-fit transition-all">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Add Task</span>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </header>
 
             <!-- Filters and Search -->
-            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-4 sm:py-5 shrink-0">
-                <div class="flex items-center gap-4 justify-between w-full">
+            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-3 sm:py-4 shrink-0">
+                <div class="flex flex-wrap items-center justify-between gap-4">
                     <!-- Filter Buttons -->
-                    <div class="flex items-center gap-2 flex-1 overflow-x-auto">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <button @click="filterStatus = 'all'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'all' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            All (<span x-text="counts.all"></span>)
-                        </button>
-                        <button @click="filterStatus = 'pending'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'pending' ? 'bg-yellow-500 border-yellow-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            Pending (<span x-text="counts.pending"></span>)
-                        </button>
-                        <button @click="filterStatus = 'in_progress'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'in_progress' ? 'bg-blue-500 border-blue-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            In Progress (<span x-text="counts.in_progress"></span>)
-                        </button>
-                        <button @click="filterStatus = 'completed'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'completed' ? 'bg-green-500 border-green-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            Completed (<span x-text="counts.completed"></span>)
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap"
+                            :class="filterStatus === 'all' ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            All Tasks (<span x-text="counts.all"></span>)
                         </button>
                         <button @click="filterStatus = 'overdue'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'overdue' ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            Overdue (<span x-text="counts.overdue"></span>)
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'overdue' ? 'bg-red-50 border-red-200 text-red-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            Overdue
+                        </button>
+                        <button @click="filterStatus = 'pending'"
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'pending' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            Pending
+                        </button>
+                        <button @click="filterStatus = 'in_progress'"
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'in_progress' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            In Progress
+                        </button>
+                        <button @click="filterStatus = 'completed'"
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'completed' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            Completed
                         </button>
                     </div>
 
                     <!-- Filter by Employee (admin/supervisor only) -->
                     <div x-show="showEmployeeFilter" class="relative flex-shrink-0" x-data="{ open: false }">
                         <button type="button" @click="open = !open"
-                            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-lg text-sm font-semibold bg-white text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-full text-xs sm:text-sm font-semibold bg-white text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-200 shadow-sm">
                             <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                             </svg>
@@ -97,92 +129,209 @@
                         </div>
                     </div>
 
-                    <!-- Search -->
-                    <div class="relative ml-4 flex-shrink-0">
-                        <input type="text" x-model="search" placeholder="Search tasks..."
-                            class="w-64 pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                        <svg class="w-5 h-5 text-slate-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
                 </div>
             </div>
 
             <!-- Content Area -->
             <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50">
-                <!-- Task Cards Grid -->
-                <div x-show="filteredTasks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Overview: Task Cards Grid -->
+                <div x-show="view === 'overview' && filteredTasks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <template x-for="task in filteredTasks" :key="task.id">
-                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
                             @click="openModal(task)">
-                            <!-- Header: time left (left), project + priority (right) -->
-                            <div class="flex items-start justify-between mb-3 gap-2">
-                                <span class="text-xs font-semibold shrink-0"
-                                    :class="dueInClass(task)"
-                                    x-text="dueIn(task)"></span>
-                                <div class="flex flex-col items-end gap-1 min-w-0">
-                                    <span class="text-xs font-medium text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
-                                        :class="{
-                                            'bg-red-100 text-red-700': task.priority === 'high',
-                                            'bg-orange-100 text-orange-700': task.priority === 'medium',
-                                            'bg-green-100 text-green-700': task.priority === 'low',
-                                            'bg-slate-100 text-slate-700': task.priority === 'free'
-                                        }"
-                                        x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
-                                    </span>
-                                </div>
+                            <!-- Header: project + priority -->
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide" x-text="task.project?.name || 'No Project'"></div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold"
+                                    :class="{
+                                        'bg-red-100 text-red-700': task.priority === 'high',
+                                        'bg-yellow-100 text-yellow-700': task.priority === 'medium',
+                                        'bg-green-100 text-green-700': task.priority === 'low',
+                                        'bg-purple-100 text-purple-700': task.priority === 'free'
+                                    }"
+                                    x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
+                                </span>
                             </div>
 
                             <!-- Description -->
-                            <p class="text-base font-bold text-slate-800 mb-3 line-clamp-2 group-hover:text-indigo-600 transition-colors"
-                                x-text="(task.description || '').substring(0, 120) + ((task.description || '').length > 120 ? '...' : '')">
-                            </p>
+                            <p class="mt-3 text-lg font-semibold text-slate-900 leading-snug line-clamp-1"
+                                :title="task.description || ''"
+                                x-text="(task.description || '').length > 30 ? (task.description || '').substring(0, 30) + '...' : (task.description || '')"></p>
 
-                            <!-- Footer -->
-                            <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-2">
-                                <div class="flex -space-x-2 shrink-0">
-                                    <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
-                                        <img :src="getProfileImageUrl(assignee)"
-                                            :alt="assignee.full_name || assignee.name"
-                                            :title="assignee.full_name || assignee.name"
-                                            class="w-7 h-7 rounded-full border-2 border-white object-cover shadow-sm">
-                                    </template>
-                                    <template x-if="task.assignees.length > 3">
-                                        <div class="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
-                                            :title="'+' + (task.assignees.length - 3) + ' more'"
-                                            x-text="'+' + (task.assignees.length - 3)">
-                                        </div>
-                                    </template>
-                                </div>
-                                <div class="flex flex-col gap-0.5 text-xs font-medium text-slate-400 min-w-0 text-right">
-                                    <span class="truncate">Due: <span x-text="formatDate(task.end_date)"></span></span>
-                                    <span class="truncate">End: <span x-text="formatTime(task.end_date)"></span></span>
-                                </div>
+                            <!-- Stage + Status row -->
+                            <div class="mt-4 mb-3 flex flex-wrap items-center gap-2">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700"
+                                    x-text="formatStage(task.stage)"></span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                    :class="getStatusBadgeColor(task.status)"
+                                    x-text="formatStatus(task.status)"></span>
                             </div>
 
-                            <!-- Status Badge -->
-                            <div class="mt-3">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold"
-                                    :class="{
-                                        'bg-slate-100 text-slate-700': task.stage === 'pending',
-                                        'bg-blue-100 text-blue-700': task.stage === 'in_progress',
-                                        'bg-green-100 text-green-700': task.stage === 'completed',
-                                        'bg-red-100 text-red-700': task.stage === 'overdue'
-                                    }"
-                                    x-text="formatStage(task.stage)">
-                                </span>
+                            <!-- Footer -->
+                            <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-5 gap-3">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="flex -space-x-2 shrink-0">
+                                        <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
+                                            <img :src="getProfileImageUrl(assignee)"
+                                                :alt="assignee.full_name || assignee.name"
+                                                :title="assignee.full_name || assignee.name"
+                                                class="w-8 h-8 rounded-full border-2 border-white object-cover shadow-sm">
+                                        </template>
+                                        <template x-if="task.assignees.length > 3">
+                                            <div class="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
+                                                :title="'+' + (task.assignees.length - 3) + ' more'"
+                                                x-text="'+' + (task.assignees.length - 3)"></div>
+                                        </template>
+                                    </div>
+                                    <div class="text-xs font-medium text-slate-500 truncate">
+                                        <span>Due </span>
+                                        <span x-text="formatDate(task.end_date)"></span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-1.5 text-xs font-semibold shrink-0"
+                                    :class="dueInClass(task)">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span x-text="dueIn(task)"></span>
+                                </div>
                             </div>
                         </div>
                     </template>
                 </div>
 
-                <!-- Empty State -->
-                <div x-show="filteredTasks.length === 0" class="flex flex-col items-center justify-center py-20">
+                <!-- Empty State (Overview) -->
+                <div x-show="view === 'overview' && filteredTasks.length === 0" class="flex flex-col items-center justify-center py-20">
                     <svg class="w-16 h-16 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                     </svg>
                     <p class="text-slate-500 font-medium">No tasks found</p>
+                </div>
+
+                <!-- Vertical Kanban View -->
+                <div x-show="view === 'vertical'" class="h-full overflow-x-auto overflow-y-hidden">
+                    <div class="flex h-full gap-3 sm:gap-4 md:gap-6 items-start pb-4 w-full min-w-max">
+                        <template x-for="stage in stages" :key="stage">
+                            <div class="flex-1 min-w-[280px] sm:min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-lg sm:rounded-xl border border-slate-200 max-h-full">
+                                <div class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-lg sm:rounded-t-xl">
+                                    <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0"
+                                            :class="{
+                                                'bg-red-500': stage === 'overdue',
+                                                'bg-yellow-500': stage === 'pending',
+                                                'bg-blue-500': stage === 'in_progress',
+                                                'bg-green-500': stage === 'completed'
+                                            }"></div>
+                                        <span class="text-xs sm:text-sm font-bold text-slate-700 uppercase truncate" x-text="formatStage(stage)"></span>
+                                        <span class="bg-slate-200 text-slate-600 px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold shrink-0" x-text="tasksByStage(stage).length"></span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 overflow-y-auto p-2 sm:p-3 space-y-2 sm:space-y-3" style="min-height: 100px;">
+                                    <template x-for="task in tasksByStage(stage)" :key="task.id">
+                                        <div class="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-slate-100 cursor-pointer hover:shadow-md transition-all"
+                                            @click="openModal(task)">
+                                            <div class="flex items-start justify-between gap-2 mb-1.5 sm:mb-2">
+                                                <span class="text-[9px] sm:text-[10px] font-bold shrink-0" :class="dueInClass(task)" x-text="dueIn(task)"></span>
+                                                <div class="flex flex-col items-end gap-0.5 min-w-0">
+                                                    <span class="text-[9px] sm:text-[10px] text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
+                                                    <span class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0" :class="{
+                                                        'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                        'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
+                                                        'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                        'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
+                                                    }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
+                                                </div>
+                                            </div>
+                                            <p class="text-xs sm:text-sm font-bold text-slate-800 leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words" x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></p>
+                                            <div class="flex flex-col gap-0.5 text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
+                                                <div class="flex items-center gap-1">
+                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                    <span>Due: <span x-text="formatDate(task.end_date)"></span></span>
+                                                </div>
+                                                <div class="flex items-center gap-1">
+                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    <span>End: <span x-text="formatTime(task.end_date)"></span></span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between border-t border-slate-50 pt-2 sm:pt-3 mt-1.5 sm:mt-2 gap-2">
+                                                <div class="flex -space-x-1.5 sm:-space-x-2 overflow-hidden shrink-0">
+                                                    <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
+                                                        <img :src="getProfileImageUrl(assignee)" :alt="assignee.full_name || assignee.name" :title="assignee.full_name || assignee.name" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white object-cover shadow-sm">
+                                                    </template>
+                                                    <template x-if="task.assignees.length > 3">
+                                                        <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[9px] sm:text-[10px] font-bold text-slate-600" :title="'+' + (task.assignees.length - 3)" x-text="'+' + (task.assignees.length - 3)"></div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Horizontal Table View -->
+                <div x-show="view === 'horizontal'" class="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs sm:text-sm min-w-[800px]">
+                            <thead>
+                                <tr class="border-b border-slate-200 bg-slate-50">
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Sr No</th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Project Code</th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Task</th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Status</th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Stage</th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Assigned To</th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Start Date</th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">End Date</th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Priority</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="(task, index) in filteredTasks" :key="task.id">
+                                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer" @click="openModal(task)">
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="String(index + 1).padStart(2, '0')"></td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="task.project?.project_code || 'N/A'"></td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 min-w-[200px]">
+                                            <div class="font-medium text-slate-900 break-words line-clamp-2" x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')"></div>
+                                        </td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap" @click.stop>
+                                            <select @change="updateStatus(task.id, $event.target.value)" class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer" :class="getStatusSelectColor(task.status)" :value="task.status">
+                                                <template x-for="status in statusOptions" :key="status">
+                                                    <option :value="status" x-text="formatStatus(status)"></option>
+                                                </template>
+                                            </select>
+                                        </td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold" :class="getStageSelectColor(task.stage)" x-text="formatStage(task.stage)"></span>
+                                        </td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
+                                            <div class="flex -space-x-1.5 sm:-space-x-2">
+                                                <template x-for="assignee in task.assignees.slice(0, 3)" :key="assignee.id">
+                                                    <img :src="getProfileImageUrl(assignee)" :alt="assignee.full_name || assignee.name" :title="assignee.full_name || assignee.name" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white object-cover shadow-sm">
+                                                </template>
+                                                <template x-if="task.assignees.length > 3">
+                                                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] sm:text-xs font-bold text-slate-600" :title="'+' + (task.assignees.length - 3)" x-text="'+' + (task.assignees.length - 3)"></div>
+                                                </template>
+                                            </div>
+                                        </td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-slate-600 whitespace-nowrap" x-text="formatDate(task.start_date)"></td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-slate-600 whitespace-nowrap" x-text="formatDate(task.end_date) + ' ' + formatTime(task.end_date)"></td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold" :class="getPriorityColor(task.priority)" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div x-show="filteredTasks.length === 0" class="text-center py-12">
+                        <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <p class="text-slate-500 font-medium">No tasks found</p>
+                    </div>
                 </div>
             </main>
 
@@ -202,9 +351,9 @@
                                     <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                         :class="{
                                               'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                              'bg-orange-50 text-orange-600': selectedTask.priority === 'medium',
+                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
                                               'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                              'bg-slate-50 text-slate-600': selectedTask.priority === 'free'
+                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
                                           }" x-text="selectedTask.priority"></span>
                                     <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')"></h2>
                                     <p class="text-xs sm:text-sm text-slate-500 font-medium truncate" x-text="selectedTask.project?.name"></p>
@@ -231,7 +380,7 @@
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</h3>
                                         <select @change="updateStatus(selectedTask.id, $event.target.value)"
                                             class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                            <template x-for="status in statuses" :key="status">
+                                            <template x-for="status in statusOptions" :key="status">
                                                 <option :value="status" :selected="selectedTask.status === status"
                                                     x-text="formatStatus(status)"></option>
                                             </template>
@@ -239,13 +388,10 @@
                                     </div>
                                     <div>
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Stage</h3>
-                                        <select @change="updateStage(selectedTask.id, $event.target.value)"
-                                            class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                            <template x-for="stage in stages" :key="stage">
-                                                <option :value="stage" :selected="selectedTask.stage === stage"
-                                                    x-text="formatStage(stage)"></option>
-                                            </template>
-                                        </select>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                            :class="getStageBadgeColor(selectedTask.stage)"
+                                            x-text="formatStage(selectedTask.stage)"></span>
+                                        <p class="text-[11px] text-slate-400 mt-1">Stage is set automatically based on status and due date.</p>
                                     </div>
                                     <div class="sm:col-span-2">
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due Date</h3>
@@ -424,7 +570,14 @@
                                 </form>
                             </div>
 
-                            <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex justify-end rounded-b-xl sm:rounded-b-2xl">
+                            <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-b-xl sm:rounded-b-2xl">
+                                <button
+                                    x-show="canEditDue && selectedTask"
+                                    type="button"
+                                    @click="showDeleteConfirm = true; taskToDelete = selectedTask"
+                                    class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
+                                    Delete task
+                                </button>
                                 <button type="button" @click="saveAndClose()"
                                     class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     :disabled="saving">
@@ -436,12 +589,39 @@
                     </div>
             </template>
             </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div x-show="showDeleteConfirm" x-cloak
+                class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+                x-transition.opacity
+                @click.self="showDeleteConfirm = false; taskToDelete = null">
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6" @click.stop>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Delete task?</h3>
+                    <p class="text-sm text-slate-600 mb-4" x-show="taskToDelete">
+                        Are you sure you want to delete this task? This action cannot be undone.
+                    </p>
+                    <p class="text-xs text-slate-500 mb-4 line-clamp-2" x-show="taskToDelete" x-text="taskToDelete ? ((taskToDelete.description || '').substring(0, 100) + ((taskToDelete.description || '').length > 100 ? '...' : '')) : ''"></p>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" @click="showDeleteConfirm = false; taskToDelete = null"
+                            :disabled="deleteInProgress"
+                            class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 disabled:opacity-50">
+                            Cancel
+                        </button>
+                        <button type="button" @click="confirmDeleteTask()"
+                            :disabled="deleteInProgress"
+                            class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50">
+                            <span x-show="!deleteInProgress">Delete</span>
+                            <span x-show="deleteInProgress">Deleting...</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter) => ({
+            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter, currentUserId) => ({
                 tasks: initialTasks,
                 statuses: allStatuses,
                 stages: allStages,
@@ -452,8 +632,12 @@
                 filterEmployeeIds: [],
                 search: '',
                 sidebarOpen: true,
+                view: 'overview',
                 filterStatus: 'all',
                 selectedTask: null,
+                showDeleteConfirm: false,
+                taskToDelete: null,
+                deleteInProgress: false,
                 editEndDate: '',
                 editEndTime: '',
                 taskComments: [],
@@ -468,6 +652,46 @@
                 availableEmployees: [],
                 showAddPeopleModal: false,
                 showTagModal: false,
+                currentUserId: currentUserId,
+                toast: {
+                    show: false,
+                    type: 'success',
+                    message: ''
+                },
+                toastTimer: null,
+
+                showToast(message, type = 'success') {
+                    console.log('showToast called:', message, type);
+                    this.toast.message = message;
+                    this.toast.type = type;
+                    this.toast.show = true;
+                    console.log('toast.show is now:', this.toast.show);
+                    clearTimeout(this.toastTimer);
+                    this.toastTimer = setTimeout(() => {
+                        this.toast.show = false;
+                    }, 3000);
+                },
+
+                getStageBadgeColor(stage) {
+                    const colors = {
+                        'overdue': 'bg-red-100 text-red-700',
+                        'pending': 'bg-yellow-100 text-yellow-700',
+                        'in_progress': 'bg-blue-100 text-blue-700',
+                        'completed': 'bg-green-100 text-green-700',
+                    };
+                    return colors[stage] || 'bg-slate-100 text-slate-700';
+                },
+
+                get statusOptions() {
+                    // Supervisors/Admins (who can edit due dates) see all statuses
+                    if (this.canEditDue) {
+                        return this.statuses;
+                    }
+
+                    // Employees are limited to these statuses
+                    const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
+                    return this.statuses.filter(status => allowedForEmployees.includes(status));
+                },
 
                 async saveAndClose() {
                     const taskId = this.selectedTask?.id;
@@ -481,6 +705,104 @@
                     } finally {
                         this.saving = false;
                     }
+                },
+
+                recomputeCounts() {
+                    this.counts = {
+                        all: this.tasks.length,
+                        pending: this.tasks.filter(t => t.stage === 'pending').length,
+                        in_progress: this.tasks.filter(t => t.stage === 'in_progress').length,
+                        completed: this.tasks.filter(t => t.stage === 'completed').length,
+                        overdue: this.tasks.filter(t => t.stage === 'overdue').length,
+                    };
+                },
+
+                confirmDeleteTask() {
+                    const task = this.taskToDelete;
+                    if (!task || !task.id) return;
+                    this.deleteTask(task.id);
+                },
+                async deleteTask(taskId) {
+                    if (!taskId) return;
+                    this.deleteInProgress = true;
+                    try {
+                        const response = await fetch(`/tasks/${taskId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                        });
+                        const data = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            const msg = data.message || (response.status === 403 ? 'You do not have permission to delete this task.' : 'Failed to delete task.');
+                            throw new Error(msg);
+                        }
+                        this.tasks = this.tasks.filter(t => t.id !== taskId);
+                        if (this.selectedTask && this.selectedTask.id === taskId) {
+                            this.selectedTask = null;
+                        }
+                        this.showDeleteConfirm = false;
+                        this.taskToDelete = null;
+                        this.recomputeCounts();
+                        alert('Task deleted successfully.');
+                    } catch (e) {
+                        console.error('Delete failed:', e);
+                        alert(e.message || 'Failed to delete task. You may not have permission or there was a server error.');
+                    } finally {
+                        this.deleteInProgress = false;
+                    }
+                },
+                getStatusBadgeColor(status) {
+                    const colors = {
+                        'not_started': 'bg-slate-100 text-slate-700',
+                        'wip': 'bg-blue-100 text-blue-700',
+                        'correction': 'bg-amber-100 text-amber-700',
+                        'completed': 'bg-green-100 text-green-700',
+                        'revision': 'bg-orange-100 text-orange-700',
+                        'closed': 'bg-slate-100 text-slate-700',
+                        'hold': 'bg-purple-100 text-purple-700',
+                        'under_review': 'bg-yellow-100 text-yellow-700',
+                        'awaiting_resources': 'bg-amber-100 text-amber-700',
+                    };
+                    return colors[status] || 'bg-slate-100 text-slate-700';
+                },
+
+                getStatusSelectColor(status) {
+                    const colors = {
+                        'wip': 'bg-blue-100 text-blue-700',
+                        'correction': 'bg-amber-100 text-amber-700',
+                        'completed': 'bg-green-100 text-green-700',
+                        'revision': 'bg-orange-100 text-orange-700',
+                        'closed': 'bg-slate-100 text-slate-700',
+                        'hold': 'bg-purple-100 text-purple-700',
+                        'under_review': 'bg-yellow-100 text-yellow-700',
+                        'not_started': 'bg-slate-100 text-slate-700',
+                        'awaiting_resources': 'bg-amber-100 text-amber-700',
+                    };
+                    return colors[status] || 'bg-slate-100 text-slate-700';
+                },
+
+                getStageSelectColor(stage) {
+                    const colors = {
+                        'overdue': 'bg-red-100 text-red-700',
+                        'pending': 'bg-yellow-100 text-yellow-700',
+                        'in_progress': 'bg-blue-100 text-blue-700',
+                        'completed': 'bg-green-100 text-green-700',
+                    };
+                    return colors[stage] || 'bg-slate-100 text-slate-700';
+                },
+
+                getPriorityColor(priority) {
+                    const colors = {
+                        'high': 'bg-red-100 text-red-700',
+                        'medium': 'bg-yellow-100 text-yellow-700',
+                        'low': 'bg-green-100 text-green-700',
+                        'free': 'bg-purple-100 text-purple-700',
+                    };
+                    return colors[priority] || 'bg-slate-100 text-slate-700';
                 },
 
                 peopleChanged() {
@@ -625,6 +947,10 @@
                     return filtered;
                 },
 
+                tasksByStage(stage) {
+                    return this.filteredTasks.filter(t => t.stage === stage);
+                },
+
                 formatStatus(status) {
                     return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
                 },
@@ -703,42 +1029,20 @@
                         });
 
                         if (!response.ok) throw new Error();
+                        const data = await response.json();
+                        if (data.stage) {
+                            task.stage = data.stage;
+                            if (this.selectedTask && this.selectedTask.id === taskId) {
+                                this.selectedTask.stage = data.stage;
+                            }
+                        }
+                        this.recomputeCounts();
                     } catch (e) {
                         task.status = oldStatus;
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask.status = oldStatus;
                         }
                         console.error('Failed to update status');
-                    }
-                },
-
-                async updateStage(taskId, newStage) {
-                    const task = this.tasks.find(t => t.id === taskId);
-                    if (!task) return;
-                    const oldStage = task.stage;
-                    task.stage = newStage;
-
-                    if (this.selectedTask && this.selectedTask.id === taskId) {
-                        this.selectedTask.stage = newStage;
-                    }
-
-                    try {
-                        const response = await fetch(`/tasks/${taskId}/stage`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify({ stage: newStage })
-                        });
-
-                        if (!response.ok) throw new Error();
-                    } catch (e) {
-                        task.stage = oldStage;
-                        if (this.selectedTask && this.selectedTask.id === taskId) {
-                            this.selectedTask.stage = oldStage;
-                        }
-                        console.error('Failed to update stage');
                     }
                 },
 

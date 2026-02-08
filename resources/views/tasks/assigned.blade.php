@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="assignedTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ auth()->user()->isAdmin() || auth()->user()->isSupervisor() ? 'true' : 'false' }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="assignedTasks({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ auth()->user()->isAdmin() || auth()->user()->isSupervisor() ? 'true' : 'false' }}, {{ auth()->id() }})">
         <x-sidebar :role="auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isSupervisor() ? 'supervisor' : 'employee')" />
         
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
@@ -14,19 +14,19 @@
                             <p class="text-slate-500 text-sm font-medium mt-1">Track, prioritize, and complete your assigned tasks</p>
                         </div>
 
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2">
                             <!-- View Toggle -->
-                            <div class="flex bg-white border border-slate-300 p-1 rounded-lg gap-1">
+                            <div class="flex bg-white border border-slate-200 shadow-sm p-0.5 rounded-lg gap-0.5">
                                 <button @click="view = 'vertical'" 
-                                    class="p-2 rounded transition-all"
-                                    :class="view === 'vertical' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:text-slate-900'">
+                                    class="p-2 rounded-md transition-all duration-200 relative"
+                                    :class="view === 'vertical' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M5 3a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2V3zM5 13a2 2 0 012-2h6a2 2 0 012 2v2a2 2 0 01-2 2H7a2 2 0 01-2-2v-2z"></path>
                                     </svg>
                                 </button>
                                 <button @click="view = 'horizontal'" 
-                                    class="p-2 rounded transition-all"
-                                    :class="view === 'horizontal' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:text-slate-900'">
+                                    class="p-2 rounded-md transition-all duration-200 relative"
+                                    :class="view === 'horizontal' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
                                     </svg>
@@ -34,7 +34,7 @@
                             </div>
 
                             <a href="{{ route('tasks.index') }}"
-                                class="text-slate-600 hover:text-slate-900 p-2 rounded-lg hover:bg-slate-100 transition-all">
+                                class="text-slate-600 hover:text-indigo-600 p-2 rounded-lg hover:bg-indigo-50 transition-all duration-200 border border-transparent hover:border-indigo-200 shadow-sm hover:shadow">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"></path>
                                 </svg>
@@ -87,10 +87,7 @@
                 <div x-show="view === 'vertical'" class="h-full overflow-x-auto overflow-y-hidden p-3 sm:p-4 md:p-6">
                     <div class="flex h-full gap-3 sm:gap-4 md:gap-6 items-start pb-4 w-full" style="min-width: max-content;">
                         <template x-for="stage in stages" :key="stage">
-                            <div class="flex-1 min-w-[280px] sm:min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-lg sm:rounded-xl border border-slate-200 max-h-full"
-                                @dragover.prevent="dragOverStage = stage" @dragleave="dragOverStage = null"
-                                @drop="drop($event, stage); dragOverStage = null"
-                                :class="{ 'ring-2 ring-indigo-400 ring-inset bg-indigo-50': dragOverStage === stage }">
+                            <div class="flex-1 min-w-[280px] sm:min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-lg sm:rounded-xl border border-slate-200 max-h-full">
                                 
                                 <!-- Column Header -->
                                 <div class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-lg sm:rounded-t-xl">
@@ -112,8 +109,8 @@
                                 <!-- Cards Container -->
                                 <div class="flex-1 overflow-y-auto p-2 sm:p-3 space-y-2 sm:space-y-3 custom-scrollbar" style="min-height: 100px;">
                                     <template x-for="task in tasksByStage(stage)" :key="task.id">
-                                        <div class="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-slate-100 cursor-grab hover:shadow-md transition-all active:cursor-grabbing group relative"
-                                            draggable="true" @dragstart="dragStart($event, task)" @click="openModal(task)">
+                                        <div class="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-slate-100 cursor-pointer hover:shadow-md transition-all group relative"
+                                            @click="openModal(task)">
                                             
                                             <!-- Header: time left (left), project + priority (right) -->
                                             <div class="flex items-start justify-between gap-2 mb-1.5 sm:mb-2">
@@ -122,9 +119,9 @@
                                                     <span class="text-[9px] sm:text-[10px] text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
                                                     <span class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0" :class="{
                                                           'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                          'text-orange-600 bg-orange-50 border-orange-100': task.priority === 'medium',
+                                                          'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
                                                           'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                          'text-slate-600 bg-slate-50 border-slate-100': task.priority === 'free'
+                                                          'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
                                                       }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
@@ -206,20 +203,15 @@
                                                     class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                                     :class="getStatusSelectColor(task.status)"
                                                     :value="task.status">
-                                                    <template x-for="status in statuses" :key="status">
+                                                    <template x-for="status in statusOptions" :key="status">
                                                         <option :value="status" x-text="formatStatus(status)"></option>
                                                     </template>
                                                 </select>
                                             </td>
-                                            <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 whitespace-nowrap" @click.stop>
-                                                <select @change="updateStage(task.id, $event.target.value)" 
-                                                    class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                            <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold"
                                                     :class="getStageSelectColor(task.stage)"
-                                                    :value="task.stage">
-                                                    <template x-for="stage in stages" :key="stage">
-                                                        <option :value="stage" x-text="formatStage(stage)"></option>
-                                                    </template>
-                                                </select>
+                                                    x-text="formatStage(task.stage)"></span>
                                             </td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 whitespace-nowrap">
                                                 <div class="flex -space-x-1.5 sm:-space-x-2">
@@ -278,9 +270,9 @@
                                 <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                     :class="{
                                           'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                          'bg-orange-50 text-orange-600': selectedTask.priority === 'medium',
+                                          'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
                                           'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                          'bg-slate-50 text-slate-600': selectedTask.priority === 'free'
+                                          'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
                                       }" x-text="selectedTask.priority"></span>
                                 <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')"></h2>
                                 <p class="text-xs sm:text-sm text-slate-500 font-medium truncate" x-text="selectedTask.project?.name"></p>
@@ -307,7 +299,7 @@
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</h3>
                                     <select @change="updateStatus(selectedTask.id, $event.target.value)"
                                         class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                        <template x-for="status in statuses" :key="status">
+                                        <template x-for="status in statusOptions" :key="status">
                                             <option :value="status" :selected="selectedTask.status === status"
                                                 x-text="formatStatus(status)"></option>
                                         </template>
@@ -315,13 +307,10 @@
                                 </div>
                                 <div>
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Stage</h3>
-                                    <select @change="updateStage(selectedTask.id, $event.target.value)"
-                                        class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
-                                        <template x-for="stage in stages" :key="stage">
-                                            <option :value="stage" :selected="selectedTask.stage === stage"
-                                                x-text="formatStage(stage)"></option>
-                                        </template>
-                                    </select>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                        :class="getStageSelectColor(selectedTask.stage)"
+                                        x-text="formatStage(selectedTask.stage)"></span>
+                                    <p class="text-[11px] text-slate-400 mt-1">Stage is set automatically based on status and due date.</p>
                                 </div>
                                 <div class="sm:col-span-2">
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due Date</h3>
@@ -497,7 +486,14 @@
                             </form>
                         </div>
 
-                        <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex justify-end rounded-b-xl sm:rounded-b-2xl">
+                        <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-b-xl sm:rounded-b-2xl">
+                                <button
+                                    x-show="canEditDue && selectedTask && selectedTask.created_by === currentUserId"
+                                    type="button"
+                                    @click="showDeleteConfirm = true; taskToDelete = selectedTask"
+                                    class="bg-transparent text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
+                                    Delete task
+                                </button>
                             <button type="button" @click="saveAndClose()"
                                 class="bg-indigo-600 text-white font-bold text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 :disabled="saving">
@@ -508,11 +504,38 @@
                 </template>
             </div>
         </template>
+
+        <!-- Delete Confirmation Modal -->
+        <div x-show="showDeleteConfirm" x-cloak
+            class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+            x-transition.opacity
+            @click.self="showDeleteConfirm = false; taskToDelete = null">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6" @click.stop>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Delete task?</h3>
+                <p class="text-sm text-slate-600 mb-4" x-show="taskToDelete">
+                    Are you sure you want to delete this task? This action cannot be undone.
+                </p>
+                <p class="text-xs text-slate-500 mb-4 line-clamp-2" x-show="taskToDelete" x-text="taskToDelete ? ((taskToDelete.description || '').substring(0, 100) + ((taskToDelete.description || '').length > 100 ? '...' : '')) : ''"></p>
+                <div class="flex justify-end gap-3">
+                    <button type="button" @click="showDeleteConfirm = false; taskToDelete = null"
+                        :disabled="deleteInProgress"
+                        class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 disabled:opacity-50">
+                        Cancel
+                    </button>
+                    <button type="button" @click="confirmDeleteTask()"
+                        :disabled="deleteInProgress"
+                        class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50">
+                        <span x-show="!deleteInProgress">Delete</span>
+                        <span x-show="deleteInProgress">Deleting...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('assignedTasks', (initialTasks, statuses, stages, canEditDue) => ({
+            Alpine.data('assignedTasks', (initialTasks, statuses, stages, canEditDue, currentUserId) => ({
                 tasks: initialTasks,
                 statuses: statuses,
                 stages: stages,
@@ -520,7 +543,9 @@
                 view: 'vertical',
                 selectedStage: null,
                 selectedTask: null,
-                dragOverStage: null,
+                showDeleteConfirm: false,
+                taskToDelete: null,
+                deleteInProgress: false,
                 canEditDue: canEditDue,
                 editEndDate: '',
                 editEndTime: '',
@@ -536,6 +561,18 @@
                 availableEmployees: [],
                 showAddPeopleModal: false,
                 showTagModal: false,
+                currentUserId: currentUserId,
+
+                get statusOptions() {
+                    // Supervisors/Admins (who can edit due dates) see all statuses
+                    if (this.canEditDue) {
+                        return this.statuses;
+                    }
+
+                    // Employees are limited to these statuses
+                    const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
+                    return this.statuses.filter(status => allowedForEmployees.includes(status));
+                },
 
                 async saveAndClose() {
                     const taskId = this.selectedTask?.id;
@@ -548,6 +585,42 @@
                         this.selectedTask = null;
                     } finally {
                         this.saving = false;
+                    }
+                },
+
+                confirmDeleteTask() {
+                    const task = this.taskToDelete;
+                    if (!task || !task.id) return;
+                    this.deleteTask(task.id);
+                },
+                async deleteTask(taskId) {
+                    if (!taskId) return;
+                    this.deleteInProgress = true;
+                    try {
+                        const response = await fetch(`/tasks/${taskId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                        });
+                        const data = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            const msg = data.message || (response.status === 403 ? 'You do not have permission to delete this task.' : 'Failed to delete task.');
+                            throw new Error(msg);
+                        }
+                        this.tasks = this.tasks.filter(t => t.id !== taskId);
+                        if (this.selectedTask && this.selectedTask.id === taskId) {
+                            this.selectedTask = null;
+                        }
+                        this.showDeleteConfirm = false;
+                        this.taskToDelete = null;
+                    } catch (e) {
+                        console.error('Delete failed:', e);
+                        alert(e.message || 'Failed to delete task. You may not have permission or there was a server error.');
+                    } finally {
+                        this.deleteInProgress = false;
                     }
                 },
 
@@ -651,26 +724,6 @@
                         : this.tasks;
                 },
 
-                dragStart(event, task) {
-                    event.dataTransfer.effectAllowed = 'move';
-                    event.dataTransfer.setData('text/plain', JSON.stringify(task));
-                    event.target.classList.add('opacity-50');
-                },
-
-                async drop(event, newStage) {
-                    const data = event.dataTransfer.getData('text/plain');
-                    if (!data) return;
-                    
-                    const task = JSON.parse(data);
-                    const validTask = this.tasks.find(t => t.id === task.id);
-                    
-                    if (validTask && validTask.stage !== newStage) {
-                        await this.updateStage(validTask.id, newStage);
-                    }
-                    
-                    document.querySelectorAll('.opacity-50').forEach(el => el.classList.remove('opacity-50'));
-                },
-
                 formatStatus(status) {
                     return status.replace(/_/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 },
@@ -720,9 +773,9 @@
                 getPriorityColor(priority) {
                     const colors = {
                         'high': 'bg-red-100 text-red-700',
-                        'medium': 'bg-orange-100 text-orange-700',
+                        'medium': 'bg-yellow-100 text-yellow-700',
                         'low': 'bg-green-100 text-green-700',
-                        'free': 'bg-slate-100 text-slate-700'
+                        'free': 'bg-purple-100 text-purple-700'
                     };
                     return colors[priority] || 'bg-slate-100 text-slate-700';
                 },
@@ -730,6 +783,7 @@
                 getStatusSelectColor(status) {
                     const colors = {
                         'wip': 'bg-blue-100 text-blue-700',
+                        'correction': 'bg-amber-100 text-amber-700',
                         'completed': 'bg-green-100 text-green-700',
                         'revision': 'bg-orange-100 text-orange-700',
                         'closed': 'bg-slate-100 text-slate-700',
@@ -785,42 +839,19 @@
                         });
 
                         if (!response.ok) throw new Error();
+                        const data = await response.json();
+                        if (data.stage) {
+                            task.stage = data.stage;
+                            if (this.selectedTask && this.selectedTask.id === taskId) {
+                                this.selectedTask.stage = data.stage;
+                            }
+                        }
                     } catch (e) {
                         task.status = oldStatus;
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask.status = oldStatus;
                         }
                         alert('Failed to update status');
-                    }
-                },
-
-                async updateStage(taskId, newStage) {
-                    const task = this.tasks.find(t => t.id === taskId);
-                    if (!task) return;
-                    const oldStage = task.stage;
-                    task.stage = newStage;
-
-                    if (this.selectedTask && this.selectedTask.id === taskId) {
-                        this.selectedTask.stage = newStage;
-                    }
-
-                    try {
-                        const response = await fetch(`/tasks/${taskId}/stage`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify({ stage: newStage })
-                        });
-
-                        if (!response.ok) throw new Error();
-                    } catch (e) {
-                        task.stage = oldStage;
-                        if (this.selectedTask && this.selectedTask.id === taskId) {
-                            this.selectedTask.stage = oldStage;
-                        }
-                        alert('Failed to update stage');
                     }
                 },
 

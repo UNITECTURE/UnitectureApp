@@ -78,6 +78,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/manage', [App\Http\Controllers\UserController::class, 'manageUsers'])->name('users.manage');
     Route::delete('/users/{id}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
 
+    // Admin Teams: view teams, assign secondary supervisor, remove from team
+    Route::get('/teams', [App\Http\Controllers\UserController::class, 'teamsIndex'])->name('teams.index');
+    Route::patch('/teams/users/{user}/secondary-supervisor', [App\Http\Controllers\UserController::class, 'updateSecondarySupervisor'])->name('teams.update-secondary-supervisor');
+    Route::post('/teams/users/{user}/remove', [App\Http\Controllers\UserController::class, 'removeFromTeam'])->name('teams.remove-member');
+
     // Settings
     Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings/password', [App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('settings.updatePassword');
@@ -134,6 +139,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tasks/team', [App\Http\Controllers\TaskController::class, 'teamTasks'])->name('tasks.team');
     Route::get('/tasks/create', [App\Http\Controllers\TaskController::class, 'create'])->name('tasks.create');
     Route::post('/tasks', [App\Http\Controllers\TaskController::class, 'store'])->name('tasks.store');
+    Route::delete('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::patch('/tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
     Route::patch('/tasks/{task}/stage', [App\Http\Controllers\TaskController::class, 'updateStage'])->name('tasks.updateStage');
     Route::patch('/tasks/{task}/due', [App\Http\Controllers\TaskController::class, 'updateDue'])->name('tasks.updateDue');

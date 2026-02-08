@@ -141,14 +141,14 @@ class ProcessAttendance extends Command
                     // If count == 1, clockOut is null.
                 }
 
-                // Restore logic: ClockOut is only set if we have distinct punches or count > 1
-                // Actually if min == max, we treated it as single punch?
+                // Resolved Logic: Use Min/Max to ensure correct order
                 if ($minTime === $maxTime || $logs->count() <= 1) {
                     $clockOut = null;
                     $biometricDurationMinutes = 0;
                 } else {
-                    $biometricDurationMinutes = $clockIn->diffInMinutes($clockOut);
+                    $biometricDurationMinutes = abs($clockIn->diffInMinutes($clockOut));
                 }
+
 
                 // Ensure ClockIn is formatted as string for DB if needed, or Carbon object is fine for Eloquent
                 // But let's keep consistency with original which assigned $logs->first()->punch_time (string/datetime)
@@ -207,6 +207,7 @@ class ProcessAttendance extends Command
         }
 
         // Format Total Duration
+        $totalMinutes = abs($totalMinutes); // Ensure positive value
         $hours = floor($totalMinutes / 60);
         $mins = $totalMinutes % 60;
         $durationString = "{$hours} Hrs {$mins} Mins";

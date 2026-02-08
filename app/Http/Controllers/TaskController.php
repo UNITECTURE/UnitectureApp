@@ -17,6 +17,7 @@ class TaskController extends Controller
      */
     const STATUSES = [
         'wip',
+        'correction',
         'completed',
         'revision',
         'closed',
@@ -40,23 +41,21 @@ class TaskController extends Controller
      */
     public function index()
     {
-        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
-        Task::bulkSyncPrioritiesFromDeadlines();
-
-        // For now, show all tasks if admin/supervisor, or assigned tasks if employee
         $user = Auth::user();
 
+        // Employees go to assigned tasks page (vertical view) by default
         if ($user->isEmployee()) {
-            $tasks = $user->tasks()
-                ->with(['project', 'assignees', 'taggedUsers'])
-                ->latest()
-                ->get();
-        } else {
-            // Supervisors and Admins see all tasks
-            $tasks = Task::with(['project', 'assignees', 'taggedUsers', 'creator'])
-                ->latest()
-                ->get();
+            return redirect()->route('tasks.assigned');
         }
+
+        // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
+        Task::bulkSyncPrioritiesFromDeadlines();
+        Task::bulkSyncOverdueStages();
+
+        // Supervisors and Admins see all tasks
+        $tasks = Task::with(['project', 'assignees', 'taggedUsers', 'creator'])
+            ->latest()
+            ->get();
 
         // Format assignees' and tagged users' profile images
         $tasks = $tasks->map(function ($task) {
@@ -105,6 +104,7 @@ class TaskController extends Controller
             $employees = User::select('id', 'full_name', 'email', 'profile_image')
                 ->where('id', $user->id)
                 ->orWhere('reporting_to', $user->id)
+                ->orWhere('secondary_supervisor_id', $user->id)
                 ->orderBy('full_name')
                 ->get();
         }
@@ -125,8 +125,9 @@ class TaskController extends Controller
      */
     public function assigned()
     {
-        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
         Task::bulkSyncPrioritiesFromDeadlines();
+        Task::bulkSyncOverdueStages();
 
         $user = Auth::user();
 
@@ -179,13 +180,16 @@ class TaskController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Ensure priorities reflect the latest deadline rules (fallback if scheduler hasn't run yet)
+        // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
         Task::bulkSyncPrioritiesFromDeadlines();
+        Task::bulkSyncOverdueStages();
 
         $user = Auth::user();
         
-        // Get team member IDs (subordinates)
-        $teamIds = User::where('reporting_to', $user->id)->pluck('id');
+        // Get team member IDs (primary + secondary subordinates)
+        $teamIds = User::where('reporting_to', $user->id)
+            ->orWhere('secondary_supervisor_id', $user->id)
+            ->pluck('id');
         
         // Get tasks assigned to team members
         $tasks = Task::whereHas('assignees', function ($query) use ($teamIds) {
@@ -224,9 +228,25 @@ class TaskController extends Controller
             return $task;
         });
 
+        // Employees for filter dropdown (team members the supervisor can assign to)
+        $employees = User::select('id', 'full_name', 'email', 'profile_image')
+            ->where(function ($query) use ($user) {
+                $query->where('id', $user->id)
+                    ->orWhere('reporting_to', $user->id)
+                    ->orWhere('secondary_supervisor_id', $user->id);
+            })
+            ->orderBy('full_name')
+            ->get();
+        $employees = $employees->map(function ($u) {
+            $u->profile_image_url = $u->profile_image && filter_var($u->profile_image, FILTER_VALIDATE_URL)
+                ? $u->profile_image
+                : ($u->profile_image ? asset('storage/' . $u->profile_image) : null);
+            return $u;
+        });
+
         $statuses = self::STATUSES;
         $stages = self::STAGES;
-        return view('tasks.team', compact('tasks', 'statuses', 'stages', 'user'));
+        return view('tasks.team', compact('tasks', 'statuses', 'stages', 'user', 'employees'));
     }
 
     /**
@@ -247,11 +267,13 @@ class TaskController extends Controller
 
         $currentUser = Auth::user();
         if ($currentUser->isAdmin()) {
+            // Admin and Super Admin can assign tasks to all users, including supervisors
             $users = User::orderBy('full_name')->get();
         } else {
-            // Supervisor: Show themselves + their subordinates
+            // Supervisor: themselves + primary subordinates + secondary subordinates
             $users = User::where('id', $currentUser->id)
                 ->orWhere('reporting_to', $currentUser->id)
+                ->orWhere('secondary_supervisor_id', $currentUser->id)
                 ->orderBy('full_name')
                 ->get();
         }
@@ -270,14 +292,16 @@ class TaskController extends Controller
 
         $currentUser = Auth::user();
         if ($currentUser->isAdmin()) {
+            // Admin and Super Admin can assign tasks to all users, including supervisors
             $users = User::select('id', 'full_name', 'email', 'profile_image')
                 ->orderBy('full_name')
                 ->get();
         } else {
-            // Supervisor: Show themselves + their subordinates
+            // Supervisor: themselves + primary + secondary subordinates
             $users = User::select('id', 'full_name', 'email', 'profile_image')
                 ->where('id', $currentUser->id)
                 ->orWhere('reporting_to', $currentUser->id)
+                ->orWhere('secondary_supervisor_id', $currentUser->id)
                 ->orderBy('full_name')
                 ->get();
         }
@@ -339,9 +363,6 @@ class TaskController extends Controller
             if ($request->has('status')) {
                 $request->validate(['status' => 'in:' . implode(',', self::STATUSES)]);
             }
-            if ($request->has('stage')) {
-                $request->validate(['stage' => 'in:' . implode(',', self::STAGES)]);
-            }
         }
 
         // Combine Date and Time for end_date
@@ -363,21 +384,7 @@ class TaskController extends Controller
         if ($request->has('status')) {
             $task->status = $request->status;
         }
-        if ($request->has('stage')) {
-            $task->stage = $request->stage;
-        } else {
-            // Set default stage based on end_date
-            if ($endDate) {
-                $endDateTime = \Carbon\Carbon::parse($endDate);
-                if ($endDateTime->isPast()) {
-                    $task->stage = 'overdue';
-                } else {
-                    $task->stage = 'pending';
-                }
-            } else {
-                $task->stage = 'pending';
-            }
-        }
+        // Stage is set automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->created_by = Auth::id();
         $task->save();
 
@@ -403,7 +410,7 @@ class TaskController extends Controller
             // Notify tagged users via Telegram
             try {
                 /** @var \App\Services\TelegramService $telegram */
-                $telegram = app(TelegramService::class);
+                $telegram = new TelegramService('task');
                 $creator = Auth::user();
                 $project = $task->project()->first();
 
@@ -508,19 +515,28 @@ class TaskController extends Controller
      */
     public function updateStatus(Request $request, Task $task)
     {
+        // Supervisors/Admins can use the full status enum.
+        // Employees are restricted to: under_review, completed, wip, revision.
+        $user = Auth::user();
+        $allowedStatuses = self::STATUSES;
+        if ($user->isEmployee()) {
+            $allowedStatuses = ['under_review', 'completed', 'wip', 'revision'];
+        }
+
         $validated = $request->validate([
-            'status' => 'required|string|in:' . implode(',', self::STATUSES),
+            'status' => 'required|string|in:' . implode(',', $allowedStatuses),
         ]);
 
         $oldStatus = $task->status;
         $task->status = $validated['status'];
+        // Stage is synced automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->save();
 
         // Notify assignees and tagged users via Telegram about status change
         if ($oldStatus !== $task->status) {
             try {
                 /** @var \App\Services\TelegramService $telegram */
-                $telegram = app(TelegramService::class);
+                $telegram = new TelegramService('task');
                 $actor = Auth::user();
                 $project = $task->project()->first();
 
@@ -566,73 +582,74 @@ class TaskController extends Controller
             }
         }
 
-        return response()->json(['message' => 'Status updated successfully', 'status' => $task->status]);
+        return response()->json([
+            'message' => 'Status updated successfully',
+            'status' => $task->status,
+            'stage' => $task->stage,
+        ]);
     }
 
     /**
-     * Update the task stage.
+     * Update the task stage. Stages cannot be changed manually; they are set automatically
+     * based on status and due date (pending, in_progress when wip, completed when closed, overdue when past due).
      */
     public function updateStage(Request $request, Task $task)
     {
-        $validated = $request->validate([
-            'stage' => 'required|string|in:' . implode(',', self::STAGES),
-        ]);
+        return response()->json([
+            'message' => 'Stages cannot be changed manually. They are set automatically based on status and due date.',
+        ], 403);
+    }
 
-        $oldStage = $task->stage;
-        $task->stage = $validated['stage'];
-        $task->save();
+    /**
+     * Delete a task (and its relations).
+     *
+     * Supervisors can delete only tasks they created.
+     * Admins can delete any task.
+     */
+    public function destroy(Task $task)
+    {
+        $user = Auth::user();
+        $userId = (int) $user->id;
+        $taskCreatedBy = (int) $task->created_by;
 
-        // Notify assignees and tagged users via Telegram about stage change
-        if ($oldStage !== $task->stage) {
-            try {
-                /** @var \App\Services\TelegramService $telegram */
-                $telegram = app(TelegramService::class);
-                $actor = Auth::user();
-                $project = $task->project()->first();
+        // Only admins and supervisors can delete tasks
+        if (!$user->isAdmin() && !$user->isSupervisor()) {
+            abort(403, 'Unauthorized to delete tasks.');
+        }
 
-                $task->loadMissing(['assignees', 'taggedUsers', 'creator']);
-                $recipientIds = $task->assignees->pluck('id')
-                    ->merge($task->taggedUsers->pluck('id'))
-                    ->push(optional($task->creator)->id)
-                    ->filter()
-                    ->unique()
-                    ->all();
+        // For supervisors (not admins), check if they manage the task creator or created it themselves
+        if (!$user->isAdmin() && $user->isSupervisor()) {
+            // If supervisor created the task themselves, allow deletion
+            if ($taskCreatedBy === $userId) {
+                $task->delete();
+                return request()->wantsJson() 
+                    ? response()->json(['message' => 'Task deleted successfully.'])
+                    : redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+            }
 
-                if (!empty($recipientIds)) {
-                    $recipients = User::whereIn('id', $recipientIds)
-                        ->whereNotNull('telegram_chat_id')
-                        ->get();
+            // Otherwise check if the task creator is in this supervisor's team
+            $taskCreator = $task->creator;
+            if (!$taskCreator) {
+                abort(404, 'Task creator not found.');
+            }
 
-                    foreach ($recipients as $user) {
-                        $lines = [];
-                        $lines[] = '🔔 <b>Task stage updated</b>';
-                        $lines[] = '';
-                        $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
+            $creatorReportingTo = (int) ($taskCreator->reporting_to ?? 0);
+            $creatorSecondaryId = (int) ($taskCreator->secondary_supervisor_id ?? 0);
 
-                        if ($project) {
-                            $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
-                        }
+            $isInTeam = $creatorReportingTo === $userId || $creatorSecondaryId === $userId;
 
-                        $lines[] = '<b>New Stage:</b> ' . ucfirst(str_replace('_', ' ', $task->stage));
-
-                        if ($actor) {
-                            $lines[] = '<b>Updated by:</b> ' . e($actor->name);
-                        }
-
-                        $lines[] = '';
-                        $lines[] = 'Open the Unitecture app to view full details.';
-
-                        $message = implode("\n", $lines);
-
-                        $telegram->sendMessage($user->telegram_chat_id, $message);
-                    }
-                }
-            } catch (\Throwable $e) {
-                \Log::error('Failed to send Telegram task stage notifications: ' . $e->getMessage());
+            if (!$isInTeam) {
+                abort(403, 'You can only delete tasks from your team.');
             }
         }
 
-        return response()->json(['message' => 'Stage updated successfully', 'stage' => $task->stage]);
+        $task->delete();
+
+        if (request()->wantsJson()) {
+            return response()->json(['message' => 'Task deleted successfully.']);
+        }
+
+        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
     }
 
     /**
@@ -671,17 +688,60 @@ class TaskController extends Controller
             }
         }
 
+        $oldDueDate = $task->end_date;
         $task->end_date = $endDateTime;
-
-        // Recalculate stage based on new end date if not manually overridden
-        $endCarbon = \Carbon\Carbon::parse($endDateTime);
-        if ($endCarbon->isPast() && $task->stage !== 'completed') {
-            $task->stage = 'overdue';
-        } elseif (!$endCarbon->isPast() && $task->stage === 'overdue') {
-            $task->stage = 'pending';
-        }
-
+        // Stage is synced automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->save();
+
+        // Notify assignees and tagged users via Telegram about due date change
+        if ($oldDueDate != $task->end_date) {
+            try {
+                /** @var \App\Services\TelegramService $telegram */
+                $telegram = new TelegramService('task');
+                $actor = Auth::user();
+                $project = $task->project()->first();
+
+                $task->loadMissing(['assignees', 'taggedUsers', 'creator']);
+                $recipientIds = $task->assignees->pluck('id')
+                    ->merge($task->taggedUsers->pluck('id'))
+                    ->push(optional($task->creator)->id)
+                    ->filter()
+                    ->unique()
+                    ->all();
+
+                if (!empty($recipientIds)) {
+                    $recipients = User::whereIn('id', $recipientIds)
+                        ->whereNotNull('telegram_chat_id')
+                        ->get();
+
+                    foreach ($recipients as $user) {
+                        $lines = [];
+                        $lines[] = '🔔 <b>Task due date updated</b>';
+                        $lines[] = '';
+                        $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
+
+                        if ($project) {
+                            $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
+                        }
+
+                        if ($oldDueDate) {
+                            $lines[] = '<b>Previous Due:</b> ' . \Carbon\Carbon::parse($oldDueDate)->format('d M Y H:i');
+                        }
+                        $lines[] = '<b>New Due:</b> ' . \Carbon\Carbon::parse($task->end_date)->format('d M Y H:i');
+
+                        if ($actor) {
+                            $lines[] = '<b>Updated by:</b> ' . e($actor->name);
+                        }
+
+                        $lines[] = '';
+                        $lines[] = 'Open the Unitecture app to view full details.';
+                        $telegram->sendMessage($user->telegram_chat_id, implode("\n", $lines));
+                    }
+                }
+            } catch (\Throwable $e) {
+                \Log::error('Failed to send Telegram task due date notifications: ' . $e->getMessage());
+            }
+        }
 
         return response()->json([
             'message' => 'Due date updated successfully.',
@@ -714,6 +774,7 @@ class TaskController extends Controller
         $assigneeIds = array_values(array_unique($request->input('assignees', [])));
         $taggedIds = array_values(array_unique($request->input('tagged', [])));
 
+        $oldAssigneeIds = $task->assignees->pluck('id')->all();
         $oldTaggedIds = $task->taggedUsers->pluck('id')->all();
 
         $task->assignees()->sync(
@@ -723,19 +784,27 @@ class TaskController extends Controller
             collect($taggedIds)->mapWithKeys(fn ($id) => [$id => ['type' => 'tagged']])->all()
         );
 
+        // Notify newly added assignees and tagged users
+        $newAssigneeIds = array_diff($assigneeIds, $oldAssigneeIds);
         $newTaggedIds = array_diff($taggedIds, $oldTaggedIds);
-        if (!empty($newTaggedIds)) {
+        $allNewUserIds = array_merge($newAssigneeIds, $newTaggedIds);
+
+        if (!empty($allNewUserIds)) {
             try {
                 /** @var \App\Services\TelegramService $telegram */
-                $telegram = app(TelegramService::class);
+                $telegram = new TelegramService('task');
                 $actor = Auth::user();
                 $project = $task->project()->first();
-                $taggedUsers = User::whereIn('id', $newTaggedIds)
+                $newUsers = User::whereIn('id', $allNewUserIds)
                     ->whereNotNull('telegram_chat_id')
                     ->get();
-                foreach ($taggedUsers as $taggedUser) {
+                foreach ($newUsers as $user) {
                     $lines = [];
-                    $lines[] = '🔔 <b>You were tagged on a task</b>';
+                    if (in_array($user->id, $newAssigneeIds)) {
+                        $lines[] = '🔔 <b>You were assigned a task</b>';
+                    } else {
+                        $lines[] = '🔔 <b>You were tagged on a task</b>';
+                    }
                     $lines[] = '';
                     $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
                     if ($project) {
@@ -745,11 +814,11 @@ class TaskController extends Controller
                         $lines[] = '<b>Due:</b> ' . \Carbon\Carbon::parse($task->end_date)->format('d M Y H:i');
                     }
                     if ($actor) {
-                        $lines[] = '<b>Tagged by:</b> ' . e($actor->name);
+                        $lines[] = '<b>By:</b> ' . e($actor->name);
                     }
                     $lines[] = '';
                     $lines[] = 'Open the Unitecture app to view full details.';
-                    $telegram->sendMessage($taggedUser->telegram_chat_id, implode("\n", $lines));
+                    $telegram->sendMessage($user->telegram_chat_id, implode("\n", $lines));
                 }
             } catch (\Throwable $e) {
                 \Log::error('Failed to send Telegram tag notifications: ' . $e->getMessage());
@@ -837,6 +906,46 @@ class TaskController extends Controller
         ]);
 
         $comment->load('user');
+
+        // Notify assignees and tagged users about new comment via Telegram
+        if (!$recentDuplicate) {
+            try {
+                /** @var \App\Services\TelegramService $telegram */
+                $telegram = new TelegramService('task');
+                $project = $task->project()->first();
+
+                $task->loadMissing(['assignees', 'taggedUsers', 'creator']);
+                $recipientIds = $task->assignees->pluck('id')
+                    ->merge($task->taggedUsers->pluck('id'))
+                    ->push(optional($task->creator)->id)
+                    ->filter(fn($id) => $id != $user->id) // Don't notify the commenter
+                    ->unique()
+                    ->all();
+
+                if (!empty($recipientIds)) {
+                    $recipients = User::whereIn('id', $recipientIds)
+                        ->whereNotNull('telegram_chat_id')
+                        ->get();
+
+                    foreach ($recipients as $recipient) {
+                        $lines = [];
+                        $lines[] = '💬 <b>New comment on task</b>';
+                        $lines[] = '';
+                        $lines[] = '<b>Task:</b> ' . e(\Illuminate\Support\Str::limit($task->description, 80));
+                        if ($project) {
+                            $lines[] = '<b>Project:</b> ' . e($project->name) . ' (' . e($project->project_code) . ')';
+                        }
+                        $lines[] = '<b>Comment by:</b> ' . e($user->full_name ?? $user->name);
+                        $lines[] = '<b>Comment:</b> ' . e(\Illuminate\Support\Str::limit($comment->comment, 100));
+                        $lines[] = '';
+                        $lines[] = 'Open the Unitecture app to view full details.';
+                        $telegram->sendMessage($recipient->telegram_chat_id, implode("\n", $lines));
+                    }
+                }
+            } catch (\Throwable $e) {
+                \Log::error('Failed to send Telegram task comment notifications: ' . $e->getMessage());
+            }
+        }
 
         return response()->json([
             'message' => $recentDuplicate ? 'Comment already added.' : 'Comment added successfully.',

@@ -17,6 +17,7 @@ class User extends Authenticatable
         'password',
         'role_id',
         'reporting_to',
+        'secondary_supervisor_id',
         'joining_date',
         'status',
         'biometric_id',
@@ -50,9 +51,34 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'reporting_to');
     }
 
+    /** Primary supervisor (assigned during onboarding). */
+    public function primarySupervisor()
+    {
+        return $this->belongsTo(User::class, 'reporting_to');
+    }
+
+    /** Optional secondary supervisor (assigned by admin). */
+    public function secondarySupervisor()
+    {
+        return $this->belongsTo(User::class, 'secondary_supervisor_id');
+    }
+
+    /** Employees who report directly to this user (primary). */
     public function subordinates()
     {
         return $this->hasMany(User::class, 'reporting_to');
+    }
+
+    /** Employees who have this user as secondary supervisor. */
+    public function secondarySubordinates()
+    {
+        return $this->hasMany(User::class, 'secondary_supervisor_id');
+    }
+
+    /** All employees this user can assign tasks to (primary + secondary team). */
+    public function assignableEmployees()
+    {
+        return User::where('reporting_to', $this->id)->orWhere('secondary_supervisor_id', $this->id);
     }
 
     public function manualRequests()

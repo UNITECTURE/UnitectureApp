@@ -30,7 +30,10 @@
                                     <div class="flex items-start gap-4">
                                         <!-- Profile Image -->
                                         <div class="shrink-0">
-                                            <img src="{{ $member->profile_image ? asset('storage/' . $member->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($member->full_name) . '&background=6366f1&color=fff&size=128' }}" 
+                                            @php
+                                                $avatarUrl = $member->profile_image && filter_var($member->profile_image, FILTER_VALIDATE_URL) ? $member->profile_image : ($member->profile_image ? asset('storage/' . $member->profile_image) : 'https://ui-avatars.com/api/?name=' . urlencode($member->full_name) . '&background=6366f1&color=fff&size=128');
+                                            @endphp
+                                            <img src="{{ $avatarUrl }}" 
                                                 alt="{{ $member->full_name }}" 
                                                 class="w-16 h-16 rounded-full border border-slate-200 object-cover shadow-sm">
                                         </div>
@@ -43,6 +46,11 @@
                                                         {{ $member->full_name }}
                                                     </h3>
                                                     <p class="text-sm text-indigo-600 font-medium">{{ $member->role->name ?? 'Employee' }}</p>
+                                                    @if($member->reporting_to === auth()->id())
+                                                        <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-700">Primary</span>
+                                                    @else
+                                                        <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-600">Secondary</span>
+                                                    @endif
                                                 </div>
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded textxs font-bold capitalize shrink-0
                                                     {{ $member->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">

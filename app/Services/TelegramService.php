@@ -9,10 +9,14 @@ class TelegramService
 {
     protected $token;
 
-    public function __construct()
+    public function __construct($botType = 'main')
     {
-        // Use dedicated bot for task-related notifications
-        $this->token = config('services.telegram_tasks.bot_token', config('services.telegram.bot_token'));
+        // Use main bot for leaves/attendance, task bot for tasks
+        if ($botType === 'task') {
+            $this->token = config('services.telegram_tasks.bot_token');
+        } else {
+            $this->token = config('services.telegram.bot_token');
+        }
     }
 
     /**
