@@ -75,8 +75,8 @@
 
             {{-- Tasks: Employee sees single "All Tasks" link; Admin/Supervisor see dropdown with All Tasks, Assigned to Me, (and My Team Tasks for supervisor) --}}
             @if($role === 'employee')
-                <a href="{{ route('tasks.assigned') }}"
-                    class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative {{ request()->routeIs('tasks.assigned') ? 'bg-slate-800 text-white' : '' }}"
+                <a href="{{ route('tasks.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative {{ request()->routeIs('tasks.index') ? 'bg-slate-800 text-white' : '' }}"
                     :class="!sidebarOpen ? 'justify-center' : ''">
                     <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
                         :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
