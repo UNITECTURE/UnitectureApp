@@ -363,7 +363,7 @@ class LeaveController extends Controller
             if ($request->status === 'approved') {
                 $leave->update(['status' => 'approved_by_supervisor']);
             } else {
-                $leave->update(['status' => 'rejected']);
+                $leave->update(['status' => 'rejected', 'rejected_by' => 'supervisor']);
             }
         } 
         // Admin Approval Logic
@@ -395,7 +395,7 @@ class LeaveController extends Controller
                     $currentDate->addDay();
                 }
             } else {
-                $leave->update(['status' => 'rejected']);
+                $leave->update(['status' => 'rejected', 'rejected_by' => 'admin']);
             }
         }
 

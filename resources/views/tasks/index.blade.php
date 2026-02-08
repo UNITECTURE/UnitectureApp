@@ -13,7 +13,7 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
             <!-- Header & Toolbar -->
-            <header class="bg-white border-b border-slate-100 py-5 px-4 sm:px-6 shrink-0 z-10">
+            <header class="bg-white border-b border-slate-100 py-6 px-4 sm:px-6 shrink-0 z-10">
                 <div class="flex flex-col gap-4">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
@@ -61,41 +61,45 @@
             </header>
 
             <!-- Filters and Search -->
-            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-4 sm:py-5 shrink-0">
-                <div class="flex items-center gap-4 justify-between w-full">
+            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-3 sm:py-4 shrink-0">
+                <div class="flex flex-wrap items-center justify-between gap-4">
                     <!-- Filter Buttons -->
-                    <div class="flex items-center gap-2 flex-1 overflow-x-auto">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <button @click="filterStatus = 'all'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'all' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            All (<span x-text="counts.all"></span>)
-                        </button>
-                        <button @click="filterStatus = 'pending'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'pending' ? 'bg-yellow-500 border-yellow-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            Pending (<span x-text="counts.pending"></span>)
-                        </button>
-                        <button @click="filterStatus = 'in_progress'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'in_progress' ? 'bg-blue-500 border-blue-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            In Progress (<span x-text="counts.in_progress"></span>)
-                        </button>
-                        <button @click="filterStatus = 'completed'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'completed' ? 'bg-green-500 border-green-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            Completed (<span x-text="counts.completed"></span>)
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap"
+                            :class="filterStatus === 'all' ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            All Tasks (<span x-text="counts.all"></span>)
                         </button>
                         <button @click="filterStatus = 'overdue'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'overdue' ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            Overdue (<span x-text="counts.overdue"></span>)
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'overdue' ? 'bg-red-50 border-red-200 text-red-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            Overdue
+                        </button>
+                        <button @click="filterStatus = 'pending'"
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'pending' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            Pending
+                        </button>
+                        <button @click="filterStatus = 'in_progress'"
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'in_progress' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            In Progress
+                        </button>
+                        <button @click="filterStatus = 'completed'"
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'completed' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            Completed
                         </button>
                     </div>
 
                     <!-- Filter by Employee (admin/supervisor only) -->
                     <div x-show="showEmployeeFilter" class="relative flex-shrink-0" x-data="{ open: false }">
                         <button type="button" @click="open = !open"
-                            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-lg text-sm font-semibold bg-white text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-full text-xs sm:text-sm font-semibold bg-white text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-200 shadow-sm">
                             <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                             </svg>
@@ -125,14 +129,6 @@
                         </div>
                     </div>
 
-                    <!-- Search -->
-                    <div class="relative ml-4 flex-shrink-0">
-                        <input type="text" x-model="search" placeholder="Search tasks..."
-                            class="w-64 pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                        <svg class="w-5 h-5 text-slate-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
                 </div>
             </div>
 
@@ -141,59 +137,50 @@
                 <!-- Overview: Task Cards Grid -->
                 <div x-show="view === 'overview' && filteredTasks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <template x-for="task in filteredTasks" :key="task.id">
-                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
                             @click="openModal(task)">
-                            <!-- Header: time left (left), project + priority (right) -->
-                            <div class="flex items-start justify-between mb-3 gap-2">
-                                <span class="text-xs font-semibold shrink-0"
-                                    :class="dueInClass(task)"
-                                    x-text="dueIn(task)"></span>
-                                <div class="flex flex-col items-end gap-1 min-w-0">
-                                    <span class="text-xs font-medium text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
-                                        :class="{
-                                            'bg-red-100 text-red-700': task.priority === 'high',
-                                            'bg-yellow-100 text-yellow-700': task.priority === 'medium',
-                                            'bg-green-100 text-green-700': task.priority === 'low',
-                                            'bg-purple-100 text-purple-700': task.priority === 'free'
-                                        }"
-                                        x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Description -->
-                            <p class="text-base font-bold text-slate-800 mb-3 line-clamp-2 group-hover:text-indigo-600 transition-colors"
-                                x-text="(task.description || '').substring(0, 120) + ((task.description || '').length > 120 ? '...' : '')">
-                            </p>
-
-                            <!-- Stage + Status row -->
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="text-xs font-medium text-slate-500">
-                                    <span>Stage: </span>
-                                    <span class="font-semibold text-slate-700" x-text="formatStage(task.stage)"></span>
-                                </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                                    :class="getStatusBadgeColor(task.status)"
-                                    x-text="formatStatus(task.status)">
+                            <!-- Header: project + priority -->
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide" x-text="task.project?.name || 'No Project'"></div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold"
+                                    :class="{
+                                        'bg-red-100 text-red-700': task.priority === 'high',
+                                        'bg-yellow-100 text-yellow-700': task.priority === 'medium',
+                                        'bg-green-100 text-green-700': task.priority === 'low',
+                                        'bg-purple-100 text-purple-700': task.priority === 'free'
+                                    }"
+                                    x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
                                 </span>
                             </div>
 
-                            <!-- Footer: assignees + due date (left), time left (right) -->
-                            <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-3">
+                            <!-- Description -->
+                            <p class="mt-3 text-lg font-semibold text-slate-900 leading-snug line-clamp-1"
+                                :title="task.description || ''"
+                                x-text="(task.description || '').length > 30 ? (task.description || '').substring(0, 30) + '...' : (task.description || '')"></p>
+
+                            <!-- Stage + Status row -->
+                            <div class="mt-4 mb-3 flex flex-wrap items-center gap-2">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700"
+                                    x-text="formatStage(task.stage)"></span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                    :class="getStatusBadgeColor(task.status)"
+                                    x-text="formatStatus(task.status)"></span>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-5 gap-3">
                                 <div class="flex items-center gap-2 min-w-0">
                                     <div class="flex -space-x-2 shrink-0">
                                         <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
                                             <img :src="getProfileImageUrl(assignee)"
                                                 :alt="assignee.full_name || assignee.name"
                                                 :title="assignee.full_name || assignee.name"
-                                                class="w-7 h-7 rounded-full border-2 border-white object-cover shadow-sm">
+                                                class="w-8 h-8 rounded-full border-2 border-white object-cover shadow-sm">
                                         </template>
                                         <template x-if="task.assignees.length > 3">
-                                            <div class="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
+                                            <div class="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
                                                 :title="'+' + (task.assignees.length - 3) + ' more'"
-                                                x-text="'+' + (task.assignees.length - 3)">
-                                            </div>
+                                                x-text="'+' + (task.assignees.length - 3)"></div>
                                         </template>
                                     </div>
                                     <div class="text-xs font-medium text-slate-500 truncate">
@@ -585,7 +572,7 @@
 
                             <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-b-xl sm:rounded-b-2xl">
                                 <button
-                                    x-show="canEditDue && selectedTask && selectedTask.created_by === currentUserId"
+                                    x-show="canEditDue && selectedTask"
                                     type="button"
                                     @click="showDeleteConfirm = true; taskToDelete = selectedTask"
                                     class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
@@ -666,6 +653,24 @@
                 showAddPeopleModal: false,
                 showTagModal: false,
                 currentUserId: currentUserId,
+                toast: {
+                    show: false,
+                    type: 'success',
+                    message: ''
+                },
+                toastTimer: null,
+
+                showToast(message, type = 'success') {
+                    console.log('showToast called:', message, type);
+                    this.toast.message = message;
+                    this.toast.type = type;
+                    this.toast.show = true;
+                    console.log('toast.show is now:', this.toast.show);
+                    clearTimeout(this.toastTimer);
+                    this.toastTimer = setTimeout(() => {
+                        this.toast.show = false;
+                    }, 3000);
+                },
 
                 getStageBadgeColor(stage) {
                     const colors = {
@@ -724,6 +729,7 @@
                         const response = await fetch(`/tasks/${taskId}`, {
                             method: 'DELETE',
                             headers: {
+                                'Accept': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                                 'X-Requested-With': 'XMLHttpRequest',
                                 'Accept': 'application/json',
@@ -741,6 +747,7 @@
                         this.showDeleteConfirm = false;
                         this.taskToDelete = null;
                         this.recomputeCounts();
+                        alert('Task deleted successfully.');
                     } catch (e) {
                         console.error('Delete failed:', e);
                         alert(e.message || 'Failed to delete task. You may not have permission or there was a server error.');

@@ -76,6 +76,15 @@ class ManualAttendanceController extends Controller
             $supervisor->notify(new NewManualAttendanceRequest($manualRequest));
         }
 
+        // Also notify all Admins (Role ID 2) about the manual attendance request
+        $admins = User::where('role_id', 2)->whereNotNull('telegram_chat_id')->get();
+        foreach ($admins as $admin) {
+            // Don't send duplicate notification if admin is already the supervisor
+            if (!$supervisor || $admin->id !== $supervisor->id) {
+                $admin->notify(new NewManualAttendanceRequest($manualRequest));
+            }
+        }
+
         return redirect()->back()->with('success', 'Manual attendance requested successfully.');
     }
 
@@ -209,7 +218,7 @@ class ManualAttendanceController extends Controller
                 if ($attendance->clock_in && $attendance->clock_out) {
                     $start = Carbon::parse($attendance->clock_in);
                     $end = Carbon::parse($attendance->clock_out);
-                    $diffMinutes = $start->diffInMinutes($end);
+                    $diffMinutes = abs($start->diffInMinutes($end));
 
                     $h = floor($diffMinutes / 60);
                     $m = $diffMinutes % 60;
