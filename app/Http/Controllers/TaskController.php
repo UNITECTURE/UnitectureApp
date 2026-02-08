@@ -43,19 +43,21 @@ class TaskController extends Controller
     {
         $user = Auth::user();
 
-        // Employees go to assigned tasks page (vertical view) by default
-        if ($user->isEmployee()) {
-            return redirect()->route('tasks.assigned');
-        }
-
         // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
         Task::bulkSyncPrioritiesFromDeadlines();
         Task::bulkSyncOverdueStages();
 
-        // Supervisors and Admins see all tasks
-        $tasks = Task::with(['project', 'assignees', 'taggedUsers', 'creator'])
-            ->latest()
-            ->get();
+        // Employees see only their assigned tasks; Admins/Supervisors see all tasks
+        if ($user->isEmployee()) {
+            $tasks = $user->tasks()
+                ->with(['project', 'assignees', 'taggedUsers'])
+                ->latest()
+                ->get();
+        } else {
+            $tasks = Task::with(['project', 'assignees', 'taggedUsers', 'creator'])
+                ->latest()
+                ->get();
+        }
 
         // Format assignees' and tagged users' profile images
         $tasks = $tasks->map(function ($task) {
@@ -864,7 +866,7 @@ class TaskController extends Controller
                     'id' => $comment->id,
                     'comment' => $comment->comment,
                     'created_at' => $comment->created_at->toDateTimeString(),
-                    'created_at_human' => $comment->created_at->diffForHumans(),
+                    'created_at_human' => $comment->created_at->format('M j, Y g:i A'),
                     'user' => [
                         'id' => $commentUser?->id,
                         'name' => $commentUser?->full_name ?? $commentUser?->name ?? 'Unknown',
@@ -953,7 +955,7 @@ class TaskController extends Controller
                 'id' => $comment->id,
                 'comment' => $comment->comment,
                 'created_at' => $comment->created_at->toDateTimeString(),
-                'created_at_human' => $comment->created_at->diffForHumans(),
+                'created_at_human' => $comment->created_at->format('M j, Y g:i A'),
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->full_name ?? $user->name,

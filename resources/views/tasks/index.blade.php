@@ -158,10 +158,8 @@
                                 :title="task.description || ''"
                                 x-text="(task.description || '').length > 30 ? (task.description || '').substring(0, 30) + '...' : (task.description || '')"></p>
 
-                            <!-- Stage + Status row -->
+                            <!-- Status row -->
                             <div class="mt-4 mb-3 flex flex-wrap items-center gap-2">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700"
-                                    x-text="formatStage(task.stage)"></span>
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
                                     :class="getStatusBadgeColor(task.status)"
                                     x-text="formatStatus(task.status)"></span>
