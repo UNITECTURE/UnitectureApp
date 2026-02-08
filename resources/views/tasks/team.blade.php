@@ -128,9 +128,9 @@
                                                     <span class="text-[10px] text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
                                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded border shrink-0" :class="{
                                                           'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                          'text-orange-600 bg-orange-50 border-orange-100': task.priority === 'medium',
+                                                          'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
                                                           'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                          'text-slate-600 bg-slate-50 border-slate-100': task.priority === 'free'
+                                                          'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
                                                       }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
@@ -279,9 +279,9 @@
                                 <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                     :class="{
                                           'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                          'bg-orange-50 text-orange-600': selectedTask.priority === 'medium',
+                                          'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
                                           'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                          'bg-slate-50 text-slate-600': selectedTask.priority === 'free'
+                                          'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
                                       }" x-text="selectedTask.priority"></span>
                                 <h2 class="text-xl font-bold text-slate-900" x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')"></h2>
                                 <p class="text-sm text-slate-500 font-medium" x-text="selectedTask.project?.name"></p>
@@ -809,9 +809,9 @@
                 getPriorityColor(priority) {
                     const colors = {
                         'high': 'bg-red-100 text-red-700',
-                        'medium': 'bg-orange-100 text-orange-700',
+                        'medium': 'bg-yellow-100 text-yellow-700',
                         'low': 'bg-green-100 text-green-700',
-                        'free': 'bg-slate-100 text-slate-700'
+                        'free': 'bg-purple-100 text-purple-700'
                     };
                     return colors[priority] || 'bg-slate-100 text-slate-700';
                 },

@@ -115,18 +115,23 @@
                     <template x-for="task in filteredTasks" :key="task.id">
                         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
                             @click="openModal(task)">
-                            <!-- Header: project (left), priority (right) -->
-                            <div class="flex items-center justify-between mb-3 gap-2">
-                                <span class="text-xs font-medium text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
-                                    :class="{
-                                        'bg-red-100 text-red-700': task.priority === 'high',
-                                        'bg-orange-100 text-orange-700': task.priority === 'medium',
-                                        'bg-green-100 text-green-700': task.priority === 'low',
-                                        'bg-slate-100 text-slate-700': task.priority === 'free'
-                                    }"
-                                    x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
-                                </span>
+                            <!-- Header: time left (left), project + priority (right) -->
+                            <div class="flex items-start justify-between mb-3 gap-2">
+                                <span class="text-xs font-semibold shrink-0"
+                                    :class="dueInClass(task)"
+                                    x-text="dueIn(task)"></span>
+                                <div class="flex flex-col items-end gap-1 min-w-0">
+                                    <span class="text-xs font-medium text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
+                                        :class="{
+                                            'bg-red-100 text-red-700': task.priority === 'high',
+                                            'bg-yellow-100 text-yellow-700': task.priority === 'medium',
+                                            'bg-green-100 text-green-700': task.priority === 'low',
+                                            'bg-purple-100 text-purple-700': task.priority === 'free'
+                                        }"
+                                        x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
+                                    </span>
+                                </div>
                             </div>
 
                             <!-- Description -->
@@ -207,9 +212,9 @@
                                     <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                         :class="{
                                               'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                              'bg-orange-50 text-orange-600': selectedTask.priority === 'medium',
+                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
                                               'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                              'bg-slate-50 text-slate-600': selectedTask.priority === 'free'
+                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
                                           }" x-text="selectedTask.priority"></span>
                                     <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')"></h2>
                                     <p class="text-xs sm:text-sm text-slate-500 font-medium truncate" x-text="selectedTask.project?.name"></p>
