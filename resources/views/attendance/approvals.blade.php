@@ -42,9 +42,9 @@
                 {{-- Summary Cards --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     {{-- All --}}
-                    <button type="button"
-                        onclick="document.querySelector('input[name=status][value=All]').click(); document.querySelector('form').submit();"
-                        class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-blue-300 hover:shadow-md transition-all">
+                    {{-- All --}}
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'All']) }}"
+                        class="block w-full text-left bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-blue-300 hover:shadow-md transition-all">
                         <div class="h-1 bg-blue-500"></div>
                         <div class="p-5 flex items-start justify-between gap-3">
                             <div>
@@ -60,12 +60,12 @@
                                 </svg>
                             </div>
                         </div>
-                    </button>
+                    </a>
 
                     {{-- Pending --}}
-                    <button type="button"
-                        onclick="document.querySelector('input[name=status][value=Pending]').click(); document.querySelector('form').submit();"
-                        class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-orange-300 hover:shadow-md transition-all">
+                    {{-- Pending --}}
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'Pending']) }}"
+                        class="block w-full text-left bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-orange-300 hover:shadow-md transition-all">
                         <div class="h-1 bg-orange-500"></div>
                         <div class="p-5 flex items-start justify-between gap-3">
                             <div>
@@ -79,12 +79,12 @@
                                 </svg>
                             </div>
                         </div>
-                    </button>
+                    </a>
 
                     {{-- Approved --}}
-                    <button type="button"
-                        onclick="document.querySelector('input[name=status][value=Approved]').click(); document.querySelector('form').submit();"
-                        class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-green-300 hover:shadow-md transition-all">
+                    {{-- Approved --}}
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'Approved']) }}"
+                        class="block w-full text-left bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-green-300 hover:shadow-md transition-all">
                         <div class="h-1 bg-green-500"></div>
                         <div class="p-5 flex items-start justify-between gap-3">
                             <div>
@@ -98,12 +98,12 @@
                                 </svg>
                             </div>
                         </div>
-                    </button>
+                    </a>
 
                     {{-- Rejected --}}
-                    <button type="button"
-                        onclick="document.querySelector('input[name=status][value=Rejected]').click(); document.querySelector('form').submit();"
-                        class="bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-red-300 hover:shadow-md transition-all">
+                    {{-- Rejected --}}
+                    <a href="{{ request()->fullUrlWithQuery(['status' => 'Rejected']) }}"
+                        class="block w-full text-left bg-white rounded-lg shadow border border-slate-100 overflow-hidden hover:border-red-300 hover:shadow-md transition-all">
                         <div class="h-1 bg-red-500"></div>
                         <div class="p-5 flex items-start justify-between gap-3">
                             <div>
@@ -117,91 +117,12 @@
                                 </svg>
                             </div>
                         </div>
-                    </button>
+                    </a>
                 </div>
 
                 {{-- Filter & Search Bar --}}
-                <form action="" method="GET" class="flex items-center gap-4 mb-8" x-data="{ 
-                    filterOpen: false, 
-                    selectedStatus: '{{ request('status', 'All') }}',
-                    dateRange: '{{ request('date') }}' 
-                }" @click.outside="filterOpen = false">
-
-                    {{-- Filter Button & Dropdown --}}
-                    <div class="relative">
-                        <button type="button" @click="filterOpen = !filterOpen"
-                            :class="{'bg-slate-50 border-blue-300 ring-4 ring-blue-50': filterOpen}"
-                            class="flex items-center space-x-2 bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg shadow-sm hover:bg-slate-50 transition-all duration-200 select-none">
-                            <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
-                                </path>
-                            </svg>
-                            <span class="text-sm font-medium">Filter</span>
-                            <svg class="w-4 h-4 text-slate-400 ml-1 transform transition-transform duration-200"
-                                :class="{'rotate-180': filterOpen}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                                </path>
-                            </svg>
-                        </button>
-
-                        {{-- Dropdown Menu --}}
-                        <div x-show="filterOpen" x-transition:enter="transition ease-out duration-100"
-                            x-transition:enter-start="transform opacity-0 scale-95"
-                            x-transition:enter-end="transform opacity-100 scale-100"
-                            x-transition:leave="transition ease-in duration-75"
-                            x-transition:leave-start="transform opacity-100 scale-100"
-                            x-transition:leave-end="transform opacity-0 scale-95"
-                            class="absolute top-full left-0 z-20 mt-2 w-72 bg-white border border-slate-200 rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden"
-                            style="display: none;">
-
-                            <div class="p-4 border-b border-slate-50 bg-slate-50/50">
-                                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</span>
-                                <div class="mt-2 space-y-1">
-                                    <label
-                                        class="flex items-center px-2 py-1.5 rounded hover:bg-slate-100 cursor-pointer transition-colors">
-                                        <input type="radio" name="status" value="All" x-model="selectedStatus"
-                                            class="form-radio text-blue-600 focus:ring-blue-500 h-4 w-4 border-slate-300">
-                                        <span class="ml-2 text-sm text-slate-700">All</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center px-2 py-1.5 rounded hover:bg-slate-100 cursor-pointer transition-colors">
-                                        <input type="radio" name="status" value="Pending" x-model="selectedStatus"
-                                            class="form-radio text-orange-400 focus:ring-orange-400 h-4 w-4 border-slate-300">
-                                        <span class="ml-2 text-sm text-slate-700">Pending</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center px-2 py-1.5 rounded hover:bg-slate-100 cursor-pointer transition-colors">
-                                        <input type="radio" name="status" value="Approved" x-model="selectedStatus"
-                                            class="form-radio text-green-500 focus:ring-green-500 h-4 w-4 border-slate-300">
-                                        <span class="ml-2 text-sm text-slate-700">Approved</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center px-2 py-1.5 rounded hover:bg-slate-100 cursor-pointer transition-colors">
-                                        <input type="radio" name="status" value="Rejected" x-model="selectedStatus"
-                                            class="form-radio text-red-500 focus:ring-red-500 h-4 w-4 border-slate-300">
-                                        <span class="ml-2 text-sm text-slate-700">Rejected</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            {{-- Date Range (Mock) --}}
-                            <div class="p-4">
-                                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</span>
-                                <div class="mt-2 relative">
-                                    <input type="date" name="date" x-model="dateRange"
-                                        class="block w-full text-sm border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-slate-600">
-                                </div>
-                            </div>
-
-                            <div class="p-4 bg-slate-50 border-t border-slate-200">
-                                <button type="submit"
-                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors shadow-sm text-center">
-                                    Apply Filters
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <form action="" method="GET" class="flex items-center gap-4 mb-8">
+                    <input type="hidden" name="status" value="{{ request('status', 'All') }}">
 
                     {{-- Search Bar --}}
                     <div class="relative flex-1 max-w-lg">
@@ -211,7 +132,7 @@
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by Employee name"
                             class="block w-full pl-11 pr-3 py-2.5 border border-slate-200 rounded-lg leading-5 bg-white placeholder-slate-400 focus:outline-none focus:placeholder-slate-300 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 sm:text-sm shadow-sm transition-shadow duration-200">
                     </div>
                 </form>
@@ -227,7 +148,12 @@
                                         Name</th>
                                     <th
                                         class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Date</th>
+                                        {{ 'Applied Date' }}
+                                    </th>
+                                    <th
+                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        {{ 'Requested Date' }}
+                                    </th>
                                     <th
                                         class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Time Range</th>
@@ -258,9 +184,15 @@
                                                                         <div class="text-sm font-medium text-slate-900">{{ $request->user->name }}
                                                                         </div>
                                                                         <div class="text-xs text-slate-500">
-                                                                            {{ucfirst($request->user->role?->name ?? 'Employee') }}</div>
+                                                                            {{ucfirst($request->user->role?->name ?? 'Employee') }}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
+                                                            </td>
+                                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                                                {{ \Carbon\Carbon::parse($request->created_at)->format('M d, Y') }}
+                                                                <div class="text-xs text-slate-400">
+                                                                    {{ \Carbon\Carbon::parse($request->created_at)->format('h:i A') }}</div>
                                                             </td>
                                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                                                 {{ \Carbon\Carbon::parse($request->date)->format('M d, Y') }}
@@ -279,7 +211,7 @@
                                                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                                                 <span
                                                                     class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium
-                                                                    {{ $request->status === 'approved' ? 'bg-green-100 text-green-600' :
+                                                                                                                            {{ $request->status === 'approved' ? 'bg-green-100 text-green-600' :
                                     ($request->status === 'rejected' ? 'bg-red-100 text-red-600' : 'bg-yellow-50 text-yellow-700') }}">
                                                                     {{ ucfirst($request->status) }}
                                                                 </span>

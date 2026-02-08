@@ -285,18 +285,7 @@ class AttendanceController extends Controller
         ];
 
         // Cumulative Record (Single Row User)
-        // Calculate Total Duration
-        $totalMinutes = 0;
-        foreach ($attRecords as $att) {
-            if (($att->status === 'present' || $att->status === 'exempted') && $att->duration) {
-                preg_match('/(\d+)\s*[hH]/i', $att->duration, $hMatch);
-                preg_match('/(\d+)\s*[mM]/i', $att->duration, $mMatch);
-                $totalMinutes += (isset($hMatch[1]) ? (int) $hMatch[1] * 60 : 0) + (isset($mMatch[1]) ? (int) $mMatch[1] : 0);
-            }
-        }
-        $h = floor($totalMinutes / 60);
-        $m = $totalMinutes % 60;
-        $workingDuration = "{$h} Hrs {$m} Mins";
+
 
         $cumulative_records = [
             [
@@ -304,7 +293,7 @@ class AttendanceController extends Controller
                 'present' => $presentCount,
                 'leave' => $leaveCount,
                 'absent' => $absentCount,
-                'working_duration' => $workingDuration
+
             ]
         ];
 
@@ -532,27 +521,24 @@ class AttendanceController extends Controller
             // Existing logic had explicit and implicit checks, simplified here to:
             $totalAbsent = max(0, $potentialWorkingDaysElapsed - $presentCount - $leaveCount);
 
-            // Calculate Total Duration
-            $totalMinutes = 0;
+            // Calculate Late Marks
+            $lateMarks = 0;
             foreach ($monthAtts as $att) {
-                if (($att->status === 'present' || $att->status === 'exempted') && $att->duration) {
-                    preg_match('/(\d+)\s*[hH]/i', $att->duration, $hMatch);
-                    preg_match('/(\d+)\s*[mM]/i', $att->duration, $mMatch);
-                    $minutes = (isset($hMatch[1]) ? (int) $hMatch[1] * 60 : 0) + (isset($mMatch[1]) ? (int) $mMatch[1] : 0);
-                    $totalMinutes += $minutes;
+                if ($att->clock_in) {
+                    $clockInTime = \Carbon\Carbon::parse($att->clock_in);
+                    // Check if time is strictly after 09:40:00
+                    if ($clockInTime->format('H:i') > '09:40') {
+                        $lateMarks++;
+                    }
                 }
             }
-
-            $totalH = floor($totalMinutes / 60);
-            $totalM = $totalMinutes % 60;
-            $displayDuration = "{$totalH} Hrs {$totalM} Mins";
 
             $cumulative_records[] = [
                 'name' => $user->name,
                 'present' => $presentCount,
                 'leave' => $leaveCount,
                 'absent' => $totalAbsent,
-                'duration' => $displayDuration
+                'late_marks' => $lateMarks
             ];
         }
 
