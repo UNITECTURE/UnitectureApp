@@ -17,8 +17,10 @@ class TaskController extends Controller
 
     /**
      * All available task statuses.
+     * New tasks default to 'not_started'.
      */
     const STATUSES = [
+        'not_started',
         'wip',
         'correction',
         'completed',
@@ -386,9 +388,7 @@ class TaskController extends Controller
         $data['end_date'] = $endDate;
 
         $task = new Task($data);
-        if ($request->has('status')) {
-            $task->status = $request->status;
-        }
+        $task->status = $request->has('status') ? $request->status : 'not_started';
         // Stage is set automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->created_by = Auth::id();
         $task->save();

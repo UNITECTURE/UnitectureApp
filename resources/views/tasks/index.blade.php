@@ -687,7 +687,7 @@
                     }
 
                     // Employees are limited to these statuses
-                    const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
+                    const allowedForEmployees = ['not_started', 'under_review', 'completed', 'wip', 'revision'];
                     return this.statuses.filter(status => allowedForEmployees.includes(status));
                 },
 
