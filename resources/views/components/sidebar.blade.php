@@ -73,65 +73,82 @@
                     Calendar</div>
             </a>
 
-            {{-- Tasks (Admin, Super Admin, Supervisor, and Employee can all access) --}}
-            <div x-data="{ 
-                open: localStorage.getItem('sidebar_tasks_open') === 'true', 
-                init() { this.$watch('open', val => localStorage.setItem('sidebar_tasks_open', val)) } 
-            }" class="space-y-1">
-                <div @click="if (sidebarOpen) { if (open) { open = false } else { open = true; window.location.href = '{{ route('tasks.index') }}' } } else { sidebarOpen = true; open = true; window.location.href = '{{ route('tasks.index') }}' }"
-                    class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
+            {{-- Tasks: Employee sees single "All Tasks" link; Admin/Supervisor see dropdown with All Tasks, Assigned to Me, (and My Team Tasks for supervisor) --}}
+            @if($role === 'employee')
+                <a href="{{ route('tasks.assigned') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative {{ request()->routeIs('tasks.assigned') ? 'bg-slate-800 text-white' : '' }}"
                     :class="!sidebarOpen ? 'justify-center' : ''">
-                    <div class="flex items-center flex-1 min-w-0" :class="!sidebarOpen ? 'justify-center' : ''">
-                        <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
-                            :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
-                            </path>
-                        </svg>
-                        <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Tasks' }}</span>
-                    </div>
-                    <svg x-show="sidebarOpen"
-                        class="w-4 h-4 text-slate-500 transition-transform duration-200 ml-auto flex-shrink-0"
-                        :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
+                        :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                        </path>
                     </svg>
-
-                    {{-- Tooltip for collapsed state --}}
+                    <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'All Tasks' }}</span>
                     <div x-show="!sidebarOpen"
                         class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
-                        Tasks</div>
-                </div>
-
-                {{-- Submenu --}}
-                <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
-                    <a href="{{ route('tasks.index') }}"
-                        class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
-                        {{ 'All Tasks' }}
-                    </a>
-
-                    <a href="{{ route('tasks.assigned') }}"
-                        class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.assigned') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
-                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        {{ 'Assigned to Me' }}
-                    </a>
-
-                    @if($role === 'supervisor')
-                        <a href="{{ route('tasks.team') }}"
-                            class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.team') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        All Tasks</div>
+                </a>
+            @else
+                <div x-data="{ 
+                    open: localStorage.getItem('sidebar_tasks_open') === 'true', 
+                    init() { this.$watch('open', val => localStorage.setItem('sidebar_tasks_open', val)) } 
+                }" class="space-y-1">
+                    <div @click="if (sidebarOpen) { if (open) { open = false } else { open = true; window.location.href = '{{ route('tasks.index') }}' } } else { sidebarOpen = true; open = true; window.location.href = '{{ route('tasks.index') }}' }"
+                        class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
+                        :class="!sidebarOpen ? 'justify-center' : ''">
+                        <div class="flex items-center flex-1 min-w-0" :class="!sidebarOpen ? 'justify-center' : ''">
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
+                                :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
                                 </path>
                             </svg>
-                            {{ 'My Team Tasks' }}
-                        </a>
-                    @endif
+                            <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Tasks' }}</span>
+                        </div>
+                        <svg x-show="sidebarOpen"
+                            class="w-4 h-4 text-slate-500 transition-transform duration-200 ml-auto flex-shrink-0"
+                            :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
 
+                        {{-- Tooltip for collapsed state --}}
+                        <div x-show="!sidebarOpen"
+                            class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
+                            Tasks</div>
+                    </div>
+
+                    {{-- Submenu --}}
+                    <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
+                        <a href="{{ route('tasks.index') }}"
+                            class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
+                            {{ 'All Tasks' }}
+                        </a>
+
+                        <a href="{{ route('tasks.assigned') }}"
+                            class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.assigned') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ 'Assigned to Me' }}
+                        </a>
+
+                        @if($role === 'supervisor')
+                            <a href="{{ route('tasks.team') }}"
+                                class="flex items-center px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('tasks.team') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">
+                                <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                    </path>
+                                </svg>
+                                {{ 'My Team Tasks' }}
+                            </a>
+                        @endif
+
+                    </div>
                 </div>
-            </div>
+            @endif
 
             {{-- Attendance & Leave --}}
             <div x-data="{ 
