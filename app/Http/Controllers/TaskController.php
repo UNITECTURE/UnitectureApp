@@ -781,7 +781,7 @@ class TaskController extends Controller
                     'id' => $comment->id,
                     'comment' => $comment->comment,
                     'created_at' => $comment->created_at->toDateTimeString(),
-                    'created_at_human' => $comment->created_at->diffForHumans(),
+                    'created_at_human' => $comment->created_at->format('M j, Y g:i A'),
                     'user' => [
                         'id' => $commentUser?->id,
                         'name' => $commentUser?->full_name ?? $commentUser?->name ?? 'Unknown',
@@ -830,7 +830,7 @@ class TaskController extends Controller
                 'id' => $comment->id,
                 'comment' => $comment->comment,
                 'created_at' => $comment->created_at->toDateTimeString(),
-                'created_at_human' => $comment->created_at->diffForHumans(),
+                'created_at_human' => $comment->created_at->format('M j, Y g:i A'),
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->full_name ?? $user->name,
