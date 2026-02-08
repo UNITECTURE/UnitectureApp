@@ -129,10 +129,10 @@ class AttendanceController extends Controller
         $daily_records = [];
         $daily_summary = ['total' => $start->daysInMonth, 'present' => 0, 'leave' => 0, 'absent' => 0];
 
-        $curr = $start->copy();
+        $curr = $limitDate->copy();
 
-        // We iterate through every day of the month
-        while ($curr->lte($end)) {
+        // We iterate through every day of the month (Reverse Order)
+        while ($curr->gte($start)) {
             $dateStr = $curr->toDateString();
             $isToday = $curr->isToday();
             $isFuture = $curr->isFuture();
@@ -232,7 +232,7 @@ class AttendanceController extends Controller
                 'class' => $class
             ];
 
-            $curr->addDay();
+            $curr->subDay();
         }
 
         // --- Cumulative Report Logic ---
