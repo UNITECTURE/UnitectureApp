@@ -22,15 +22,15 @@
                         {{-- Legend --}}
                         <div class="hidden md:flex items-center gap-4 text-xs">
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-[#22c55e]"></span>
+                                <span class="w-3 h-3 rounded-full bg-[#f97316]"></span>
                                 <span class="text-slate-500 font-medium">Leave</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-[#3b82f6]"></span>
+                                <span class="w-3 h-3 rounded-full bg-[#22c55e]"></span>
                                 <span class="text-slate-500 font-medium">Holiday</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-[#f97316]"></span>
+                                <span class="w-3 h-3 rounded-full bg-[#3b82f6]"></span>
                                 <span class="text-slate-500 font-medium">Task</span>
                             </div>
                             <div class="flex items-center gap-2">
@@ -102,7 +102,7 @@
                                     @change="eventTypes.includes('task') ? eventTypes = eventTypes.filter(t => t !== 'task') : eventTypes.push('task')"
                                     class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
                                 <div class="flex items-center gap-2 flex-1">
-                                    <span class="w-3 h-3 rounded-full bg-[#f97316]"></span>
+                                    <span class="w-3 h-3 rounded-full bg-[#3b82f6]"></span>
                                     <span class="text-sm font-medium text-slate-700">Task</span>
                                 </div>
                             </label>
@@ -113,7 +113,7 @@
                                     @change="eventTypes.includes('leave') ? eventTypes = eventTypes.filter(t => t !== 'leave') : eventTypes.push('leave')"
                                     class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded">
                                 <div class="flex items-center gap-2 flex-1">
-                                    <span class="w-3 h-3 rounded-full bg-[#22c55e]"></span>
+                                    <span class="w-3 h-3 rounded-full bg-[#f97316]"></span>
                                     <span class="text-sm font-medium text-slate-700">Leave</span>
                                 </div>
                             </label>

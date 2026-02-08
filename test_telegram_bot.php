@@ -91,3 +91,39 @@ if ($result) {
         echo "Error: " . $directResponse->body() . "\n";
     }
 }
+
+echo "\n==========================================\n";
+echo "Testing message send to RAJ (1726037651)...\n";
+echo "==========================================\n";
+
+// User RAJ (Chat ID: 1726037651)
+$rajChatId = '1726037651';
+$rajMessage = '🧪 <b>Test for RAJ - Notification System Check</b>\n\nIf you receive this, task notifications should work! ✅\n\n<i>This is a system test message from the development team.</i>';
+
+echo "Sending test message to RAJ (Chat ID: {$rajChatId})...\n";
+
+$result = $telegram->sendMessage($rajChatId, $rajMessage);
+
+if ($result) {
+    echo "✅ Message sent successfully to RAJ!\n";
+    echo "   Chat ID: {$rajChatId}\n";
+    echo "   Check RAJ's Telegram to confirm receipt.\n";
+} else {
+    echo "❌ Message failed to send to RAJ.\n";
+    echo "   Check Laravel logs for details.\n";
+    
+    // Try direct API call to see exact error
+    echo "\nTrying direct API call...\n";
+    $directResponse = Http::post("https://api.telegram.org/bot{$configToken}/sendMessage", [
+        'chat_id' => $rajChatId,
+        'text' => $rajMessage,
+        'parse_mode' => 'HTML',
+    ]);
+    
+    if ($directResponse->successful()) {
+        echo "✅ Direct API call succeeded!\n";
+    } else {
+        echo "❌ Direct API call failed!\n";
+        echo "Error: " . $directResponse->body() . "\n";
+    }
+}
