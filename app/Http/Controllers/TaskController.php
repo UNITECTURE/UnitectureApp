@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
+    /** Tasks page URL included in Telegram notifications (clickable link). */
+    private const TASKS_APP_LINK = 'http://hrms.unitecture.co/tasks';
+
     /**
      * All available task statuses.
      */
@@ -450,7 +453,7 @@ class TaskController extends Controller
                     }
 
                     $lines[] = '';
-                    $lines[] = 'Open the Unitecture app to view full details.';
+                    $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
 
                     $message = implode("\n", $lines);
 
@@ -483,7 +486,7 @@ class TaskController extends Controller
                     }
 
                     $lines[] = '';
-                    $lines[] = 'Open the Unitecture app to view full details.';
+                    $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
 
                     $message = implode("\n", $lines);
 
@@ -572,7 +575,7 @@ class TaskController extends Controller
                         }
 
                         $lines[] = '';
-                        $lines[] = 'Open the Unitecture app to view full details.';
+                        $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
 
                         $message = implode("\n", $lines);
 
@@ -736,7 +739,7 @@ class TaskController extends Controller
                         }
 
                         $lines[] = '';
-                        $lines[] = 'Open the Unitecture app to view full details.';
+                        $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
                         $telegram->sendMessage($user->telegram_chat_id, implode("\n", $lines));
                     }
                 }
@@ -819,7 +822,7 @@ class TaskController extends Controller
                         $lines[] = '<b>By:</b> ' . e($actor->name);
                     }
                     $lines[] = '';
-                    $lines[] = 'Open the Unitecture app to view full details.';
+                    $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
                     $telegram->sendMessage($user->telegram_chat_id, implode("\n", $lines));
                 }
             } catch (\Throwable $e) {
@@ -940,7 +943,7 @@ class TaskController extends Controller
                         $lines[] = '<b>Comment by:</b> ' . e($user->full_name ?? $user->name);
                         $lines[] = '<b>Comment:</b> ' . e(\Illuminate\Support\Str::limit($comment->comment, 100));
                         $lines[] = '';
-                        $lines[] = 'Open the Unitecture app to view full details.';
+                        $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
                         $telegram->sendMessage($recipient->telegram_chat_id, implode("\n", $lines));
                     }
                 }
