@@ -114,7 +114,7 @@
                                     <th class="px-6 py-4 font-semibold text-slate-700">Dates & Duration</th>
                                     <th class="px-6 py-4 font-semibold text-slate-700 text-center">Approval Progress</th>
                                     <th class="px-6 py-4 font-semibold text-slate-700 text-center">Status</th>
-                                    <th class="px-6 py-4 font-semibold text-slate-700 text-center">Review Status</th>
+                                    <th class="px-6 py-4 font-semibold text-slate-700 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
@@ -153,9 +153,9 @@
                                                 $isRejected = ($s === 'rejected');
                                                 $selfDone = true;
                                                 $leadDone = in_array($s, ['approved_by_supervisor', 'approved']);
-                                                $leadRejected = $isRejected && !$leadDone;
+                                                $leadRejected = $isRejected && $leave->rejected_by === 'supervisor';
                                                 $adminDone = ($s === 'approved');
-                                                $adminRejected = $isRejected && $leadDone;
+                                                $adminRejected = $isRejected && $leave->rejected_by === 'admin';
                                             @endphp
 
                                             {{-- Self --}}
@@ -221,31 +221,49 @@
 
                                     {{-- Action --}}
                                     <td class="px-6 py-5">
-                                        <div class="flex items-center justify-center gap-2">
+                                        <div class="flex items-center justify-center gap-3">
                                             @php
-                                                $canApprove = false;
-                                                if (Auth::user()->isSupervisor() && $leave->status === 'pending') {
-                                                    $canApprove = true;
-                                                } elseif (Auth::user()->isAdmin() && in_array($leave->status, ['pending', 'approved_by_supervisor'])) {
-                                                    $canApprove = true;
+                                                $currentUser = Auth::user();
+                                                $isSupervisor = $currentUser->isSupervisor();
+                                                $isAdmin = $currentUser->isAdmin();
+                                                
+                                                // Determine if actions should be enabled
+                                                $canTakeAction = false;
+                                                
+                                                if ($isSupervisor) {
+                                                    // Supervisor can only act on 'pending' status
+                                                    $canTakeAction = $leave->status === 'pending';
+                                                } elseif ($isAdmin) {
+                                                    // Admin can only act on 'approved_by_supervisor' status
+                                                    $canTakeAction = $leave->status === 'approved_by_supervisor';
                                                 }
                                             @endphp
 
-                                            @if($canApprove)
-                                                <button onclick="openReviewModal({{ $leave->id }}, '{{ $leave->user->name }}', '{{ $leave->leave_type }}', '{{ \Carbon\Carbon::parse($leave->start_date)->format('M d, Y') }}', '{{ \Carbon\Carbon::parse($leave->end_date)->format('M d, Y') }}', '{{ $leave->reason }}', {{ $leave->days }})" class="px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
-                                                    REVIEW
-                                                </button>
-                                            @elseif($leave->status === 'approved')
-                                                <span class="px-3 py-1.5 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg">Complete</span>
-                                            @elseif($leave->status === 'rejected')
-                                                <span class="px-3 py-1.5 text-xs font-semibold text-slate-500 bg-slate-50 border border-slate-200 rounded-lg">Archived</span>
-                                            @elseif($leave->status === 'cancelled')
-                                                <span class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-300 rounded-lg">Leave Cancelled</span>
-                                            @else
-                                                <button class="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors">
-                                                    REVIEW
-                                                </button>
-                                            @endif
+                                            {{-- Approve Icon --}}
+                                            <button 
+                                                onclick="handleQuickAction({{ $leave->id }}, '{{ $leave->user->name }}', '{{ $leave->leave_type }}', '{{ \Carbon\Carbon::parse($leave->start_date)->format('M d, Y') }}', '{{ \Carbon\Carbon::parse($leave->end_date)->format('M d, Y') }}', '{{ $leave->reason }}', {{ $leave->days }}, 'approved')"
+                                                class="group relative transition-all duration-200 {{ $canTakeAction ? 'cursor-pointer hover:scale-110' : 'cursor-not-allowed opacity-30' }}"
+                                                {{ !$canTakeAction ? 'disabled' : '' }}>
+                                                <div class="w-8 h-8 rounded-full {{ $canTakeAction ? 'bg-green-100 hover:bg-green-200 text-green-600' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center">
+                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                                </div>
+                                                @if($canTakeAction)
+                                                <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Approve</span>
+                                                @endif
+                                            </button>
+
+                                            {{-- Reject Icon --}}
+                                            <button 
+                                                onclick="handleQuickAction({{ $leave->id }}, '{{ $leave->user->name }}', '{{ $leave->leave_type }}', '{{ \Carbon\Carbon::parse($leave->start_date)->format('M d, Y') }}', '{{ \Carbon\Carbon::parse($leave->end_date)->format('M d, Y') }}', '{{ $leave->reason }}', {{ $leave->days }}, 'rejected')"
+                                                class="group relative transition-all duration-200 {{ $canTakeAction ? 'cursor-pointer hover:scale-110' : 'cursor-not-allowed opacity-30' }}"
+                                                {{ !$canTakeAction ? 'disabled' : '' }}>
+                                                <div class="w-8 h-8 rounded-full {{ $canTakeAction ? 'bg-red-100 hover:bg-red-200 text-red-600' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center">
+                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                </div>
+                                                @if($canTakeAction)
+                                                <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Reject</span>
+                                                @endif
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -363,6 +381,21 @@
 
 <script>
     let currentLeaveId = null;
+    let currentAction = null;
+
+    function handleQuickAction(leaveId, employeeName, leaveType, startDate, endDate, reason, days, action) {
+        currentLeaveId = leaveId;
+        currentAction = action;
+        
+        const actionText = action === 'approved' ? 'approve' : 'reject';
+        const confirmMessage = action === 'approved' 
+            ? 'Are you sure you want to approve this leave request?' 
+            : 'Are you sure you want to reject this leave request?';
+        
+        if (confirm(confirmMessage)) {
+            updateLeaveStatus(leaveId, action);
+        }
+    }
 
     function openReviewModal(leaveId, employeeName, leaveType, startDate, endDate, reason, days) {
         currentLeaveId = leaveId;
@@ -474,7 +507,8 @@
             setLoadingState(action, false);
             if (data.success) {
                 closeReviewModal();
-                showSuccessToast(data.message || 'Leave status updated successfully.');
+                const actionText = status === 'approved' ? 'approved' : 'rejected';
+                showSuccessToast(`Leave request ${actionText} successfully.`);
             } else {
                 alert(data.message || 'An error occurred');
             }

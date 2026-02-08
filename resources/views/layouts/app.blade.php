@@ -20,6 +20,7 @@
 
     <!-- Custom Centered Loader -->
     <style>
+        [x-cloak] { display: none !important; }
         .loader-spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #2563EB;
@@ -84,7 +85,6 @@
     @if (session('success'))
     <div x-data="{ show: true }" 
             x-show="show" 
-            style="position: fixed; bottom: 24px; right: 24px; z-index: 9999;"
             x-init="setTimeout(() => show = false, 4000)"
             x-transition:enter="transition ease-out duration-500 cubic-bezier(0.175, 0.885, 0.32, 1.275)"
             x-transition:enter-start="opacity-0 translate-y-8 scale-95"
@@ -92,22 +92,23 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 translate-y-8"
-            class="fixed bottom-6 right-6 z-[150] bg-green-50 text-green-900 px-6 py-4 rounded-xl border border-green-200 shadow-2xl flex items-center gap-4 border-l-4 border-l-green-500">
-        <div class="bg-green-100 p-2 rounded-full ring-2 ring-green-100/50">
-            <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            class="fixed inset-0 z-[150] flex items-center justify-center p-4">
+        <div class="bg-green-50 text-green-900 px-6 py-4 rounded-xl border border-green-200 shadow-2xl flex items-center gap-4 border-l-4 border-l-green-500">
+            <div class="bg-green-100 p-2 rounded-full ring-2 ring-green-100/50">
+                <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <span class="block text-sm font-bold text-green-900">Success!</span>
+                <span class="text-sm font-medium text-green-800">{{ session('success') }}</span>
+            </div>
+            <button @click="show = false" class="text-green-600 hover:text-green-800 ml-2"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
-        <div>
-            <span class="block text-sm font-bold text-green-900">Success!</span>
-            <span class="text-sm font-medium text-green-800">{{ session('success') }}</span>
-        </div>
-        <button @click="show = false" class="text-green-600 hover:text-green-800 ml-2"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
     </div>
     @endif
 
     @if (session('error'))
     <div x-data="{ show: true }" 
             x-show="show" 
-            style="position: fixed; bottom: 24px; right: 24px; z-index: 9999;"
             x-init="setTimeout(() => show = false, 5000)"
             x-transition:enter="transition ease-out duration-500 cubic-bezier(0.175, 0.885, 0.32, 1.275)"
             x-transition:enter-start="opacity-0 translate-y-8 scale-95"
@@ -115,15 +116,17 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 translate-y-8"
-            class="fixed bottom-6 right-6 z-[150] bg-red-50 text-red-900 px-6 py-4 rounded-xl border border-red-200 shadow-2xl flex items-center gap-4 border-l-4 border-l-red-500">
-        <div class="bg-red-100 p-2 rounded-full ring-2 ring-red-100/50">
-            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            class="fixed inset-0 z-[150] flex items-center justify-center p-4">
+        <div class="bg-red-50 text-red-900 px-6 py-4 rounded-xl border border-red-200 shadow-2xl flex items-center gap-4 border-l-4 border-l-red-500">
+            <div class="bg-red-100 p-2 rounded-full ring-2 ring-red-100/50">
+                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <span class="block text-sm font-bold text-red-900">Error!</span>
+                <span class="text-sm font-medium text-red-800">{{ session('error') }}</span>
+            </div>
+            <button @click="show = false" class="text-red-600 hover:text-red-800 ml-2"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
         </div>
-        <div>
-            <span class="block text-sm font-bold text-red-900">Error</span>
-            <span class="text-sm font-medium text-red-800">{{ session('error') }}</span>
-        </div>
-        <button @click="show = false" class="text-red-600 hover:text-red-800 ml-2"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
     </div>
     @endif
 

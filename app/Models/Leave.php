@@ -18,6 +18,7 @@ class Leave extends Model
         'end_date',
         'days',
         'status',
+        'rejected_by',
     ];
 
     protected $casts = [

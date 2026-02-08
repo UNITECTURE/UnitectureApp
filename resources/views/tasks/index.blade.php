@@ -13,61 +13,77 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
             <!-- Header & Toolbar -->
-            <header class="bg-white border-b border-slate-100 py-5 px-4 sm:px-6 shrink-0 z-10">
+            <header class="bg-white border-b border-slate-100 py-6 px-4 sm:px-6 shrink-0 z-10">
                 <div class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-3">
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Tasks</h1>
-                        <p class="text-slate-500 text-sm font-medium">Manage and track your assigned tasks</p>
-                    </div>
+                    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between w-full">
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Tasks</h1>
+                            <p class="text-slate-500 text-sm font-medium">Manage and track your assigned tasks</p>
+                        </div>
 
-                    @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
-                        <a href="{{ route('tasks.create') }}"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md w-fit transition-all">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>Add Task</span>
-                        </a>
-                    @endif
+                        <div class="flex flex-wrap items-center gap-3 lg:ml-auto lg:justify-end w-full lg:w-auto">
+                            <div class="relative">
+                                <input type="text" x-model="search" placeholder="Search tasks..."
+                                    class="w-72 max-w-full pl-11 pr-4 py-2.5 border border-slate-200 rounded-full text-xs sm:text-sm leading-5 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-slate-300 bg-white shadow-sm">
+                                <svg class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+
+                            @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
+                                <a href="{{ route('tasks.create') }}"
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold flex items-center gap-2 shadow-md transition-all">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Add Task</span>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </header>
 
             <!-- Filters and Search -->
-            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-4 sm:py-5 shrink-0">
-                <div class="flex items-center gap-4 justify-between w-full">
+            <div class="bg-white border-b border-slate-100 px-4 sm:px-6 py-3 sm:py-4 shrink-0">
+                <div class="flex flex-wrap items-center justify-between gap-4">
                     <!-- Filter Buttons -->
-                    <div class="flex items-center gap-2 flex-1 overflow-x-auto">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <button @click="filterStatus = 'all'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'all' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            All (<span x-text="counts.all"></span>)
-                        </button>
-                        <button @click="filterStatus = 'pending'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'pending' ? 'bg-yellow-500 border-yellow-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            Pending (<span x-text="counts.pending"></span>)
-                        </button>
-                        <button @click="filterStatus = 'in_progress'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'in_progress' ? 'bg-blue-500 border-blue-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            In Progress (<span x-text="counts.in_progress"></span>)
-                        </button>
-                        <button @click="filterStatus = 'completed'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'completed' ? 'bg-green-500 border-green-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            Completed (<span x-text="counts.completed"></span>)
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap"
+                            :class="filterStatus === 'all' ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            All Tasks (<span x-text="counts.all"></span>)
                         </button>
                         <button @click="filterStatus = 'overdue'"
-                            class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap flex-shrink-0"
-                            :class="filterStatus === 'overdue' ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-slate-400'">
-                            Overdue (<span x-text="counts.overdue"></span>)
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'overdue' ? 'bg-red-50 border-red-200 text-red-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                            Overdue
+                        </button>
+                        <button @click="filterStatus = 'pending'"
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'pending' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            Pending
+                        </button>
+                        <button @click="filterStatus = 'in_progress'"
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'in_progress' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            In Progress
+                        </button>
+                        <button @click="filterStatus = 'completed'"
+                            class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
+                            :class="filterStatus === 'completed' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            Completed
                         </button>
                     </div>
 
                     <!-- Filter by Employee (admin/supervisor only) -->
                     <div x-show="showEmployeeFilter" class="relative flex-shrink-0" x-data="{ open: false }">
                         <button type="button" @click="open = !open"
-                            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-lg text-sm font-semibold bg-white text-slate-700 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-full text-xs sm:text-sm font-semibold bg-white text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-200 shadow-sm">
                             <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                             </svg>
@@ -97,75 +113,58 @@
                         </div>
                     </div>
 
-                    <!-- Search -->
-                    <div class="relative ml-4 flex-shrink-0">
-                        <input type="text" x-model="search" placeholder="Search tasks..."
-                            class="w-64 pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                        <svg class="w-5 h-5 text-slate-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
                 </div>
             </div>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-100">
                 <!-- Task Cards Grid -->
                 <div x-show="filteredTasks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <template x-for="task in filteredTasks" :key="task.id">
-                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
                             @click="openModal(task)">
-                            <!-- Header: time left (left), project + priority (right) -->
-                            <div class="flex items-start justify-between mb-3 gap-2">
-                                <span class="text-xs font-semibold shrink-0"
-                                    :class="dueInClass(task)"
-                                    x-text="dueIn(task)"></span>
-                                <div class="flex flex-col items-end gap-1 min-w-0">
-                                    <span class="text-xs font-medium text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
-                                        :class="{
-                                            'bg-red-100 text-red-700': task.priority === 'high',
-                                            'bg-yellow-100 text-yellow-700': task.priority === 'medium',
-                                            'bg-green-100 text-green-700': task.priority === 'low',
-                                            'bg-purple-100 text-purple-700': task.priority === 'free'
-                                        }"
-                                        x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Description -->
-                            <p class="text-base font-bold text-slate-800 mb-3 line-clamp-2 group-hover:text-indigo-600 transition-colors"
-                                x-text="(task.description || '').substring(0, 120) + ((task.description || '').length > 120 ? '...' : '')">
-                            </p>
-
-                            <!-- Stage + Status row -->
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="text-xs font-medium text-slate-500">
-                                    <span>Stage: </span>
-                                    <span class="font-semibold text-slate-700" x-text="formatStage(task.stage)"></span>
-                                </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                                    :class="getStatusBadgeColor(task.status)"
-                                    x-text="formatStatus(task.status)">
+                            <!-- Header: project + priority -->
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide" x-text="task.project?.name || 'No Project'"></div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold"
+                                    :class="{
+                                        'bg-red-100 text-red-700': task.priority === 'high',
+                                        'bg-yellow-100 text-yellow-700': task.priority === 'medium',
+                                        'bg-green-100 text-green-700': task.priority === 'low',
+                                        'bg-purple-100 text-purple-700': task.priority === 'free'
+                                    }"
+                                    x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
                                 </span>
                             </div>
 
-                            <!-- Footer: assignees + due date (left), time left (right) -->
-                            <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-3">
+                            <!-- Description -->
+                            <p class="mt-3 text-lg font-semibold text-slate-900 leading-snug line-clamp-1"
+                                :title="task.description || ''"
+                                x-text="(task.description || '').length > 30 ? (task.description || '').substring(0, 30) + '...' : (task.description || '')"></p>
+
+                            <!-- Stage + Status row -->
+                            <div class="mt-4 mb-3 flex flex-wrap items-center gap-2">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700"
+                                    x-text="formatStage(task.stage)"></span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                    :class="getStatusBadgeColor(task.status)"
+                                    x-text="formatStatus(task.status)"></span>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-5 gap-3">
                                 <div class="flex items-center gap-2 min-w-0">
                                     <div class="flex -space-x-2 shrink-0">
                                         <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
                                             <img :src="getProfileImageUrl(assignee)"
                                                 :alt="assignee.full_name || assignee.name"
                                                 :title="assignee.full_name || assignee.name"
-                                                class="w-7 h-7 rounded-full border-2 border-white object-cover shadow-sm">
+                                                class="w-8 h-8 rounded-full border-2 border-white object-cover shadow-sm">
                                         </template>
                                         <template x-if="task.assignees.length > 3">
-                                            <div class="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
+                                            <div class="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
                                                 :title="'+' + (task.assignees.length - 3) + ' more'"
-                                                x-text="'+' + (task.assignees.length - 3)">
-                                            </div>
+                                                x-text="'+' + (task.assignees.length - 3)"></div>
                                         </template>
                                     </div>
                                     <div class="text-xs font-medium text-slate-500 truncate">
@@ -433,7 +432,7 @@
 
                             <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-b-xl sm:rounded-b-2xl">
                                 <button
-                                    x-show="canEditDue && selectedTask && selectedTask.created_by === currentUserId"
+                                    x-show="canEditDue && selectedTask"
                                     type="button"
                                     @click="deleteTask(selectedTask.id)"
                                     class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
@@ -449,6 +448,20 @@
                     </template>
                     </div>
             </template>
+            </div>
+        </div>
+
+        <div x-show="toast.show"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100000]">
+            <div class="flex items-center gap-4 rounded-2xl border-2 px-8 py-5 shadow-2xl bg-green-100 border-green-400">
+                <svg class="h-6 w-6 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <span class="text-base font-bold text-green-800" x-text="toast.message"></span>
             </div>
         </div>
     </div>
@@ -483,6 +496,24 @@
                 showAddPeopleModal: false,
                 showTagModal: false,
                 currentUserId: currentUserId,
+                toast: {
+                    show: false,
+                    type: 'success',
+                    message: ''
+                },
+                toastTimer: null,
+
+                showToast(message, type = 'success') {
+                    console.log('showToast called:', message, type);
+                    this.toast.message = message;
+                    this.toast.type = type;
+                    this.toast.show = true;
+                    console.log('toast.show is now:', this.toast.show);
+                    clearTimeout(this.toastTimer);
+                    this.toastTimer = setTimeout(() => {
+                        this.toast.show = false;
+                    }, 3000);
+                },
 
                 getStageBadgeColor(stage) {
                     const colors = {
@@ -536,6 +567,7 @@
                         const response = await fetch(`/tasks/${taskId}`, {
                             method: 'DELETE',
                             headers: {
+                                'Accept': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                                 'X-Requested-With': 'XMLHttpRequest',
                             },
@@ -550,9 +582,10 @@
                             this.selectedTask = null;
                         }
                         this.recomputeCounts();
+                        alert('Task deleted successfully.');
                     } catch (e) {
                         console.error('Failed to delete task', e);
-                        alert('Failed to delete task. You may not have permission or there was a server error.');
+                        alert('Failed to delete task. You may not have permission.');
                     }
                 },
                 getStatusBadgeColor(status) {
