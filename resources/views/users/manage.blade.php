@@ -23,10 +23,14 @@
                     </div>
 
                     @if(session('success'))
-                        <div class="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">{{ session('success') }}</div>
+                        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 2000)" 
+                             x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                             class="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-base font-medium">{{ session('success') }}</div>
                     @endif
                     @if(session('error'))
-                        <div class="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">{{ session('error') }}</div>
+                        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 2000)"
+                             x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                             class="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-base font-medium">{{ session('error') }}</div>
                     @endif
 
                     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -38,7 +42,6 @@
                                         <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Role</th>
                                         <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Primary Supervisor</th>
                                         <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Secondary Supervisor</th>
-                                        <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Status</th>
                                         <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Actions</th>
                                     </tr>
                                 </thead>
@@ -61,18 +64,18 @@
                                             <td class="px-4 py-3 text-sm text-slate-600">{{ $u->primarySupervisor ? $u->primarySupervisor->full_name : '—' }}</td>
                                             <td class="px-4 py-3 text-sm text-slate-600">{{ $u->secondarySupervisor ? $u->secondarySupervisor->full_name : '—' }}</td>
                                             <td class="px-4 py-3">
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $u->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600' }}">{{ $u->status }}</span>
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                @if($u->id !== Auth::id())
-                                                    <form action="{{ route('users.destroy', $u->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete {{ $u->full_name }}? This cannot be undone.');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
-                                                    </form>
-                                                @else
-                                                    <span class="text-slate-400 text-sm">—</span>
-                                                @endif
+                                                <div class="flex items-center gap-4">
+                                                    <a href="{{ route('users.edit', $u->id) }}"
+                                                        class="px-3 py-1.5 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-colors">Edit</a>
+                                                    @if($u->id !== Auth::id())
+                                                        <form action="{{ route('users.destroy', $u->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete {{ $u->full_name }}? This cannot be undone.');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="px-3 py-1.5 rounded-md text-xs font-semibold bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 transition-colors">Delete</button>
+                                                        </form>
+                                                    @endif
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
