@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="flex h-screen bg-slate-50 overflow-hidden" x-data="{ sidebarOpen: true }">
-    <x-sidebar :role="Auth::user()->isAdmin() ? 'admin' : (Auth::user()->isSupervisor() ? 'supervisor' : 'employee')" />
+    <x-sidebar :role="Auth::user()->isSuperAdmin() ? 'superadmin' : (Auth::user()->isAdmin() ? 'admin' : (Auth::user()->isSupervisor() ? 'supervisor' : 'employee'))" />
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <main class="flex-1 overflow-y-auto p-4 lg:p-8">
@@ -92,9 +92,12 @@
                 <div class="bg-white rounded-lg border border-slate-200 p-4 flex items-center gap-4">
                     <div class="flex-1 relative">
                         <svg class="w-5 h-5 absolute left-3 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <form action="{{ route('leaves.approvals') }}" method="GET" class="flex gap-2">
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, employee ID, or leave type..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <select name="year" onchange="this.form.submit()" class="px-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
+                        <form id="searchForm" action="{{ route('leaves.approvals') }}" method="GET" class="flex gap-2">
+                            @if(request('status'))
+                                <input type="hidden" name="status" value="{{ request('status') }}">
+                            @endif
+                            <input type="text" id="searchInput" name="search" value="{{ request('search') }}" placeholder="Search by name or leave type (paid, unpaid, etc)..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <select name="year" class="px-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
                                 @for($y = now()->year - 1; $y <= now()->year + 1; $y++)
                                     <option value="{{ $y }}" {{ (request('year') == $y || $y == now()->year) ? 'selected' : '' }}>Year {{ $y }}</option>
                                 @endfor
@@ -150,62 +153,95 @@
                                         <div class="flex items-center justify-center gap-2 {{ $leave->status === 'cancelled' ? 'line-through opacity-50' : '' }}">
                                             @php
                                                 $s = $leave->status;
-                                                $isRejected = ($s === 'rejected');
-                                                $selfDone = true;
-                                                $leadDone = in_array($s, ['approved_by_supervisor', 'approved']);
-                                                $leadRejected = $isRejected && $leave->rejected_by === 'supervisor';
-                                                $adminDone = ($s === 'approved');
-                                                $adminRejected = $isRejected && $leave->rejected_by === 'admin';
+                                                $requesterRoleId = $leave->requester_role_id ?? 0;
+                                                $isEmployee = !in_array($requesterRoleId, [1, 2, 3]);
+                                                $isStaff = in_array($requesterRoleId, [1, 2, 3]);
+                                                
+                                                // Employee Flow: Self -> Supervisor -> Admin
+                                                if ($isEmployee) {
+                                                    $selfDone = true;
+                                                    $supervisorDone = in_array($s, ['approved_by_supervisor', 'approved']);
+                                                    $supervisorRejected = ($s === 'rejected') && $leave->rejected_by === 'supervisor';
+                                                    $adminDone = ($s === 'approved');
+                                                    $adminRejected = ($s === 'rejected') && $leave->rejected_by === 'admin';
+                                                }
+                                                // Staff Flow: Self -> Super Admin
+                                                else if ($isStaff) {
+                                                    $selfDone = true;
+                                                    $superadminDone = ($s === 'approved_by_superadmin');
+                                                    $superadminRejected = ($s === 'rejected');
+                                                }
                                             @endphp
 
-                                            {{-- Self --}}
-                                            <div class="flex flex-col items-center gap-0.5">
-                                                <div class="w-7 h-7 rounded-full {{ $selfDone ? 'bg-green-500' : 'bg-slate-200' }} flex items-center justify-center">
-                                                    <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                                </div>
-                                                <span class="text-[10px] font-semibold text-slate-700">Self</span>
-                                            </div>
-
-                                            {{-- Connector --}}
-                                            <div class="w-5 h-0.5 {{ $leadDone ? 'bg-green-500' : ($leadRejected ? 'bg-red-500' : 'bg-slate-200') }}"></div>
-
-                                            {{-- Lead --}}
-                                            <div class="flex flex-col items-center gap-0.5">
-                                                <div class="w-7 h-7 rounded-full {{ $leadDone ? 'bg-green-500' : ($leadRejected ? 'bg-red-500' : 'bg-slate-200') }} flex items-center justify-center">
-                                                    @if($leadDone)
+                                            @if($isEmployee)
+                                                {{-- EMPLOYEE FLOW: Self -> Supervisor -> Admin --}}
+                                                {{-- Self --}}
+                                                <div class="flex flex-col items-center gap-0.5">
+                                                    <div class="w-7 h-7 rounded-full {{ $selfDone ? 'bg-green-500' : 'bg-slate-200' }} flex items-center justify-center">
                                                         <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                                    @elseif($leadRejected)
-                                                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                                    @else
-                                                        <div class="w-2 h-2 rounded-full bg-slate-400"></div>
-                                                    @endif
+                                                    </div>
+                                                    <span class="text-[10px] font-semibold text-slate-700">Self</span>
                                                 </div>
-                                                <span class="text-[10px] font-semibold text-slate-700">Lead</span>
-                                            </div>
 
-                                            {{-- Connector --}}
-                                            <div class="w-5 h-0.5 {{ $adminDone ? 'bg-green-500' : ($adminRejected ? 'bg-red-500' : 'bg-slate-200') }}"></div>
+                                                {{-- Supervisor --}}
+                                                <div class="flex flex-col items-center gap-0.5">
+                                                    <div class="w-7 h-7 rounded-full {{ $supervisorDone ? 'bg-green-500' : ($supervisorRejected ? 'bg-red-500' : 'bg-slate-200') }} flex items-center justify-center">
+                                                        @if($supervisorDone)
+                                                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                        @elseif($supervisorRejected)
+                                                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                        @else
+                                                            <div class="w-2 h-2 rounded-full bg-slate-400"></div>
+                                                        @endif
+                                                    </div>
+                                                    <span class="text-[10px] font-semibold text-slate-700">Supervisor</span>
+                                                </div>
 
-                                            {{-- Admin --}}
-                                            <div class="flex flex-col items-center gap-0.5">
-                                                <div class="w-7 h-7 rounded-full {{ $adminDone ? 'bg-green-500' : ($adminRejected ? 'bg-red-500' : 'bg-slate-200') }} flex items-center justify-center">
-                                                    @if($adminDone)
+                                                {{-- Admin --}}
+                                                <div class="flex flex-col items-center gap-0.5">
+                                                    <div class="w-7 h-7 rounded-full {{ $adminDone ? 'bg-green-500' : ($adminRejected ? 'bg-red-500' : 'bg-slate-200') }} flex items-center justify-center">
+                                                        @if($adminDone)
+                                                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                        @elseif($adminRejected)
+                                                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                        @else
+                                                            <div class="w-2 h-2 rounded-full bg-slate-400"></div>
+                                                        @endif
+                                                    </div>
+                                                    <span class="text-[10px] font-semibold text-slate-700">Admin</span>
+                                                </div>
+
+                                            @elseif($isStaff)
+                                                {{-- STAFF FLOW: Self -> Super Admin --}}
+                                                {{-- Self --}}
+                                                <div class="flex flex-col items-center gap-0.5">
+                                                    <div class="w-7 h-7 rounded-full {{ $selfDone ? 'bg-green-500' : 'bg-slate-200' }} flex items-center justify-center">
                                                         <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                                    @elseif($adminRejected)
-                                                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                                    @else
-                                                        <div class="w-2 h-2 rounded-full bg-slate-400"></div>
-                                                    @endif
+                                                    </div>
+                                                    <span class="text-[10px] font-semibold text-slate-700">Self</span>
                                                 </div>
-                                                <span class="text-[10px] font-semibold text-slate-700">Admin</span>
-                                            </div>
+
+                                                {{-- Super Admin --}}
+                                                <div class="flex flex-col items-center gap-0.5">
+                                                    <div class="w-7 h-7 rounded-full {{ $superadminDone ? 'bg-green-500' : ($superadminRejected ? 'bg-red-500' : 'bg-slate-200') }} flex items-center justify-center">
+                                                        @if($superadminDone)
+                                                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                        @elseif($superadminRejected)
+                                                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                        @else
+                                                            <div class="w-2 h-2 rounded-full bg-slate-400"></div>
+                                                        @endif
+                                                    </div>
+                                                    <span class="text-[10px] font-semibold text-slate-700">Super Admin</span>
+                                                </div>
+                                            @endif
                                         </div>
                                     </td>
 
                                     {{-- Status --}}
                                     <td class="px-6 py-5 text-center">
                                         <div class="flex justify-center">
-                                            @if($leave->status === 'approved')
+                                            @if($leave->status === 'approved' || $leave->status === 'approved_by_superadmin')
                                                 <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-300">Approved</span>
                                             @elseif($leave->status === 'rejected')
                                                 <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-300">Rejected</span>
@@ -226,16 +262,27 @@
                                                 $currentUser = Auth::user();
                                                 $isSupervisor = $currentUser->isSupervisor();
                                                 $isAdmin = $currentUser->isAdmin();
+                                                $isSuperAdmin = $currentUser->isSuperAdmin();
+                                                
+                                                $requesterRoleId = $leave->requester_role_id ?? 0;
+                                                $isEmployee = !in_array($requesterRoleId, [1, 2, 3]);
+                                                $isStaff = in_array($requesterRoleId, [1, 2, 3]);
                                                 
                                                 // Determine if actions should be enabled
                                                 $canTakeAction = false;
                                                 
-                                                if ($isSupervisor) {
-                                                    // Supervisor can only act on 'pending' status
-                                                    $canTakeAction = $leave->status === 'pending';
-                                                } elseif ($isAdmin) {
-                                                    // Admin can only act on 'approved_by_supervisor' status
-                                                    $canTakeAction = $leave->status === 'approved_by_supervisor';
+                                                if ($isEmployee) {
+                                                    // Employee leaves: Supervisor acts on 'pending', Admin acts on 'approved_by_supervisor'
+                                                    if ($isSupervisor) {
+                                                        $canTakeAction = $leave->status === 'pending';
+                                                    } elseif ($isAdmin) {
+                                                        $canTakeAction = $leave->status === 'approved_by_supervisor';
+                                                    }
+                                                } elseif ($isStaff) {
+                                                    // Staff leaves: ONLY Super Admin (role_id 3) can act on 'pending'
+                                                    if ($isSuperAdmin) {
+                                                        $canTakeAction = $leave->status === 'pending';
+                                                    }
                                                 }
                                             @endphp
 
@@ -498,25 +545,54 @@
             body: JSON.stringify({ status: status })
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
+            // Parse JSON for both successful and error responses
+            return response.json().then(data => ({
+                ok: response.ok,
+                status: response.status,
+                data: data
+            }));
         })
-        .then(data => {
+        .then(({ ok, status, data }) => {
             setLoadingState(action, false);
-            if (data.success) {
+            if (ok && data.success) {
                 closeReviewModal();
                 const actionText = status === 'approved' ? 'approved' : 'rejected';
                 showSuccessToast(`Leave request ${actionText} successfully.`);
+                // Reload page after short delay to show updated status
+                setTimeout(() => window.location.reload(), 1500);
             } else {
-                alert(data.message || 'An error occurred');
+                // Show actual error message from server
+                alert(data.message || 'An error occurred while processing the request.');
             }
         })
         .catch(error => {
             setLoadingState(action, false);
             console.error('Error:', error);
             alert('An error occurred while processing the request. Please try again.');
+        });
+    }
+</script>
+
+<script>
+    // Live search functionality
+    let searchTimeout;
+    const searchInput = document.getElementById('searchInput');
+    const yearSelect = document.querySelector('select[name="year"]');
+    const searchForm = document.getElementById('searchForm');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            // Debounce - wait 500ms after user stops typing before submitting
+            searchTimeout = setTimeout(() => {
+                searchForm.submit();
+            }, 500);
+        });
+    }
+
+    if (yearSelect) {
+        yearSelect.addEventListener('change', function() {
+            searchForm.submit();
         });
     }
 </script>

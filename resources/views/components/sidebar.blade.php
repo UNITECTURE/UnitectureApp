@@ -2,7 +2,7 @@
 
 @php
     $pendingAttendanceCount = 0;
-    if ($role === 'admin') {
+    if ($role === 'admin' || $role === 'superadmin') {
         $pendingAttendanceCount = \App\Models\ManualAttendanceRequest::where('status', 'pending')->count();
     } elseif ($role === 'supervisor') {
         $user = \Illuminate\Support\Facades\Auth::user();
@@ -173,7 +173,7 @@
                 open: localStorage.getItem('sidebar_attendance_open') === 'true', 
                 init() { this.$watch('open', val => localStorage.setItem('sidebar_attendance_open', val)) } 
             }" class="space-y-1">
-                <div @click="if (sidebarOpen) { if (open) { open = false } else { open = true; @if($role === 'admin') window.location.href = '{{ route('admin.attendance.self') }}' @elseif($role === 'supervisor') window.location.href = '{{ route('supervisor.attendance.self') }}' @else window.location.href = '{{ route('employee.attendance') }}' @endif } } else { sidebarOpen = true; open = true; @if($role === 'admin') window.location.href = '{{ route('admin.attendance.self') }}' @elseif($role === 'supervisor') window.location.href = '{{ route('supervisor.attendance.self') }}' @else window.location.href = '{{ route('employee.attendance') }}' @endif }"
+                <div @click="if (sidebarOpen) { if (open) { open = false } else { open = true; @if($role === 'admin' || $role === 'superadmin') window.location.href = '{{ route('admin.attendance.self') }}' @elseif($role === 'supervisor') window.location.href = '{{ route('supervisor.attendance.self') }}' @else window.location.href = '{{ route('employee.attendance') }}' @endif } } else { sidebarOpen = true; open = true; @if($role === 'admin' || $role === 'superadmin') window.location.href = '{{ route('admin.attendance.self') }}' @elseif($role === 'supervisor') window.location.href = '{{ route('supervisor.attendance.self') }}' @else window.location.href = '{{ route('employee.attendance') }}' @endif }"
                     class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
                     :class="!sidebarOpen ? 'justify-center' : ''">
                     <div class="flex items-center flex-1 min-w-0" :class="!sidebarOpen ? 'justify-center' : ''">
@@ -200,7 +200,7 @@
 
                 {{-- Submenu - Role-based options --}}
                 <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
-                    @if($role === 'admin')
+                    @if($role === 'admin' || $role === 'superadmin')
                         <a href="{{ route('admin.attendance.all') }}"
                             class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('admin.attendance.all') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : '' }}">{{ 'Team Attendance' }}</a>
                         <a href="{{ route('attendance.manual') }}"
@@ -219,7 +219,7 @@
             </div>
 
             {{-- Approvals --}}
-            @if($role === 'admin' || $role === 'supervisor')
+            @if($role === 'admin' || $role === 'superadmin' || $role === 'supervisor')
                 <div x-data="{ 
                     open: localStorage.getItem('sidebar_approvals_open') === 'true', 
                     init() { this.$watch('open', val => localStorage.setItem('sidebar_approvals_open', val)) } 
@@ -254,7 +254,7 @@
 
                     {{-- Submenu - Only show when sidebar is open AND menu is expanded --}}
                     <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
-                        @if($role === 'admin')
+                        @if($role === 'admin' || $role === 'superadmin')
                             <a href="{{ route('admin.attendance.approvals') }}"
                                 class="flex items-center justify-between px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.attendance.approvals') ? 'text-white bg-slate-800' : 'text-slate-400' }}">
                                 <span class="truncate">{{ 'Attendance' }}</span>
@@ -276,7 +276,7 @@
                         <a href="{{ route('leaves.approvals') }}"
                             class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'Leave' }}</a>
 
-                        @if($role === 'admin')
+                        @if($role === 'admin' || $role === 'superadmin')
                             <a href="{{ route('admin.attendance.exception') }}"
                                 class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('admin.attendance.exception') ? 'text-white bg-slate-800' : 'text-slate-400' }}">{{ 'Exception' }}</a>
                         @endif
@@ -337,19 +337,13 @@
 
                 {{-- Submenu --}}
                 <div x-show="open && sidebarOpen" x-transition class="pl-11 space-y-1">
-                    @if($role === 'admin' || $role === 'supervisor')
+                    @if($role === 'admin' || $role === 'superadmin' || $role === 'supervisor')
                         <a href="{{ route('projects.index') }}"
                             class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('projects.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Projects' }}</a>
                     @endif
-                    @if($role === 'admin')
+                    @if($role === 'admin' || $role === 'superadmin')
                         <a href="{{ route('settings.index') }}"
                             class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('settings.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'General Settings' }}</a>
-                        <a href="{{ route('teams.index') }}"
-                            class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('teams.index') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Teams' }}</a>
-                        <a href="{{ route('users.manage') }}"
-                            class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('users.manage') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Manage Users' }}</a>
-                        <a href="{{ route('users.create') }}"
-                            class="block px-3 py-1.5 text-sm rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate {{ request()->routeIs('users.create') ? 'text-blue-400 border-l-2 border-blue-500 -ml-[1px]' : 'text-slate-400' }}">{{ 'Add New User' }}</a>
                     @else
                         <a href="{{ route('settings.index') }}"
                             class="block px-3 py-1.5 text-sm text-slate-400 rounded-md hover:text-white hover:bg-slate-800 transition-colors truncate">{{ 'General Settings' }}</a>
@@ -369,7 +363,7 @@
                 </div>
                 <div x-show="sidebarOpen" x-transition class="ml-3 overflow-hidden">
                     <p class="text-sm font-medium text-white truncate">{{ Auth::user()->name ?? 'User' }}</p>
-                    <p class="text-xs text-slate-400 truncate">{{ ucfirst($role ?? 'Role') }}</p>
+                    <p class="text-xs text-slate-400 truncate">{{ $role === 'superadmin' ? 'Super Admin' : ucfirst($role ?? 'Role') }}</p>
                 </div>
             </div>
 
