@@ -109,7 +109,7 @@ class AttendanceController extends Controller
         $attRecords = Attendance::where('user_id', $user->id)
             ->whereBetween('date', [$start, $end])
             ->get()
-            ->keyBy('date'); // Key by date for easy lookup
+            ->keyBy(fn($att) => $att->date->format('Y-m-d')); // Format date as string for consistent lookup
 
         // 2. Approved Leaves
         $leaves = \App\Models\Leave::where('user_id', $user->id)
@@ -729,7 +729,7 @@ class AttendanceController extends Controller
                 $atts = \App\Models\Attendance::where('user_id', $user->id)
                     ->whereBetween('date', [$start, $end])
                     ->get()
-                    ->keyBy('date');
+                    ->keyBy(fn($att) => $att->date->format('Y-m-d')); // Format date as string for consistent lookup
 
                 $holidays = \App\Models\Holiday::whereBetween('date', [$start, $end])->pluck('date')->toArray();
 
