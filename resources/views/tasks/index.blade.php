@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }}, {{ json_encode($scope ?? 'assigned') }}, {{ isset($showTeamToggle) && $showTeamToggle ? 'true' : 'false' }})">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -45,6 +45,24 @@
                                     </svg>
                                 </button>
                             </div>
+
+                            <!-- My Tasks / My Team Tasks toggle (supervisor/admin only) -->
+                            <template x-if="showTeamToggle">
+                                <div class="flex bg-white border border-slate-200 shadow-sm p-0.5 rounded-lg gap-0.5">
+                                    <a href="{{ route('tasks.index', ['scope' => 'assigned']) }}"
+                                        class="p-2 rounded-md transition-all duration-200 flex items-center justify-center"
+                                        :class="scope === 'assigned' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
+                                        title="My Tasks">
+                                        <img src="{{ asset('images/single.svg') }}" class="w-5 h-5" alt="My Tasks" />
+                                    </a>
+                                    <a href="{{ route('tasks.index', ['scope' => 'team']) }}"
+                                        class="p-2 rounded-md transition-all duration-200 flex items-center justify-center"
+                                        :class="scope === 'team' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
+                                        title="My Team Tasks">
+                                        <img src="{{ asset('images/group.svg') }}" class="w-5 h-5" alt="My Team Tasks" />
+                                    </a>
+                                </div>
+                            </template>
 
                             @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
                                 <a href="{{ route('tasks.create') }}"
@@ -96,14 +114,22 @@
                         </button>
                     </div>
 
-                    <!-- Filter by Employee (admin/supervisor only) -->
-                    <div x-show="showEmployeeFilter" class="relative flex-shrink-0" x-data="{ open: false }">
-                        <button type="button" @click="open = !open"
-                            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-full text-xs sm:text-sm font-semibold bg-white text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-200 shadow-sm">
-                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    <!-- Search and Filter (admin/supervisor: employee filter) -->
+                    <div class="flex items-center gap-2 flex-shrink-0 flex-wrap">
+                        <div class="relative">
+                            <input type="text" x-model="search" placeholder="Search tasks..."
+                                class="w-48 sm:w-56 pl-9 pr-4 py-2 border border-slate-200 rounded-full text-xs sm:text-sm bg-white text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            <span>Filter by employee</span>
+                        </div>
+                        <div x-show="showEmployeeFilter" class="relative flex-shrink-0" x-data="{ open: false }">
+                            <button type="button" @click="open = !open"
+                                class="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-full text-xs sm:text-sm font-semibold bg-white text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-200 shadow-sm">
+                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                                <span>Filter</span>
                             <span x-show="filterEmployeeIds.length > 0" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full" x-text="filterEmployeeIds.length"></span>
                             <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -126,6 +152,7 @@
                                     <span class="text-sm font-medium text-slate-700 truncate" x-text="emp.full_name || emp.name || 'Unknown'"></span>
                                 </label>
                             </template>
+                        </div>
                         </div>
                     </div>
 
@@ -615,7 +642,7 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter, currentUserId) => ({
+            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter, currentUserId, initialScope, showTeamToggleFlag) => ({
                 tasks: initialTasks,
                 statuses: allStatuses,
                 stages: allStages,
@@ -623,6 +650,8 @@
                 canEditDue: canEditDue,
                 employees: initialEmployees || [],
                 showEmployeeFilter: !!showEmployeeFilter,
+                showTeamToggle: !!showTeamToggleFlag,
+                scope: initialScope || 'assigned',
                 filterEmployeeIds: [],
                 search: '',
                 sidebarOpen: true,
