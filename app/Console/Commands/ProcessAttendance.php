@@ -121,29 +121,25 @@ class ProcessAttendance extends Command
 
                 $logs = $filteredLogs; // Use filtered list
 
-                // Calculate using Min/Max to avoid negative values if list is unsorted
-                // Get earliest punch time
-                $minTime = $logs->min(function ($log) {
-                    return strtotime($log->punch_time);
-                });
-                $clockIn = Carbon::createFromTimestamp($minTime);
+                // Get earliest and latest punch times directly using Carbon::parse()
+                // to avoid timezone conversion issues with strtotime() + createFromTimestamp()
+                $clockIn = null;
+                $clockOut = null;
 
-                // Get latest punch time 
-                $maxTime = $logs->max(function ($log) {
-                    return strtotime($log->punch_time);
-                });
-                $clockOut = Carbon::createFromTimestamp($maxTime);
+                foreach ($logs as $log) {
+                    $punchTime = Carbon::parse($log->punch_time);
 
-                // If only one punch, clockOut might be same as clockIn, duration 0
-                if ($logs->count() <= 1) {
-                    $clockOut = null;
-                    // Or keep it as null/start=end? original logic:
-                    // $clockIn = first, $clockOut = last (if count > 1).
-                    // If count == 1, clockOut is null.
+                    if ($clockIn === null || $punchTime->lt($clockIn)) {
+                        $clockIn = $punchTime;
+                    }
+
+                    if ($clockOut === null || $punchTime->gt($clockOut)) {
+                        $clockOut = $punchTime;
+                    }
                 }
 
-                // Resolved Logic: Use Min/Max to ensure correct order
-                if ($minTime === $maxTime || $logs->count() <= 1) {
+                // If only one punch, clockOut should be null
+                if ($logs->count() <= 1) {
                     $clockOut = null;
                     $biometricDurationMinutes = 0;
                 } else {

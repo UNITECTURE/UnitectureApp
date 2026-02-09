@@ -16,6 +16,12 @@ class Attendance extends Model
         'type',
     ];
 
+    protected $casts = [
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
+        'date' => 'date',
+    ];
+
     public function setDurationAttribute($value)
     {
         if ($value === null) {
