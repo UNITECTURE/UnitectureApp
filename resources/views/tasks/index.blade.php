@@ -428,16 +428,15 @@
                                 <!-- Details Grid -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                     <div>
-                                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</h3>
+                                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</h3>
+                                        <p class="text-[11px] text-slate-600 mb-1">
+                                            Current:
+                                            <span class="font-semibold" x-text="formatStatus(selectedTask.status)"></span>
+                                        </p>
                                         <select
                                             @change="updateStatus(selectedTask.id, $event.target.value)"
                                             class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50"
                                             :disabled="selectedTask.status === 'closed'">
-                                            <option
-                                                :value="selectedTask.status"
-                                                x-show="!statusOptions.includes(selectedTask.status)"
-                                                disabled
-                                                x-text="formatStatus(selectedTask.status)"></option>
                                             <template x-for="status in statusOptions" :key="status">
                                                 <option :value="status" :selected="selectedTask.status === status"
                                                     x-text="formatStatus(status)"></option>
