@@ -281,7 +281,7 @@ class AttendanceController extends Controller
             'total_working' => $totalWorkingDays,
             'my_working' => $presentCount,
             'leaves' => $leaveCount,
-            'late_marks' => $lateMarks
+            'absent' => $absentCount
         ];
 
         // Cumulative Record (Single Row User)
@@ -292,8 +292,7 @@ class AttendanceController extends Controller
                 'name' => $user->full_name,
                 'present' => $presentCount,
                 'leave' => $leaveCount,
-                'absent' => $absentCount,
-
+                'late_marks' => $lateMarks
             ]
         ];
 

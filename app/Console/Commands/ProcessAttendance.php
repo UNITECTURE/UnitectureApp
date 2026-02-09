@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Attendance;
 use App\Models\AttendanceLog;
 use App\Models\ManualAttendanceRequest;
+use App\Models\Holiday;
 use Carbon\Carbon;
 
 class ProcessAttendance extends Command
@@ -190,6 +191,24 @@ class ProcessAttendance extends Command
             $type = 'manual';
         } else {
             $type = 'biometric';
+        }
+
+        // Determine Status
+        // 3.1 Check for Sunday/Holiday Exemption if no work done
+        $isHoliday = Holiday::where('date', $date->toDateString())->exists();
+        $isSunday = $date->isSunday();
+
+        if (($isSunday || $isHoliday) && $totalMinutes == 0) {
+            // If strictly no approved work, do NOT mark absent.
+            // If an "absent" record exists (e.g. from previous run), delete it
+            // so the system defaults to "Sunday/Holiday".
+            Attendance::where('user_id', $user->id)
+                ->where('date', $date->toDateString())
+                ->where('status', 'absent')
+                ->delete();
+
+            $this->info("Skipped/Cleaned up for User {$user->id} on {$date->toDateString()} (Sunday/Holiday)");
+            return;
         }
 
         // Determine Status

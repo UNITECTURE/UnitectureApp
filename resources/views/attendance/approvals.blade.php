@@ -144,37 +144,37 @@
                             <thead class="bg-slate-50/50">
                                 <tr>
                                     <th
-                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Name</th>
                                     <th
-                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         {{ 'Applied Date' }}
                                     </th>
                                     <th
-                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         {{ 'Requested Date' }}
                                     </th>
                                     <th
-                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Time Range</th>
                                     <th
-                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Duration</th>
                                     <th
-                                        class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/4">
+                                        class="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/4">
                                         Reason</th>
                                     <th
-                                        class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        class="px-3 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Status</th>
                                     <th
-                                        class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        class="px-3 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Action</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-slate-100">
                                 @forelse($requests as $request)
                                                         <tr class="hover:bg-slate-50/50 transition-colors">
-                                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                            <td class="px-3 py-3 whitespace-nowrap">
                                                                 <div class="flex items-center">
                                                                     <div
                                                                         class="flex-shrink-0 h-9 w-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 text-xs font-bold border border-slate-200">
@@ -189,26 +189,26 @@
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-slate-600">
                                                                 {{ \Carbon\Carbon::parse($request->created_at)->format('M d, Y') }}
                                                                 <div class="text-xs text-slate-400">
                                                                     {{ \Carbon\Carbon::parse($request->created_at)->format('h:i A') }}</div>
                                                             </td>
-                                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-slate-600">
                                                                 {{ \Carbon\Carbon::parse($request->date)->format('M d, Y') }}
                                                             </td>
-                                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-slate-600">
                                                                 {{ $request->start_time ? \Carbon\Carbon::parse($request->start_time)->format('h:i A') . ' - ' . \Carbon\Carbon::parse($request->end_time)->format('h:i A') : '-' }}
                                                             </td>
-                                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">
+                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-slate-600 font-medium">
                                                                 {{ $request->duration }}
                                                             </td>
-                                                            <td class="px-6 py-4 text-sm text-slate-600 min-w-[200px] max-w-[300px]">
+                                                            <td class="px-3 py-3 text-sm text-slate-600 min-w-[200px] max-w-[300px]">
                                                                 <p class="whitespace-normal break-words w-full">
                                                                     {{ $request->reason ?? '-' }}
                                                                 </p>
                                                             </td>
-                                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                            <td class="px-3 py-3 whitespace-nowrap text-center">
                                                                 <span
                                                                     class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium
                                                                                                                             {{ $request->status === 'approved' ? 'bg-green-100 text-green-600' :
@@ -216,7 +216,7 @@
                                                                     {{ ucfirst($request->status) }}
                                                                 </span>
                                                             </td>
-                                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                            <td class="px-3 py-3 whitespace-nowrap text-right text-sm font-medium">
                                                                 @php
                                                                     // $role passed from controller is string 'admin'. 
                                                                     // But we need strict logic: If Auth User is Admin (Role 2) AND Requester is Admin (Role 2) OR Requester is SELF, then Disable.
@@ -271,7 +271,7 @@
                     </div>
                     {{-- Pagination Feedback --}}
                     <div
-                        class="px-6 py-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        class="px-3 py-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                         <div class="flex items-center space-x-4">
                             <span>Showing {{ $requests->count() }} entries</span>
                         </div>
