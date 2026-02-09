@@ -92,48 +92,48 @@
                                     <thead class="bg-slate-50 sticky top-0 z-10">
                                         <tr class="border-b border-slate-100">
                                             <th
-                                                class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                                class="px-2 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
                                                 {{ 'Name' }}</th>
                                             <th
-                                                class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                                class="px-2 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
                                                 {{ 'Status' }}</th>
                                             <th
-                                                class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                                class="px-2 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
                                                 {{ 'Login Time' }}</th>
                                             <th
-                                                class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                                class="px-2 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
                                                 {{ 'Logout Time' }}</th>
                                             <th
-                                                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                                class="px-2 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
                                                 {{ 'Duration' }}</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-slate-100">
                                         @foreach($daily_records as $rec)
-                                            <tr class="{{ str_contains($rec['status'], '(Manual)') ? 'bg-blue-50' : '' }}">
-                                                <td class="px-4 py-4 text-sm font-medium text-slate-900 whitespace-nowrap">
+                                            <tr class="{{ str_contains($rec['status'], 'Manual') ? 'bg-blue-50' : '' }}">
+                                                <td class="px-2 py-4 text-sm font-medium text-slate-900">
                                                     {{ $rec['name'] }}</td>
-                                                <td class="px-4 py-4 text-center whitespace-nowrap">
+                                                <td class="px-2 py-4 text-center">
                                                     <span
-                                                        class="inline-flex px-2.5 py-1 text-xs leading-5 font-semibold rounded-full {{ $rec['class'] }}">
-                                                        {{ strtolower($rec['status']) == 'leave' ? 'On Leave' : $rec['status'] }}
+                                                        class="inline-block px-2.5 py-1 text-xs leading-4 font-semibold rounded-full {{ $rec['class'] }}">
+                                                        {!! str_replace('Manual Attendance', 'Manual<br><span class="text-[10px] opacity-75">Attendance</span>', $rec['status'] == 'leave' ? 'On Leave' : $rec['status']) !!}
                                                     </span>
                                                 </td>
-                                                <td class="px-4 py-4 text-center text-sm text-slate-600 whitespace-nowrap">
+                                                <td class="px-2 py-4 text-center text-sm text-slate-600">
                                                     @if($rec['login'] !== '-')
                                                         {{ $rec['login'] }}
                                                     @else
                                                         <span class="text-slate-300">&mdash;</span>
                                                     @endif
                                                 </td>
-                                                <td class="px-4 py-4 text-center text-sm text-slate-600 whitespace-nowrap">
+                                                <td class="px-2 py-4 text-center text-sm text-slate-600">
                                                     @if($rec['logout'] !== '-')
                                                         {{ $rec['logout'] }}
                                                     @else
                                                         <span class="text-slate-300">&mdash;</span>
                                                     @endif
                                                 </td>
-                                                <td class="px-4 py-4 text-right text-sm text-slate-600 whitespace-nowrap">
+                                                <td class="px-2 py-4 text-right text-sm text-slate-600">
                                                     {{ $rec['duration'] }}</td>
                                             </tr>
                                         @endforeach
@@ -226,8 +226,8 @@
                                                 class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
                                                 {{ 'Absent' }}</th>
                                             <th
-                                                class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-                                                {{ 'Working Duration' }}</th>
+                                                class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                                {{ 'Late Marks' }}</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-slate-100">
@@ -241,8 +241,8 @@
                                                     {{ $rec['leave'] }}</td>
                                                 <td class="px-4 py-4 text-center text-sm text-slate-600 whitespace-nowrap">
                                                     {{ $rec['absent'] }}</td>
-                                                <td class="px-4 py-4 text-right text-sm text-slate-600 whitespace-nowrap">
-                                                    {{ $rec['duration'] }}</td>
+                                                <td class="px-4 py-4 text-center text-sm text-slate-600 whitespace-nowrap">
+                                                    {{ $rec['late_marks'] }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

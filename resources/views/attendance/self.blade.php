@@ -41,6 +41,32 @@
 
             {{-- Content Scroll Area --}}
             <div class="flex-1 flex flex-col overflow-hidden px-8 pb-8">
+                <form action="" method="GET" id="month-filter-form" class="mb-4 flex justify-end gap-2">
+                    <div class="relative w-32">
+                        <select name="month"
+                            onchange="document.getElementById('month-filter-form').submit()"
+                            class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
+                            @foreach(range(1, 12) as $m)
+                                <option value="{{ $m }}" {{ (request('month') == $m || (!request('month') && now()->month == $m)) ? 'selected' : '' }}>
+                                    {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="relative w-32">
+                        <select name="year"
+                            onchange="document.getElementById('month-filter-form').submit()"
+                            class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
+                            @for($y = now()->year - 2; $y <= now()->year + 4; $y++)
+                                <option value="{{ $y }}" {{ (request('year') == $y || (!request('year') && now()->year == $y)) ? 'selected' : '' }}>
+                                    {{ $y }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
+                </form>
+
                 <div class="flex-1 flex flex-col lg:flex-row gap-8 min-h-0">
 
                     {{-- LEFT CARD: Daily Report --}}
@@ -52,31 +78,7 @@
                                 {{-- Date Selector --}}
                                 <!-- Backend Ready: Ensure 'name="date"' allows this to be submitted as a form filter -->
                                 {{-- Month/Year Filter --}}
-                                    <form action="" method="GET" id="month-filter-form" class="mb-6 flex gap-2">
-                                        <div class="relative w-32">
-                                            <select name="month"
-                                                onchange="document.getElementById('month-filter-form').submit()"
-                                                class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
-                                                @foreach(range(1, 12) as $m)
-                                                    <option value="{{ $m }}" {{ (request('month') == $m || (!request('month') && now()->month == $m)) ? 'selected' : '' }}>
-                                                        {{ date('F', mktime(0, 0, 0, $m, 1)) }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
 
-                                        <div class="relative w-32">
-                                            <select name="year"
-                                                onchange="document.getElementById('month-filter-form').submit()"
-                                                class="block w-full pl-3 pr-8 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg text-slate-600 bg-white shadow-sm cursor-pointer">
-                                                @for($y = now()->year - 2; $y <= now()->year + 4; $y++)
-                                                    <option value="{{ $y }}" {{ (request('year') == $y || (!request('year') && now()->year == $y)) ? 'selected' : '' }}>
-                                                        {{ $y }}
-                                                    </option>
-                                                @endfor
-                                            </select>
-                                        </div>
-                                    </form>
 
                                     {{-- Summary Cards --}}
                                     <div class="grid grid-cols-3 gap-4 mb-6">
@@ -100,19 +102,19 @@
                                             <thead class="bg-slate-50">
                                                 <tr>
                                                     <th
-                                                        class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                                        class="px-2 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                                         {{ 'Date' }}</th>
                                                     <th
-                                                        class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                                        class="px-2 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                                         {{ 'Status' }}</th>
                                                     <th
-                                                        class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                                        class="px-2 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                                         {{ 'Login Time' }}</th>
                                                     <th
-                                                        class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                                        class="px-2 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                                         {{ 'Logout Time' }}</th>
                                                     <th
-                                                        class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                                        class="px-2 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                                         {{ 'Duration' }}</th>
                                                 </tr>
                                             </thead>
@@ -120,19 +122,19 @@
                                                 @forelse($daily_records as $record)
                                                     <tr
                                                         class="{{ str_contains($record['status'], '(Manual)') ? 'bg-blue-50' : '' }}">
-                                                        <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                                                        <td class="px-2 py-4 text-sm font-medium text-slate-900">
                                                             {{ $record['date'] }}</td>
-                                                        <td class="px-4 py-4 whitespace-nowrap">
+                                                        <td class="px-2 py-4">
                                                             <span
-                                                                class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $record['class'] }}">
-                                                                {{ $record['status'] }}
+                                                                class="px-2.5 py-1 inline-block text-xs leading-4 font-semibold rounded-full text-center {{ $record['class'] }}">
+                                                                {!! str_replace(['(', ')'], '', str_replace('(Manual)', '<br><span class="text-[10px] opacity-80">Manual</span>', $record['status'])) !!}
                                                             </span>
                                                         </td>
-                                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
+                                                        <td class="px-2 py-4 text-sm text-slate-600">
                                                             {{ $record['login_time'] }}</td>
-                                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
+                                                        <td class="px-2 py-4 text-sm text-slate-600">
                                                             {{ $record['logout_time'] }}</td>
-                                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600">
+                                                        <td class="px-2 py-4 text-sm text-slate-600">
                                                             {{ $record['duration'] }}</td>
                                                     </tr>
                                                 @empty
@@ -167,63 +169,65 @@
 
                                     {{-- Summary Cards --}}
                                     {{-- Summary Cards --}}
-                                    <div class="flex gap-4 mb-8 overflow-x-auto pb-2">
+                                    <div class="flex gap-2 mb-8">
                                         <div
-                                            class="flex-1 min-w-[120px] bg-blue-50 rounded-lg p-3 text-center border border-blue-100 flex flex-col justify-center h-24">
+                                            class="flex-1 min-w-0 bg-blue-50 rounded-lg p-2 text-center border border-blue-100 flex flex-col justify-center h-24">
                                             <div class="text-xl font-bold text-blue-600">
                                                 {{ $cumulative_summary['total_working'] }}</div>
                                             <div class="text-[10px] uppercase font-bold text-blue-600 mt-1 leading-tight">Total
-                                                Working<br>(Excl. Sun/Holidays)</div>
+                                                Working<br></div>
                                         </div>
                                         <div
-                                            class="flex-1 min-w-[120px] bg-green-50 rounded-lg p-3 text-center border border-green-100 flex flex-col justify-center h-24">
+                                            class="flex-1 min-w-0 bg-green-50 rounded-lg p-2 text-center border border-green-100 flex flex-col justify-center h-24">
                                             <div class="text-xl font-bold text-green-600">
                                                 {{ $cumulative_summary['my_working'] }}</div>
                                             <div class="text-[10px] uppercase font-bold text-green-600 mt-1 leading-tight">My
                                                 Working<br>(Present)</div>
                                         </div>
                                         <div
-                                            class="flex-1 min-w-[120px] bg-yellow-50 rounded-lg p-3 text-center border border-yellow-100 flex flex-col justify-center h-24">
+                                            class="flex-1 min-w-0 bg-yellow-50 rounded-lg p-2 text-center border border-yellow-100 flex flex-col justify-center h-24">
                                             <div class="text-xl font-bold text-yellow-600">{{ $cumulative_summary['leaves'] }}
                                             </div>
                                             <div class="text-[10px] uppercase font-bold text-yellow-600 mt-1 leading-tight">
                                                 Leaves<br>(Approved)</div>
                                         </div>
                                         <div
-                                            class="flex-1 min-w-[120px] bg-red-50 rounded-lg p-3 text-center border border-red-100 flex flex-col justify-center h-24">
+                                            class="flex-1 min-w-0 bg-red-50 rounded-lg p-2 text-center border border-red-100 flex flex-col justify-center h-24">
                                             <div class="text-xl font-bold text-red-600">{{ $cumulative_summary['late_marks'] }}
                                             </div>
                                             <div class="text-[10px] uppercase font-bold text-red-600 mt-1 leading-tight">
-                                                Late Marks<br>(> 9:40 AM)</div>
+                                                Late Marks<br></div>
                                         </div>
                                     </div>
 
                                     {{-- Cumulative Table --}}
                                     <div class="mb-6 flex-1 overflow-auto min-h-0">
-                                        <div
-                                            class="grid grid-cols-5 text-xs font-semibold text-slate-500 text-center mb-4 uppercase tracking-wider">
-                                            <div class="text-left pl-2">{{ 'Name' }}</div>
-                                            <div>{{ 'Present' }}</div>
-                                            <div>{{ 'Leave' }}</div>
-                                            <div>{{ 'Absent' }}</div>
-                                            <div class="text-right pr-2">{{ 'Working Duration' }}</div>
-                                        </div>
-                                        <div class="space-y-4">
-                                            @forelse($cumulative_records as $record)
-                                                <div
-                                                    class="grid grid-cols-5 text-sm text-slate-600 text-center items-center py-2 border-b border-transparent hover:bg-slate-50 rounded-lg transition-colors">
-                                                    <div class="font-medium text-slate-900 text-left pl-2">{{ $record['name'] }}
-                                                    </div>
-                                                    <div>{{ $record['present'] }}</div>
-                                                    <div>{{ $record['leave'] }}</div>
-                                                    <div>{{ $record['absent'] }}</div>
-                                                    <div class="text-right pr-2">{{ $record['working_duration'] }}</div>
-                                                </div>
-                                            @empty
-                                                <div class="text-center text-sm text-slate-500 py-4">
-                                                    {{ 'No cumulative records found.' }}</div>
-                                            @endforelse
-                                        </div>
+                                        <table class="w-full text-xs font-semibold text-slate-500 text-center mb-4 tracking-wider">
+                                            <thead class="uppercase">
+                                                <tr class="border-b border-slate-100">
+                                                    <th class="py-2 text-left pl-2">{{ 'Name' }}</th>
+                                                    <th class="py-2">{{ 'Present' }}</th>
+                                                    <th class="py-2">{{ 'Leave' }}</th>
+                                                    <th class="py-2">{{ 'Absent' }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="text-sm text-slate-600 font-normal tracking-normal">
+                                                @forelse($cumulative_records as $record)
+                                                    <tr class="border-b border-transparent hover:bg-slate-50 transition-colors">
+                                                        <td class="py-3 text-left pl-2 font-medium text-slate-900">
+                                                            {{ $record['name'] }}</td>
+                                                        <td class="py-3">{{ $record['present'] }}</td>
+                                                        <td class="py-3">{{ $record['leave'] }}</td>
+                                                        <td class="py-3">{{ $record['absent'] }}</td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="4" class="text-center py-4 text-slate-500">
+                                                            {{ 'No cumulative records found.' }}</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
 
