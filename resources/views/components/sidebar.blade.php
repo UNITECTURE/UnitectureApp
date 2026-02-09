@@ -86,7 +86,7 @@
                 <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Team' }}</span>
                 <div x-show="!sidebarOpen"
                     class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
-                    Team</div>
+                    Tasks</div>
             </a>
 
             {{-- Leave - Direct link to My Leaves --}}
