@@ -541,6 +541,15 @@ class TaskController extends Controller
         // Supervisors/Admins can use the full status enum.
         // Employees are restricted to: under_review, completed, wip, revision.
         $user = Auth::user();
+
+        // Once a task is closed, its status cannot be changed anymore.
+        if ($task->status === 'closed' && $request->input('status') !== 'closed') {
+            return response()->json([
+                'message' => 'Closed tasks cannot be re-opened or changed.',
+                'status' => $task->status,
+                'stage' => $task->stage,
+            ], 403);
+        }
         $allowedStatuses = self::STATUSES;
         if ($user->isEmployee()) {
             $allowedStatuses = ['under_review', 'completed', 'wip', 'revision'];

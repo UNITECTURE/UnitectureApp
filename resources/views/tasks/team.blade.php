@@ -208,10 +208,17 @@
                                                 <div class="font-medium text-slate-900 line-clamp-2" x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')"></div>
                                             </td>
                                             <td class="px-6 py-3" @click.stop>
-                                                <select @change="updateStatus(task.id, $event.target.value)" 
+                                                <select
+                                                    @change="updateStatus(task.id, $event.target.value)" 
                                                     class="text-xs font-bold px-2 py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                                     :class="getStatusSelectColor(task.status)"
-                                                    :value="task.status">
+                                                    :value="task.status"
+                                                    :disabled="task.status === 'closed'">
+                                                    <option
+                                                        :value="task.status"
+                                                        x-show="!statuses.includes(task.status)"
+                                                        disabled
+                                                        x-text="formatStatus(task.status)"></option>
                                                     <template x-for="status in statuses" :key="status">
                                                         <option :value="status" x-text="formatStatus(status)"></option>
                                                     </template>
@@ -306,8 +313,15 @@
                             <div class="grid grid-cols-2 gap-6">
                                 <div>
                                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</h3>
-                                    <select @change="updateStatus(selectedTask.id, $event.target.value)"
-                                        class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
+                                    <select
+                                        @change="updateStatus(selectedTask.id, $event.target.value)"
+                                        class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50"
+                                        :disabled="selectedTask.status === 'closed'">
+                                        <option
+                                            :value="selectedTask.status"
+                                            x-show="!statuses.includes(selectedTask.status)"
+                                            disabled
+                                            x-text="formatStatus(selectedTask.status)"></option>
                                         <template x-for="status in statuses" :key="status">
                                             <option :value="status" :selected="selectedTask.status === status"
                                                 x-text="formatStatus(status)"></option>

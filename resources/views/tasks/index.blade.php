@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden" x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }}, {{ json_encode($scope ?? 'assigned') }}, {{ isset($showTeamToggle) && $showTeamToggle ? 'true' : 'false' }})">
+    <div class="flex h-screen bg-[#F8F9FB] overflow-hidden"
+         x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }}, {{ json_encode($scope ?? 'assigned') }}, {{ isset($showTeamToggle) && $showTeamToggle ? 'true' : 'false' }})"
+         x-init="
+            @if(session('success'))
+                showToast('{{ addslashes(session('success')) }}', 'success');
+            @endif
+         ">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -156,6 +162,17 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- Toast Notification -->
+            <div x-show="toast.show"
+                 x-transition
+                 class="fixed bottom-4 right-4 z-50">
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-sm font-medium text-white"
+                     :class="toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'">
+                    <span x-text="toast.message"></span>
+                    <button type="button" class="ml-2 text-white/80 hover:text-white" @click="toast.show = false">×</button>
                 </div>
             </div>
 
@@ -324,11 +341,20 @@
                                             <div class="font-medium text-slate-900 break-words line-clamp-2" x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')"></div>
                                         </td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap" @click.stop>
-                                            <select @change="updateStatus(task.id, $event.target.value)" class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer" :class="getStatusSelectColor(task.status)" :value="task.status">
+                                            <select
+                                                @change="updateStatus(task.id, $event.target.value)"
+                                                class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                                :class="getStatusSelectColor(task.status)"
+                                                :value="task.status"
+                                                :disabled="task.status === 'closed'">
+                                                <option
+                                                    :value="task.status"
+                                                    x-show="!statusOptions.includes(task.status)"
+                                                    disabled
+                                                    x-text="formatStatus(task.status)"></option>
                                                 <template x-for="status in statusOptions" :key="status">
                                                     <option :value="status" x-text="formatStatus(status)"></option>
                                                 </template>
-                                            </select>
                                         </td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
                                             <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold" :class="getStageSelectColor(task.stage)" x-text="formatStage(task.stage)"></span>
@@ -403,8 +429,15 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                     <div>
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</h3>
-                                        <select @change="updateStatus(selectedTask.id, $event.target.value)"
-                                            class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50">
+                                        <select
+                                            @change="updateStatus(selectedTask.id, $event.target.value)"
+                                            class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50"
+                                            :disabled="selectedTask.status === 'closed'">
+                                            <option
+                                                :value="selectedTask.status"
+                                                x-show="!statusOptions.includes(selectedTask.status)"
+                                                disabled
+                                                x-text="formatStatus(selectedTask.status)"></option>
                                             <template x-for="status in statusOptions" :key="status">
                                                 <option :value="status" :selected="selectedTask.status === status"
                                                     x-text="formatStatus(status)"></option>
@@ -711,8 +744,10 @@
                         return this.statuses;
                     }
 
-                    // Employees are limited to these statuses
-                    const allowedForEmployees = ['not_started', 'under_review', 'completed', 'wip', 'revision'];
+                    // Employees are limited to these statuses.
+                    // They may still SEE other statuses (e.g. "Correction") on the task,
+                    // but cannot select them from the dropdown.
+                    const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
                     return this.statuses.filter(status => allowedForEmployees.includes(status));
                 },
 
