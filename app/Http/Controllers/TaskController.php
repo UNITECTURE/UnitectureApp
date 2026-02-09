@@ -43,25 +43,42 @@ class TaskController extends Controller
 
     /**
      * Display a listing of the tasks (Overview Dashboard).
+     * Scope: 'assigned' = my tasks, 'team' = my team tasks (supervisor/admin only).
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $scope = $request->get('scope', 'assigned');
 
         // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
         Task::bulkSyncPrioritiesFromDeadlines();
         Task::bulkSyncOverdueStages();
 
-        // Employees see only their assigned tasks; Admins/Supervisors see all tasks
+        // Employees always see only their assigned tasks
         if ($user->isEmployee()) {
             $tasks = $user->tasks()
                 ->with(['project', 'assignees', 'taggedUsers'])
                 ->latest()
                 ->get();
-        } else {
-            $tasks = Task::with(['project', 'assignees', 'taggedUsers', 'creator'])
+            $scope = 'assigned';
+        } elseif ($scope === 'team' && ($user->isSupervisor() || $user->isAdmin())) {
+            // Team tasks: tasks assigned to team members
+            $teamIds = User::where('reporting_to', $user->id)
+                ->orWhere('secondary_supervisor_id', $user->id)
+                ->pluck('id');
+            $tasks = Task::whereHas('assignees', function ($query) use ($teamIds) {
+                $query->whereIn('users.id', $teamIds);
+            })
+                ->with(['project', 'assignees', 'taggedUsers'])
                 ->latest()
                 ->get();
+        } else {
+            // Assigned to me (admin/supervisor)
+            $tasks = $user->tasks()
+                ->with(['project', 'assignees', 'taggedUsers'])
+                ->latest()
+                ->get();
+            $scope = 'assigned';
         }
 
         // Format assignees' and tagged users' profile images
@@ -124,7 +141,8 @@ class TaskController extends Controller
 
         $statuses = self::STATUSES;
         $stages = self::STAGES;
-        return view('tasks.index', compact('tasks', 'statuses', 'stages', 'counts', 'employees'));
+        $showTeamToggle = $user->isSupervisor() || $user->isAdmin();
+        return view('tasks.index', compact('tasks', 'statuses', 'stages', 'counts', 'employees', 'scope', 'showTeamToggle'));
     }
 
     /**
