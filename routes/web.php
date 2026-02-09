@@ -76,6 +76,8 @@ Route::middleware('auth')->group(function () {
     
     // Admin User Management
     Route::get('/users/manage', [App\Http\Controllers\UserController::class, 'manageUsers'])->name('users.manage');
+    Route::get('/users/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
 
     // Admin Teams: view teams, assign secondary supervisor, remove from team

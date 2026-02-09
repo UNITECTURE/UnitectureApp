@@ -116,7 +116,7 @@ class CalendarController extends Controller
                     // FullCalendar expects exclusive end for all-day ranges
                     'end' => $leave->end_date?->copy()->addDay()->toDateString(),
                     'allDay' => true,
-                    'color' => '#22c55e', // green (approved only)
+                    'color' => '#f97316', // orange (approved only)
                     'type' => 'leave',
                     'extendedProps' => [
                         'user' => $leave->user->name ?? null,
@@ -137,7 +137,7 @@ class CalendarController extends Controller
                 'title' => $holiday->name,
                 'start' => $holiday->date?->toDateString(),
                 'allDay' => true,
-                'color' => '#3b82f6', // blue
+                'color' => '#22c55e', // green
                 'type' => 'holiday',
                 'extendedProps' => [
                     'description' => $holiday->description,
@@ -164,7 +164,7 @@ class CalendarController extends Controller
                     'start' => optional($task->start_date)->toDateString(),
                     'end' => optional($task->end_date)->toIso8601String(),
                     'allDay' => false,
-                    'color' => '#3b82f6', // light blue
+                    'color' => '#3b82f6', // blue
                     'type' => 'task',
                     'extendedProps' => [
                         'project' => $task->project?->name,

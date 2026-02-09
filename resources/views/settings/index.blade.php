@@ -101,6 +101,17 @@
                                         </svg>
                                     </div>
                                 </a>
+                                <a href="{{ route('users.create') }}" class="group flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:border-indigo-100 hover:bg-indigo-50/50 transition-all duration-200">
+                                    <div>
+                                        <h4 class="font-bold text-slate-700 group-hover:text-indigo-700">Add New User</h4>
+                                        <p class="text-xs text-slate-400 mt-1">Create a new user account in the system</p>
+                                    </div>
+                                    <div class="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                         @endif

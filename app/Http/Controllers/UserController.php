@@ -105,6 +105,90 @@ class UserController extends Controller
     }
 
     /**
+     * Show edit user form (Admin only)
+     */
+    public function edit($id)
+    {
+        if (!\Illuminate\Support\Facades\Auth::user()->isAdmin()) {
+            abort(403, 'Only admins can manage users.');
+        }
+        $user = User::findOrFail($id);
+        $roles = Role::all();
+        $managers = User::whereIn('role_id', [1, 2])->get();
+        return view('users.edit', compact('user', 'roles', 'managers'));
+    }
+
+    /**
+     * Update user (Admin only)
+     */
+    public function update(Request $request, $id)
+    {
+        if (!\Illuminate\Support\Facades\Auth::user()->isAdmin()) {
+            abort(403, 'Only admins can manage users.');
+        }
+
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'role_id' => 'required|exists:roles,id',
+            'reporting_to' => 'nullable|exists:users,id',
+            'secondary_supervisor_id' => 'nullable|exists:users,id',
+            'joining_date' => 'required|date',
+            'telegram_chat_id' => 'nullable|string|max:50',
+            'biometric_id' => 'nullable|string|max:20|unique:users,biometric_id,' . $user->id,
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Employees must have a primary supervisor
+        if ((int) $request->role_id === 0 && empty($request->reporting_to)) {
+            return back()->withErrors(['reporting_to' => 'Employees must have a primary supervisor.'])->withInput();
+        }
+
+        $imageUrl = $user->profile_image;
+        if ($request->hasFile('profile_image')) {
+            $uploadedFile = $request->file('profile_image');
+
+            // Check if Cloudinary credentials are set because Cloudinary package crashes if config is missing
+            $hasCloudinary = !empty(env('CLOUDINARY_URL')) || (!empty(env('CLOUDINARY_CLOUD_NAME')) && !empty(env('CLOUDINARY_KEY')) && !empty(env('CLOUDINARY_SECRET')));
+
+            if ($hasCloudinary) {
+                try {
+                    $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($uploadedFile->getRealPath(), [
+                        'folder' => 'unitecture_users',
+                        'resource_type' => 'auto'
+                    ]);
+                    $imageUrl = $uploadResult->getSecurePath();
+                } catch (\Exception $e) {
+                    \Log::error('Cloudinary upload failed: ' . $e->getMessage());
+                    // Fallback to local if Cloudinary fails
+                    $path = $uploadedFile->store('profile_images', 'public');
+                    $imageUrl = asset('storage/' . $path);
+                }
+            } else {
+                // Fallback to local storage
+                $path = $uploadedFile->store('profile_images', 'public');
+                $imageUrl = asset('storage/' . $path);
+            }
+        }
+
+        $user->full_name = $request->name;
+        $user->email = $request->email;
+        $user->role_id = $request->role_id;
+        $user->reporting_to = $request->reporting_to;
+        $user->secondary_supervisor_id = $request->secondary_supervisor_id;
+        $user->joining_date = $request->joining_date;
+        $user->telegram_chat_id = $request->telegram_chat_id;
+        $user->biometric_id = $request->biometric_id;
+        $user->profile_image = $imageUrl;
+
+        $user->save();
+
+        return redirect()->route('users.manage')->with('success', 'User updated successfully.');
+    }
+
+    /**
      * Show all teams: each supervisor with their members (Admin only).
      */
     public function teamsIndex()

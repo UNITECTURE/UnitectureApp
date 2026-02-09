@@ -12,10 +12,15 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
+    /** Tasks page URL included in Telegram notifications (clickable link). */
+    private const TASKS_APP_LINK = 'http://hrms.unitecture.co/tasks';
+
     /**
      * All available task statuses.
+     * New tasks default to 'not_started'.
      */
     const STATUSES = [
+        'not_started',
         'wip',
         'correction',
         'completed',
@@ -43,19 +48,21 @@ class TaskController extends Controller
     {
         $user = Auth::user();
 
-        // Employees go to assigned tasks page (vertical view) by default
-        if ($user->isEmployee()) {
-            return redirect()->route('tasks.assigned');
-        }
-
         // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
         Task::bulkSyncPrioritiesFromDeadlines();
         Task::bulkSyncOverdueStages();
 
-        // Supervisors and Admins see all tasks
-        $tasks = Task::with(['project', 'assignees', 'taggedUsers', 'creator'])
-            ->latest()
-            ->get();
+        // Employees see only their assigned tasks; Admins/Supervisors see all tasks
+        if ($user->isEmployee()) {
+            $tasks = $user->tasks()
+                ->with(['project', 'assignees', 'taggedUsers'])
+                ->latest()
+                ->get();
+        } else {
+            $tasks = Task::with(['project', 'assignees', 'taggedUsers', 'creator'])
+                ->latest()
+                ->get();
+        }
 
         // Format assignees' and tagged users' profile images
         $tasks = $tasks->map(function ($task) {
@@ -381,9 +388,7 @@ class TaskController extends Controller
         $data['end_date'] = $endDate;
 
         $task = new Task($data);
-        if ($request->has('status')) {
-            $task->status = $request->status;
-        }
+        $task->status = $request->has('status') ? $request->status : 'not_started';
         // Stage is set automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->created_by = Auth::id();
         $task->save();
@@ -448,7 +453,7 @@ class TaskController extends Controller
                     }
 
                     $lines[] = '';
-                    $lines[] = 'Open the Unitecture app to view full details.';
+                    $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
 
                     $message = implode("\n", $lines);
 
@@ -481,7 +486,7 @@ class TaskController extends Controller
                     }
 
                     $lines[] = '';
-                    $lines[] = 'Open the Unitecture app to view full details.';
+                    $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
 
                     $message = implode("\n", $lines);
 
@@ -570,7 +575,7 @@ class TaskController extends Controller
                         }
 
                         $lines[] = '';
-                        $lines[] = 'Open the Unitecture app to view full details.';
+                        $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
 
                         $message = implode("\n", $lines);
 
@@ -734,7 +739,7 @@ class TaskController extends Controller
                         }
 
                         $lines[] = '';
-                        $lines[] = 'Open the Unitecture app to view full details.';
+                        $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
                         $telegram->sendMessage($user->telegram_chat_id, implode("\n", $lines));
                     }
                 }
@@ -817,7 +822,7 @@ class TaskController extends Controller
                         $lines[] = '<b>By:</b> ' . e($actor->name);
                     }
                     $lines[] = '';
-                    $lines[] = 'Open the Unitecture app to view full details.';
+                    $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
                     $telegram->sendMessage($user->telegram_chat_id, implode("\n", $lines));
                 }
             } catch (\Throwable $e) {
@@ -864,7 +869,7 @@ class TaskController extends Controller
                     'id' => $comment->id,
                     'comment' => $comment->comment,
                     'created_at' => $comment->created_at->toDateTimeString(),
-                    'created_at_human' => $comment->created_at->diffForHumans(),
+                    'created_at_human' => $comment->created_at->format('M j, Y g:i A'),
                     'user' => [
                         'id' => $commentUser?->id,
                         'name' => $commentUser?->full_name ?? $commentUser?->name ?? 'Unknown',
@@ -938,7 +943,7 @@ class TaskController extends Controller
                         $lines[] = '<b>Comment by:</b> ' . e($user->full_name ?? $user->name);
                         $lines[] = '<b>Comment:</b> ' . e(\Illuminate\Support\Str::limit($comment->comment, 100));
                         $lines[] = '';
-                        $lines[] = 'Open the Unitecture app to view full details.';
+                        $lines[] = 'View tasks: <a href="' . self::TASKS_APP_LINK . '">' . self::TASKS_APP_LINK . '</a>';
                         $telegram->sendMessage($recipient->telegram_chat_id, implode("\n", $lines));
                     }
                 }
@@ -953,7 +958,7 @@ class TaskController extends Controller
                 'id' => $comment->id,
                 'comment' => $comment->comment,
                 'created_at' => $comment->created_at->toDateTimeString(),
-                'created_at_human' => $comment->created_at->diffForHumans(),
+                'created_at_human' => $comment->created_at->format('M j, Y g:i A'),
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->full_name ?? $user->name,

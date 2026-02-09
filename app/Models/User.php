@@ -107,6 +107,13 @@ class User extends Authenticatable
         return $this->full_name;
     }
 
+    // Keep legacy name column in sync when full_name changes
+    public function setFullNameAttribute($value)
+    {
+        $this->attributes['full_name'] = $value;
+        $this->attributes['name'] = $value;
+    }
+
     // Helper Methods
     public function isSuperAdmin()
     {

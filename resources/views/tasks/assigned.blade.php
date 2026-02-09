@@ -486,6 +486,29 @@
                             </form>
                         </div>
 
+                        <div x-show="showDeleteConfirm" x-cloak x-transition
+                            class="px-4 sm:px-6 pb-4">
+                            <div class="bg-white border border-red-200 rounded-lg p-4 shadow-sm">
+                                <h3 class="text-sm font-bold text-slate-900 mb-1">Delete task?</h3>
+                                <p class="text-xs text-slate-600 mb-3" x-show="taskToDelete">
+                                    Are you sure you want to delete this task? This action cannot be undone.
+                                </p>
+                                <div class="flex justify-end gap-3">
+                                    <button type="button" @click="showDeleteConfirm = false; taskToDelete = null"
+                                        :disabled="deleteInProgress"
+                                        class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 disabled:opacity-50">
+                                        Cancel
+                                    </button>
+                                    <button type="button" @click="confirmDeleteTask()"
+                                        :disabled="deleteInProgress"
+                                        class="px-3 py-1.5 text-xs font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50"
+                                        style="background-color:#dc2626;color:#ffffff;">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-b-xl sm:rounded-b-2xl">
                                 <button
                                     x-show="canEditDue && selectedTask && selectedTask.created_by === currentUserId"
@@ -504,33 +527,6 @@
                 </template>
             </div>
         </template>
-
-        <!-- Delete Confirmation Modal -->
-        <div x-show="showDeleteConfirm" x-cloak
-            class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
-            x-transition.opacity
-            @click.self="showDeleteConfirm = false; taskToDelete = null">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6" @click.stop>
-                <h3 class="text-lg font-bold text-slate-900 mb-2">Delete task?</h3>
-                <p class="text-sm text-slate-600 mb-4" x-show="taskToDelete">
-                    Are you sure you want to delete this task? This action cannot be undone.
-                </p>
-                <p class="text-xs text-slate-500 mb-4 line-clamp-2" x-show="taskToDelete" x-text="taskToDelete ? ((taskToDelete.description || '').substring(0, 100) + ((taskToDelete.description || '').length > 100 ? '...' : '')) : ''"></p>
-                <div class="flex justify-end gap-3">
-                    <button type="button" @click="showDeleteConfirm = false; taskToDelete = null"
-                        :disabled="deleteInProgress"
-                        class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 disabled:opacity-50">
-                        Cancel
-                    </button>
-                    <button type="button" @click="confirmDeleteTask()"
-                        :disabled="deleteInProgress"
-                        class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50">
-                        <span x-show="!deleteInProgress">Delete</span>
-                        <span x-show="deleteInProgress">Deleting...</span>
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -570,7 +566,7 @@
                     }
 
                     // Employees are limited to these statuses
-                    const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
+                    const allowedForEmployees = ['not_started', 'under_review', 'completed', 'wip', 'revision'];
                     return this.statuses.filter(status => allowedForEmployees.includes(status));
                 },
 
@@ -618,7 +614,6 @@
                         this.taskToDelete = null;
                     } catch (e) {
                         console.error('Delete failed:', e);
-                        alert(e.message || 'Failed to delete task. You may not have permission or there was a server error.');
                     } finally {
                         this.deleteInProgress = false;
                     }

@@ -24,6 +24,11 @@ class Task extends Model
         'created_by',
     ];
 
+    /** Default attribute values. New tasks are "not_started" by default. */
+    protected $attributes = [
+        'status' => 'not_started',
+    ];
+
     /**
      * The attributes that should be cast.
      *
