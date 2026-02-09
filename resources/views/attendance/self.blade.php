@@ -41,7 +41,7 @@
 
             {{-- Content Scroll Area --}}
             <div class="flex-1 flex flex-col overflow-hidden px-8 pb-8">
-                <form action="" method="GET" id="month-filter-form" class="mb-4 flex justify-end gap-2">
+                <form action="" method="GET" id="month-filter-form" class="mt-4 mb-4 flex justify-end gap-2">
                     <div class="relative w-32">
                         <select name="month"
                             onchange="document.getElementById('month-filter-form').submit()"
@@ -81,20 +81,7 @@
 
 
                                     {{-- Summary Cards --}}
-                                    <div class="grid grid-cols-3 gap-4 mb-6">
-                                        <div class="bg-green-50 rounded-lg p-4 text-center border border-green-100">
-                                            <div class="text-2xl font-bold text-green-600">{{ $daily_summary['present'] }}</div>
-                                            <div class="text-xs font-medium text-green-600 mt-1">{{ 'Present' }}</div>
-                                        </div>
-                                        <div class="bg-yellow-50 rounded-lg p-4 text-center border border-yellow-100">
-                                            <div class="text-2xl font-bold text-yellow-500">{{ $daily_summary['leave'] }}</div>
-                                            <div class="text-xs font-medium text-yellow-500 mt-1">{{ 'On Leave' }}</div>
-                                        </div>
-                                        <div class="bg-red-50 rounded-lg p-4 text-center border border-red-100">
-                                            <div class="text-2xl font-bold text-red-500">{{ $daily_summary['absent'] }}</div>
-                                            <div class="text-xs font-medium text-red-500 mt-1">{{ 'Absent' }}</div>
-                                        </div>
-                                    </div>
+
 
                                     {{-- Attendance Table --}}
                                     <div class="flex-1 overflow-auto min-h-0 rounded-lg border border-slate-100 mb-6">
@@ -193,10 +180,10 @@
                                         </div>
                                         <div
                                             class="flex-1 min-w-0 bg-red-50 rounded-lg p-2 text-center border border-red-100 flex flex-col justify-center h-24">
-                                            <div class="text-xl font-bold text-red-600">{{ $cumulative_summary['late_marks'] }}
+                                            <div class="text-xl font-bold text-red-600">{{ $cumulative_summary['absent'] }}
                                             </div>
                                             <div class="text-[10px] uppercase font-bold text-red-600 mt-1 leading-tight">
-                                                Late Marks<br></div>
+                                                Absent<br></div>
                                         </div>
                                     </div>
 
@@ -208,7 +195,7 @@
                                                     <th class="py-2 text-left pl-2">{{ 'Name' }}</th>
                                                     <th class="py-2">{{ 'Present' }}</th>
                                                     <th class="py-2">{{ 'Leave' }}</th>
-                                                    <th class="py-2">{{ 'Absent' }}</th>
+                                                    <th class="py-2">{{ 'Late Marks' }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="text-sm text-slate-600 font-normal tracking-normal">
@@ -218,7 +205,7 @@
                                                             {{ $record['name'] }}</td>
                                                         <td class="py-3">{{ $record['present'] }}</td>
                                                         <td class="py-3">{{ $record['leave'] }}</td>
-                                                        <td class="py-3">{{ $record['absent'] }}</td>
+                                                        <td class="py-3">{{ $record['late_marks'] }}</td>
                                                     </tr>
                                                 @empty
                                                     <tr>
