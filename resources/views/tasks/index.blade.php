@@ -198,7 +198,10 @@
                             </div>
 
                             <!-- Description -->
-                            <p class="mt-3 text-lg font-semibold text-slate-900 leading-snug line-clamp-1"
+                            <p class="mt-3 text-lg font-semibold leading-snug line-clamp-1"
+                                :class="task.status === 'closed'
+                                    ? 'text-slate-400 line-through'
+                                    : 'text-slate-900'"
                                 :title="task.description || ''"
                                 x-text="(task.description || '').length > 30 ? (task.description || '').substring(0, 30) + '...' : (task.description || '')"></p>
 
@@ -286,7 +289,11 @@
                                                     }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
-                                            <p class="text-xs sm:text-sm font-bold text-slate-800 leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words" x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></p>
+                                            <p class="text-xs sm:text-sm font-bold leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words"
+                                               :class="task.status === 'closed'
+                                                   ? 'text-slate-400 line-through'
+                                                   : 'text-slate-800'"
+                                               x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></p>
                                             <div class="flex flex-col gap-0.5 text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
                                                 <div class="flex items-center gap-1">
                                                     <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -338,7 +345,11 @@
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="String(index + 1).padStart(2, '0')"></td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="task.project?.project_code || 'N/A'"></td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 min-w-[200px]">
-                                            <div class="font-medium text-slate-900 break-words line-clamp-2" x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')"></div>
+                                            <div class="font-medium break-words line-clamp-2"
+                                                 :class="task.status === 'closed'
+                                                     ? 'text-slate-400 line-through'
+                                                     : 'text-slate-900'"
+                                                 x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')"></div>
                                         </td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap" @click.stop>
                                             <select

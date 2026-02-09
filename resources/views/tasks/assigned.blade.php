@@ -127,7 +127,11 @@
                                             </div>
 
                                             <!-- Description -->
-                                            <p class="text-xs sm:text-sm font-bold text-slate-800 leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words" x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></p>
+                                            <p class="text-xs sm:text-sm font-bold leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words"
+                                               :class="task.status === 'closed'
+                                                   ? 'text-slate-400 line-through'
+                                                   : 'text-slate-800'"
+                                               x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></p>
 
                                             <!-- Due date & End time -->
                                             <div class="flex flex-col gap-0.5 text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
@@ -196,7 +200,11 @@
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="String(index + 1).padStart(2, '0')"></td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="task.project?.project_code || 'N/A'"></td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 min-w-[200px]">
-                                                <div class="font-medium text-slate-900 break-words line-clamp-2" x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')"></div>
+                                                <div class="font-medium break-words line-clamp-2"
+                                                     :class="task.status === 'closed'
+                                                         ? 'text-slate-400 line-through'
+                                                         : 'text-slate-900'"
+                                                     x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')"></div>
                                             </td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 whitespace-nowrap" @click.stop>
                                                 <select
