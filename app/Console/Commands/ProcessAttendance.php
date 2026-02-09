@@ -120,21 +120,40 @@ class ProcessAttendance extends Command
 
                 $logs = $filteredLogs; // Use filtered list
 
-                // First Punch is Global IN
-                $clockIn = $logs->first()->punch_time;
+                // Calculate using Min/Max to avoid negative values if list is unsorted
+                // Get earliest punch time
+                $minTime = $logs->min(function ($log) {
+                    return strtotime($log->punch_time);
+                });
+                $clockIn = Carbon::createFromTimestamp($minTime);
 
-                // Last Punch is Global OUT (if multiple)
-                if ($logs->count() > 1) {
-                    $clockOut = $logs->last()->punch_time;
+                // Get latest punch time 
+                $maxTime = $logs->max(function ($log) {
+                    return strtotime($log->punch_time);
+                });
+                $clockOut = Carbon::createFromTimestamp($maxTime);
+
+                // If only one punch, clockOut might be same as clockIn, duration 0
+                if ($logs->count() <= 1) {
+                    $clockOut = null;
+                    // Or keep it as null/start=end? original logic:
+                    // $clockIn = first, $clockOut = last (if count > 1).
+                    // If count == 1, clockOut is null.
                 }
 
-                // New Logic: Duration is simply Last Punch - First Punch (Earliest vs Latest)
-                if ($logs->count() > 1) {
-                    $firstPunch = Carbon::parse($logs->first()->punch_time);
-                    $lastPunch = Carbon::parse($logs->last()->punch_time);
-
-                    $biometricDurationMinutes = abs($lastPunch->diffInMinutes($firstPunch));
+                // Resolved Logic: Use Min/Max to ensure correct order
+                if ($minTime === $maxTime || $logs->count() <= 1) {
+                    $clockOut = null;
+                    $biometricDurationMinutes = 0;
+                } else {
+                    $biometricDurationMinutes = abs($clockIn->diffInMinutes($clockOut));
                 }
+
+
+                // Ensure ClockIn is formatted as string for DB if needed, or Carbon object is fine for Eloquent
+                // But let's keep consistency with original which assigned $logs->first()->punch_time (string/datetime)
+                // We'll wrap in typical Carbon format or leave as Carbon instance (Eloquent handles it)
+
             }
         }
 
