@@ -834,6 +834,7 @@
                         'hold': 'bg-purple-100 text-purple-700',
                         'under_review': 'bg-yellow-100 text-yellow-700',
                         'awaiting_resources': 'bg-amber-100 text-amber-700',
+                        'not_started': 'bg-slate-100 text-slate-700',
                     };
                     return colors[status] || 'bg-slate-100 text-slate-700';
                 },
