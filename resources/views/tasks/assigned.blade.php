@@ -215,8 +215,8 @@
                                                     :disabled="task.status === 'closed'">
                                                     <option
                                                         :value="task.status"
-                                                        x-show="!statusOptions.includes(task.status)"
-                                                        disabled
+                                                        :selected="true"
+                                                        :disabled="!statusOptions.includes(task.status)"
                                                         x-text="formatStatus(task.status)"></option>
                                                     <template x-for="status in statusOptions" :key="status">
                                                         <option :value="status" x-text="formatStatus(status)"></option>
@@ -320,6 +320,11 @@
                                         @change="updateStatus(selectedTask.id, $event.target.value)"
                                         class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50"
                                         :disabled="selectedTask.status === 'closed'">
+                                        <option
+                                            :value="selectedTask.status"
+                                            :selected="true"
+                                            :disabled="!statusOptions.includes(selectedTask.status)"
+                                            x-text="formatStatus(selectedTask.status)"></option>
                                         <template x-for="status in statusOptions" :key="status">
                                             <option :value="status" :selected="selectedTask.status === status"
                                                 x-text="formatStatus(status)"></option>

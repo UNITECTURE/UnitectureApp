@@ -360,12 +360,13 @@
                                                 :disabled="task.status === 'closed'">
                                                 <option
                                                     :value="task.status"
-                                                    x-show="!statusOptions.includes(task.status)"
-                                                    disabled
+                                                    :selected="true"
+                                                    :disabled="!statusOptions.includes(task.status)"
                                                     x-text="formatStatus(task.status)"></option>
                                                 <template x-for="status in statusOptions" :key="status">
                                                     <option :value="status" x-text="formatStatus(status)"></option>
                                                 </template>
+                                            </select>
                                         </td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
                                             <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold" :class="getStageSelectColor(task.stage)" x-text="formatStage(task.stage)"></span>
@@ -448,6 +449,11 @@
                                             @change="updateStatus(selectedTask.id, $event.target.value)"
                                             class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50"
                                             :disabled="selectedTask.status === 'closed'">
+                                            <option
+                                                :value="selectedTask.status"
+                                                :selected="true"
+                                                :disabled="!statusOptions.includes(selectedTask.status)"
+                                                x-text="formatStatus(selectedTask.status)"></option>
                                             <template x-for="status in statusOptions" :key="status">
                                                 <option :value="status" :selected="selectedTask.status === status"
                                                     x-text="formatStatus(status)"></option>

@@ -4393,3 +4393,8 @@ Traceback (most recent call last):
     import schedule
 ModuleNotFoundError: No module named 'schedule'
 [08-02-2026 23:55:26.15] Bridge crashed or stopped. Restarting in 5 seconds... 
+Traceback (most recent call last):
+  File "bridge.py", line 6, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+[09-02-2026 22:50:10.80] Bridge crashed or stopped. Restarting in 5 seconds... 
