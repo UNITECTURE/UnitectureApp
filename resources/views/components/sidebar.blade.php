@@ -83,7 +83,7 @@
                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
                     </path>
                 </svg>
-                <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Team' }}</span>
+                <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Tasks' }}</span>
                 <div x-show="!sidebarOpen"
                     class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
                     Tasks</div>
