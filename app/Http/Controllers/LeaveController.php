@@ -504,6 +504,12 @@ class LeaveController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        // Cannot cancel if the leave has already started (current date >= start date)
+        $today = Carbon::today();
+        if ($leave->start_date && $today->greaterThanOrEqualTo($leave->start_date)) {
+            return back()->withErrors(['error' => 'Cannot cancel leave. You can only cancel a leave before its start date (' . $leave->start_date->format('Y-m-d') . ').']);
+        }
+
         // Cannot cancel if already rejected or cancelled
         if (in_array($leave->status, ['rejected', 'cancelled'])) {
             return back()->withErrors(['error' => 'This leave request cannot be cancelled as it is already ' . $leave->status . '.']);

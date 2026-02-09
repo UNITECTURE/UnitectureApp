@@ -247,7 +247,9 @@
                                             
                                             {{-- Cancel Cross Button for All Rows --}}
                                             @php
-                                                $showCancel = in_array($leave->status, ['pending', 'approved', 'approved_by_supervisor', 'approved_by_superadmin']);
+                                                $showCancel = in_array($leave->status, ['pending', 'approved', 'approved_by_supervisor', 'approved_by_superadmin']) 
+                                                    && $leave->start_date 
+                                                    && \Carbon\Carbon::today()->lessThan($leave->start_date);
                                             @endphp
                                             @if($showCancel)
                                                 <form action="{{ route('leaves.cancel', $leave) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this leave request?');">
