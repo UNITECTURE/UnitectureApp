@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="flex h-screen bg-[#F8F9FB] overflow-hidden"
-         x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }}, {{ json_encode($scope ?? 'assigned') }}, {{ isset($showTeamToggle) && $showTeamToggle ? 'true' : 'false' }})"
+         x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }}, {{ json_encode($scope ?? 'assigned') }}, {{ isset($showTeamToggle) && $showTeamToggle ? 'true' : 'false' }}, {{ isset($showAllToggle) && $showAllToggle ? 'true' : 'false' }})"
          x-init="
             @if(session('success'))
                 showToast('{{ addslashes(session('success')) }}', 'success');
@@ -52,7 +52,7 @@
                                 </button>
                             </div>
 
-                            <!-- My Tasks / My Team Tasks toggle (supervisor/admin only) -->
+                            <!-- My Tasks / My Team Tasks / All Tasks toggle (supervisor/admin/super admin) -->
                             <template x-if="showTeamToggle">
                                 <div class="flex bg-white border border-slate-200 shadow-sm p-0.5 rounded-lg gap-0.5">
                                     <a href="{{ route('tasks.index', ['scope' => 'assigned']) }}"
@@ -67,6 +67,16 @@
                                         title="My Team Tasks">
                                         <img src="{{ asset('images/group.svg') }}" class="w-5 h-5" alt="My Team Tasks" />
                                     </a>
+                                    <template x-if="showAllToggle">
+                                        <a href="{{ route('tasks.index', ['scope' => 'all']) }}"
+                                            class="p-2 rounded-md transition-all duration-200 flex items-center justify-center"
+                                            :class="scope === 'all' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
+                                            title="All Tasks">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </a>
+                                    </template>
                                 </div>
                             </template>
 
@@ -92,31 +102,31 @@
                         <button @click="filterStatus = 'all'"
                             class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border whitespace-nowrap"
                             :class="filterStatus === 'all' ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
-                            All Tasks (<span x-text="counts.all"></span>)
+                            All Tasks <span x-text="counts.all" class="ml-1 font-bold"></span>
                         </button>
                         <button @click="filterStatus = 'overdue'"
                             class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
                             :class="filterStatus === 'overdue' ? 'bg-red-50 border-red-200 text-red-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
                             <span class="w-2 h-2 rounded-full bg-red-500"></span>
-                            Overdue
+                            Overdue <span x-text="counts.overdue" class="ml-1 font-bold"></span>
                         </button>
                         <button @click="filterStatus = 'pending'"
                             class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
                             :class="filterStatus === 'pending' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
-                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                            Pending
+                            <span class="w-2.5 h-2.5 rounded-full" style="background-color: #FBBF24;"></span>
+                            Pending <span x-text="counts.pending" class="ml-1 font-bold"></span>
                         </button>
                         <button @click="filterStatus = 'in_progress'"
                             class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
                             :class="filterStatus === 'in_progress' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
                             <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                            In Progress
+                            In Progress <span x-text="counts.in_progress" class="ml-1 font-bold"></span>
                         </button>
                         <button @click="filterStatus = 'completed'"
                             class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border flex items-center gap-2 whitespace-nowrap"
                             :class="filterStatus === 'completed' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'">
                             <span class="w-2 h-2 rounded-full bg-green-500"></span>
-                            Completed
+                            Completed <span x-text="counts.completed" class="ml-1 font-bold"></span>
                         </button>
                     </div>
 
@@ -235,7 +245,7 @@
                                 </div>
 
                                 <div class="flex items-center gap-1.5 text-xs font-semibold shrink-0"
-                                    :class="dueInClass(task)">
+                                    :class="dueInClass(task)" style="font-size: 1rem; font-weight: 700;">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -278,7 +288,7 @@
                                         <div class="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-slate-100 cursor-pointer hover:shadow-md transition-all"
                                             @click="openModal(task)">
                                             <div class="flex items-start justify-between gap-2 mb-1.5 sm:mb-2">
-                                                <span class="text-[9px] sm:text-[10px] font-bold shrink-0" :class="dueInClass(task)" x-text="dueIn(task)"></span>
+                                                <span class="text-sm sm:text-base font-bold shrink-0" :class="dueInClass(task)" x-text="dueIn(task)"></span>
                                                 <div class="flex flex-col items-end gap-0.5 min-w-0">
                                                     <span class="text-[9px] sm:text-[10px] text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
                                                     <span class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0" :class="{
@@ -691,7 +701,7 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter, currentUserId, initialScope, showTeamToggleFlag) => ({
+            Alpine.data('taskManager', (initialTasks, allStatuses, allStages, initialCounts, canEditDue, initialEmployees, showEmployeeFilter, currentUserId, initialScope, showTeamToggleFlag, showAllToggleFlag) => ({
                 tasks: initialTasks,
                 statuses: allStatuses,
                 stages: allStages,
@@ -700,6 +710,7 @@
                 employees: initialEmployees || [],
                 showEmployeeFilter: !!showEmployeeFilter,
                 showTeamToggle: !!showTeamToggleFlag,
+                showAllToggle: !!showAllToggleFlag,
                 scope: initialScope || 'assigned',
                 filterEmployeeIds: [],
                 search: '',

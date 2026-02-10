@@ -698,7 +698,10 @@ class LeaveController extends Controller
         $totals = $data['totals'];
         $user = $data['user'];
 
-        $fileName = 'leave_report_' . $user->id . '_' . $selectedYear . '.csv';
+        $employeeName = trim($user->full_name ?? $user->name ?? 'employee');
+        $safeName = preg_replace('/[^A-Za-z0-9]+/', '_', strtolower($employeeName));
+        $safeName = trim($safeName, '_');
+        $fileName = 'leave_report_' . $safeName . '_' . $selectedYear . '.csv';
 
         $headers = [
             "Content-type"        => "text/csv",
