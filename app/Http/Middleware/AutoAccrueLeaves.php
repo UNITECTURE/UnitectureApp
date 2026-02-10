@@ -17,6 +17,12 @@ class AutoAccrueLeaves
     {
         if (auth()->check()) {
             $user = auth()->user();
+            
+            // Early return if joining_date is null
+            if (!$user->joining_date) {
+                return $next($request);
+            }
+            
             $today = now();
             $currentMonth = $today->format('Y-m');
             $threeMonthsAgo = $today->copy()->subMonths(3)->toDateString();

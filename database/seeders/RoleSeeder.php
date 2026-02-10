@@ -17,6 +17,7 @@ class RoleSeeder extends Seeder
             ['id' => 0, 'name' => 'employee', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 1, 'name' => 'supervisor', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 2, 'name' => 'admin', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'name' => 'super_admin', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }
