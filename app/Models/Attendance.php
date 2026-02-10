@@ -70,6 +70,20 @@ class Attendance extends Model
         $this->attributes['duration'] = $trimmed;
     }
 
+    // Accessor to ensure duration is always positive when retrieved
+    public function getDurationAttribute($value)
+    {
+        if (!$value)
+            return $value;
+
+        // If it contains a negative sign, remove it for display
+        if (str_contains($value, '-')) {
+            return str_replace('-', '', $value);
+        }
+
+        return $value;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
