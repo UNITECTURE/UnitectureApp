@@ -43,7 +43,7 @@ class TaskController extends Controller
 
     /**
      * Display a listing of the tasks (Overview Dashboard).
-     * Scope: 'assigned' = my tasks, 'team' = my team tasks (supervisor/admin only).
+     * Scope: 'assigned' = my tasks, 'team' = my team tasks (supervisor/admin only), 'all' = all tasks (super admin only).
      */
     public function index(Request $request)
     {
@@ -61,6 +61,19 @@ class TaskController extends Controller
                 ->latest()
                 ->get();
             $scope = 'assigned';
+        } elseif ($user->isSuperAdmin() && ($scope === 'all' || $scope === 'assigned')) {
+            // Super Admin can see all tasks in the firm
+            if ($scope === 'all') {
+                $tasks = Task::with(['project', 'assignees', 'taggedUsers'])
+                    ->latest()
+                    ->get();
+            } else {
+                // If 'assigned' scope is selected, show only their tasks
+                $tasks = $user->tasks()
+                    ->with(['project', 'assignees', 'taggedUsers'])
+                    ->latest()
+                    ->get();
+            }
         } elseif ($scope === 'team' && ($user->isSupervisor() || $user->isAdmin())) {
             // Team tasks: tasks assigned to team members
             $teamIds = User::where('reporting_to', $user->id)
@@ -142,7 +155,8 @@ class TaskController extends Controller
         $statuses = self::STATUSES;
         $stages = self::STAGES;
         $showTeamToggle = $user->isSupervisor() || $user->isAdmin();
-        return view('tasks.index', compact('tasks', 'statuses', 'stages', 'counts', 'employees', 'scope', 'showTeamToggle'));
+        $showAllToggle = $user->isSuperAdmin();
+        return view('tasks.index', compact('tasks', 'statuses', 'stages', 'counts', 'employees', 'scope', 'showTeamToggle', 'showAllToggle'));
     }
 
     /**
@@ -541,6 +555,15 @@ class TaskController extends Controller
         // Supervisors/Admins can use the full status enum.
         // Employees are restricted to: under_review, completed, wip, revision.
         $user = Auth::user();
+
+        // Once a task is closed, its status cannot be changed anymore.
+        if ($task->status === 'closed' && $request->input('status') !== 'closed') {
+            return response()->json([
+                'message' => 'Closed tasks cannot be re-opened or changed.',
+                'status' => $task->status,
+                'stage' => $task->stage,
+            ], 403);
+        }
         $allowedStatuses = self::STATUSES;
         if ($user->isEmployee()) {
             $allowedStatuses = ['under_review', 'completed', 'wip', 'revision'];

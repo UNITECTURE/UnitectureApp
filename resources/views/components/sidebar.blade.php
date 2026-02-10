@@ -83,10 +83,10 @@
                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
                     </path>
                 </svg>
-                <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Team' }}</span>
+                <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Tasks' }}</span>
                 <div x-show="!sidebarOpen"
                     class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
-                    Team</div>
+                    Tasks</div>
             </a>
 
             {{-- Leave - Direct link to My Leaves --}}
@@ -239,6 +239,26 @@
                     <div x-show="!sidebarOpen"
                         class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
                         My Team</div>
+                </a>
+            @endif
+
+            {{-- Reports - Admin/SuperAdmin Only --}}
+            @if($role === 'admin' || $role === 'superadmin')
+                <a href="{{ route('leaves.report') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors relative {{ request()->routeIs('leaves.report') ? 'bg-slate-800 text-white' : '' }}"
+                    :class="!sidebarOpen ? 'justify-center' : ''">
+                    <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0"
+                        :class="sidebarOpen ? 'mr-3' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    <span x-show="sidebarOpen" x-transition class="truncate whitespace-nowrap">{{ 'Leave Report' }}</span>
+
+                    {{-- Tooltip for collapsed state --}}
+                    <div x-show="!sidebarOpen"
+                        class="absolute left-full ml-2 bg-slate-900 text-white text-xs px-2 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap pointer-events-none shadow-lg border border-slate-700 font-medium">
+                        Leave Report</div>
                 </a>
             @endif
 

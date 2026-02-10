@@ -47,13 +47,6 @@ class Task extends Model
         });
     }
 
-    /**
-     * Sync stage from status and due date. Stages cannot be set manually:
-     * - completed: when status is 'closed' (supervisor only)
-     * - overdue: when end_date is past (unless status is closed)
-     * - in_progress: when status is 'wip'
-     * - pending: default
-     */
     public function syncStageFromStatusAndDueDate(?Carbon $now = null): void
     {
         $now = $now ?? now();
@@ -71,12 +64,15 @@ class Task extends Model
             }
         }
 
-        if ($this->status === 'wip') {
-            $this->stage = 'in_progress';
+        // Only "not_started" and "correction" should remain in the "pending" stage.
+        if (in_array($this->status, ['not_started', 'correction'], true)) {
+            $this->stage = 'pending';
             return;
         }
 
-        $this->stage = 'pending';
+        // Any other active status (wip, under_review, revision, hold, etc.)
+        // should be considered "in_progress" while it is not closed/overdue.
+        $this->stage = 'in_progress';
     }
 
     /**
