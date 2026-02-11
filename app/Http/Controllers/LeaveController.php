@@ -502,9 +502,22 @@ class LeaveController extends Controller
     public function cancel(Leave $leave)
     {
         $user = Auth::user();
+        
+        // Load the user relationship
+        $leave->load('user');
 
-        // Only the employee who created the leave can cancel it
-        if ($leave->user_id !== $user->id) {
+        // Allow cancellation if:
+        // 1. The user created the leave request
+        // 2. The user is the supervisor of the employee
+        // 3. The user is an admin (role_id 2)
+        // 4. The user is a super admin (role_id 3)
+        $canCancel = ($leave->user_id === $user->id) ||
+                     ($leave->user->reporting_to === $user->id) ||
+                     ($leave->user->secondary_supervisor_id === $user->id) ||
+                     ($user->role_id === 2) ||
+                     ($user->role_id === 3);
+
+        if (!$canCancel) {
             abort(403, 'Unauthorized action.');
         }
 

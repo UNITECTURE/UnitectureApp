@@ -8,14 +8,14 @@
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[#F8F9FB]">
                 <div class="container mx-auto px-6 py-8">
                     <!-- Header -->
-                    <div class="mb-8 flex items-center justify-between">
+                    <div class="mb-4 flex items-center justify-between">
                         <div>
                             <h2 class="text-2xl font-bold text-slate-800">Projects Overview</h2>
                             <p class="text-slate-400 text-sm mt-1 font-medium">View all projects created by supervisors</p>
                         </div>
                         @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
                             <a href="{{ route('projects.create') }}"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
                                     </path>
@@ -23,6 +23,19 @@
                                 Create Project
                             </a>
                         @endif
+                    </div>
+
+                    <div class="mb-8">
+                        <form id="projectSearchForm" action="{{ route('projects.index') }}" method="GET" class="w-full sm:w-80">
+                            <div class="relative">
+                                <input type="text" id="projectSearchInput" name="q" value="{{ $search ?? '' }}"
+                                    placeholder="Search by title, code, or ID"
+                                    class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
+                                <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                        </form>
                     </div>
 
                     <!-- Projects Grid -->
@@ -143,4 +156,22 @@
             </main>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script>
+        // Live search functionality (debounced)
+        let projectSearchTimeout;
+        const projectSearchInput = document.getElementById('projectSearchInput');
+        const projectSearchForm = document.getElementById('projectSearchForm');
+
+        if (projectSearchInput && projectSearchForm) {
+            projectSearchInput.addEventListener('input', function () {
+                clearTimeout(projectSearchTimeout);
+                projectSearchTimeout = setTimeout(() => {
+                    projectSearchForm.submit();
+                }, 500);
+            });
+        }
+    </script>
 @endsection
