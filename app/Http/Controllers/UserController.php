@@ -13,7 +13,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
-        $managers = User::whereIn('role_id', [1, 2])->get(); // Supervisors and Admins
+        $managers = User::whereIn('role_id', [1, 2, 3])->get(); // Supervisors, Admins, and Super Admins
         return view('users.create', compact('roles', 'managers'));
     }
 
@@ -145,7 +145,7 @@ class UserController extends Controller
         }
         $user = User::findOrFail($id);
         $roles = Role::all();
-        $managers = User::whereIn('role_id', [1, 2])->get();
+        $managers = User::whereIn('role_id', [1, 2, 3])->get(); // Supervisors, Admins, and Super Admins
         return view('users.edit', compact('user', 'roles', 'managers'));
     }
 
@@ -228,7 +228,7 @@ class UserController extends Controller
             ])
             ->orderBy('full_name')
             ->get();
-        $supervisorsList = User::whereIn('role_id', [1, 2])->orderBy('full_name')->get(); // for secondary dropdown
+        $supervisorsList = User::whereIn('role_id', [1, 2, 3])->orderBy('full_name')->get(); // Supervisors, Admins, and Super Admins
         return view('teams.index', compact('supervisors', 'supervisorsList'));
     }
 
