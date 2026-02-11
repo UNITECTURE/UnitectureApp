@@ -104,11 +104,11 @@
                                     class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-lg sm:rounded-t-xl">
                                     <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
                                         <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0" :class="{
-                                                    'bg-red-500': stage === 'overdue',
-                                                    'bg-yellow-500': stage === 'pending',
-                                                    'bg-blue-500': stage === 'in_progress',
-                                                    'bg-green-500': stage === 'completed'
-                                                }"></div>
+                                                            'bg-red-500': stage === 'overdue',
+                                                            'bg-yellow-500': stage === 'pending',
+                                                            'bg-blue-500': stage === 'in_progress',
+                                                            'bg-green-500': stage === 'completed'
+                                                        }"></div>
                                         <span class="text-xs sm:text-sm font-bold text-slate-700 uppercase truncate"
                                             x-text="formatStage(stage)"></span>
                                         <span
@@ -135,11 +135,11 @@
                                                     <span
                                                         class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0"
                                                         :class="{
-                                                              'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                              'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
-                                                              'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                              'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
-                                                          }"
+                                                                      'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                                      'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
+                                                                      'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                                      'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
+                                                                  }"
                                                         x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
@@ -147,8 +147,8 @@
                                             <!-- Description -->
                                             <p class="text-xs sm:text-sm font-bold leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words"
                                                 :class="task.status === 'closed'
-                                                       ? 'text-slate-400 line-through'
-                                                       : 'text-slate-800'"
+                                                               ? 'text-slate-400 line-through'
+                                                               : 'text-slate-800'"
                                                 x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')">
                                             </p>
 
@@ -250,8 +250,8 @@
                                                 x-text="task.project?.project_code || 'N/A'"></td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 min-w-[200px]">
                                                 <div class="font-medium break-words line-clamp-2" :class="task.status === 'closed'
-                                                             ? 'text-slate-400 line-through'
-                                                             : 'text-slate-900'"
+                                                                     ? 'text-slate-400 line-through'
+                                                                     : 'text-slate-900'"
                                                     x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')">
                                                 </div>
                                             </td>
@@ -336,11 +336,11 @@
                                     <span
                                         class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                         :class="{
-                                              'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
-                                              'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
-                                          }" x-text="selectedTask.priority"></span>
+                                                      'bg-red-50 text-red-600': selectedTask.priority === 'high',
+                                                      'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
+                                                      'bg-green-50 text-green-600': selectedTask.priority === 'low',
+                                                      'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
+                                                  }" x-text="selectedTask.priority"></span>
                                     <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words"
                                         x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')">
                                     </h2>
@@ -370,15 +370,12 @@
                                     <div>
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status
                                         </h3>
-                                        <p class="text-[11px] text-slate-600 mb-1">
-                                            Current:
-                                            <span class="font-semibold" x-text="formatStatus(selectedTask.status)"></span>
-                                        </p>
+
                                         <select @change="updateStatus(selectedTask.id, $event.target.value)"
                                             class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50"
                                             :disabled="selectedTask.status === 'closed'">
                                             <option :value="selectedTask.status" :selected="true"
-                                                :disabled="!statusOptions.includes(selectedTask.status)"
+                                                x-show="!statusOptions.includes(selectedTask.status)"
                                                 x-text="formatStatus(selectedTask.status)"></option>
                                             <template x-for="status in statusOptions" :key="status">
                                                 <option :value="status" :selected="selectedTask.status === status"
@@ -393,8 +390,7 @@
                                             class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
                                             :class="getStageSelectColor(selectedTask.stage)"
                                             x-text="formatStage(selectedTask.stage)"></span>
-                                        <p class="text-[11px] text-slate-400 mt-1">Stage is set automatically based on
-                                            status and due date.</p>
+
                                     </div>
                                     <div class="sm:col-span-2">
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due Date
@@ -405,11 +401,7 @@
                                         </template>
                                         <template x-if="canEditDue">
                                             <div class="space-y-2">
-                                                <p class="text-[11px] text-slate-400">
-                                                    Current:
-                                                    <span class="font-semibold text-slate-600"
-                                                        x-text="formatDate(selectedTask.end_date, true)"></span>
-                                                </p>
+
                                                 <div class="flex flex-col sm:flex-row gap-2">
                                                     <input type="date" x-model="editEndDate"
                                                         class="flex-1 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500">

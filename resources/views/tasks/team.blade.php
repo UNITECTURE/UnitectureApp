@@ -111,8 +111,8 @@
             <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
                 x-transition:leave="transition ease-in duration-200" class="fixed top-0 left-0 right-0 z-50 w-full">
                 <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl" :class="toast.type === 'success' 
-                             ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
-                             : 'bg-gradient-to-r from-red-500 to-red-600'">
+                                     ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
+                                     : 'bg-gradient-to-r from-red-500 to-red-600'">
                     <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
                         <div class="flex items-center gap-3 flex-1">
                             <div class="text-3xl sm:text-4xl font-bold text-white">
@@ -148,11 +148,11 @@
                                     class="p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-xl">
                                     <div class="flex items-center gap-2">
                                         <div class="w-3 h-3 rounded-full" :class="{
-                                                    'bg-red-500': stage === 'overdue',
-                                                    'bg-yellow-500': stage === 'pending',
-                                                    'bg-blue-500': stage === 'in_progress',
-                                                    'bg-green-500': stage === 'completed'
-                                                }"></div>
+                                                            'bg-red-500': stage === 'overdue',
+                                                            'bg-yellow-500': stage === 'pending',
+                                                            'bg-blue-500': stage === 'in_progress',
+                                                            'bg-green-500': stage === 'completed'
+                                                        }"></div>
                                         <span class="text-sm font-bold text-slate-700 uppercase"
                                             x-text="formatStage(stage)"></span>
                                         <span class="bg-slate-200 text-slate-600 px-2 py-0.5 rounded text-xs font-bold"
@@ -176,19 +176,19 @@
                                                         x-text="task.project?.name || 'No Project'"></span>
                                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded border shrink-0"
                                                         :class="{
-                                                              'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                              'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
-                                                              'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                              'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
-                                                          }"
+                                                                      'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                                      'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
+                                                                      'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                                      'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
+                                                                  }"
                                                         x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
 
                                             <!-- Description -->
                                             <p class="text-sm font-bold leading-tight mb-2 line-clamp-2" :class="task.status === 'closed'
-                                                       ? 'text-slate-400 line-through'
-                                                       : 'text-slate-800'"
+                                                               ? 'text-slate-400 line-through'
+                                                               : 'text-slate-800'"
                                                 x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')">
                                             </p>
 
@@ -269,8 +269,8 @@
                                                 x-text="task.project?.project_code || 'N/A'"></td>
                                             <td class="px-6 py-3">
                                                 <div class="font-medium line-clamp-2" :class="task.status === 'closed'
-                                                             ? 'text-slate-400 line-through'
-                                                             : 'text-slate-900'"
+                                                                     ? 'text-slate-400 line-through'
+                                                                     : 'text-slate-900'"
                                                     x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')">
                                                 </div>
                                             </td>
@@ -279,8 +279,9 @@
                                                     class="text-xs font-bold px-2 py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
                                                     :class="getStatusSelectColor(task.status)" :value="task.status"
                                                     :disabled="task.status === 'closed'">
-                                                    <option :value="task.status" x-show="!statuses.includes(task.status)"
-                                                        disabled x-text="formatStatus(task.status)"></option>
+                                                    <option :value="task.status"
+                                                        x-show="!statusOptions.includes(task.status)" disabled
+                                                        x-text="formatStatus(task.status)"></option>
                                                     <template x-for="status in statusOptions" :key="status">
                                                         <option :value="status" x-text="formatStatus(status)"></option>
                                                     </template>
@@ -351,11 +352,11 @@
                                     <span
                                         class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                         :class="{
-                                              'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
-                                              'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
-                                          }" x-text="selectedTask.priority"></span>
+                                                      'bg-red-50 text-red-600': selectedTask.priority === 'high',
+                                                      'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
+                                                      'bg-green-50 text-green-600': selectedTask.priority === 'low',
+                                                      'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
+                                                  }" x-text="selectedTask.priority"></span>
                                     <h2 class="text-xl font-bold text-slate-900"
                                         x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')">
                                     </h2>
@@ -388,9 +389,9 @@
                                             class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50"
                                             :disabled="selectedTask.status === 'closed'">
                                             <option :value="selectedTask.status"
-                                                x-show="!statuses.includes(selectedTask.status)" disabled
+                                                x-show="!statusOptions.includes(selectedTask.status)" disabled
                                                 x-text="formatStatus(selectedTask.status)"></option>
-                                            <template x-for="status in statuses" :key="status">
+                                            <template x-for="status in statusOptions" :key="status">
                                                 <option :value="status" :selected="selectedTask.status === status"
                                                     x-text="formatStatus(status)"></option>
                                             </template>
@@ -403,8 +404,7 @@
                                             class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
                                             :class="getStageSelectColor(selectedTask.stage)"
                                             x-text="formatStage(selectedTask.stage)"></span>
-                                        <p class="text-[11px] text-slate-400 mt-1">Stage is set automatically based on
-                                            status and due date.</p>
+
                                     </div>
                                     <div>
                                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due Date
@@ -415,11 +415,7 @@
                                         </template>
                                         <template x-if="canEditDue">
                                             <div class="space-y-2">
-                                                <p class="text-[11px] text-slate-400">
-                                                    Current:
-                                                    <span class="font-semibold text-slate-600"
-                                                        x-text="formatDate(selectedTask.end_date, true)"></span>
-                                                </p>
+
                                                 <div class="flex gap-2">
                                                     <input type="date" x-model="editEndDate"
                                                         class="flex-1 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500">
