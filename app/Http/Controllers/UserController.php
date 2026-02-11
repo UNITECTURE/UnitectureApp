@@ -163,6 +163,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
             'reporting_to' => 'nullable|exists:users,id',
             'secondary_supervisor_id' => 'nullable|exists:users,id',
@@ -200,6 +201,12 @@ class UserController extends Controller
 
         $user->full_name = $request->name;
         $user->email = $request->email;
+        
+        // Only update password if provided
+        if ($request->filled('password')) {
+            $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
+        
         $user->role_id = $request->role_id;
         $user->reporting_to = $request->reporting_to;
         $user->secondary_supervisor_id = $request->secondary_supervisor_id;
