@@ -136,14 +136,14 @@ class LeaveController extends Controller
         $isUrgent = $leaveCategory === 'emergency';
         $urgentTag = $isUrgent ? '🚨 <b>URGENT</b> ' : '';
 
+        // NEW FLOW: Super Admin gets notified FIRST for all leaves (has direct authority)
         // Send notifications based on requester role
-        // Employees: notify supervisor and admins
-        // Supervisors/Admins/Super Admins: notify super admins only
         
         if ($user->isEmployee()) {
-            // Send Telegram Notification to Supervisor
-            if ($user->manager && $user->manager->telegram_chat_id) {
-                $message = "{$urgentTag}<b>New Leave Request</b>\n\n";
+            // Priority: Notify Super Admin FIRST (Direct Authority)
+            $superAdmins = User::where('role_id', 3)->whereNotNull('telegram_chat_id')->get();
+            foreach ($superAdmins as $superAdmin) {
+                $message = "{$urgentTag}<b>🔴 NEW LEAVE REQUEST - SUPER ADMIN APPROVAL REQUIRED</b>\n\n";
                 $message .= "Employee: {$user->name}\n";
                 $message .= "<b>Date Applied:</b> " . now()->format('Y-m-d H:i A') . "\n";
                 $message .= "<b>Leave Category:</b> " . ucfirst($leaveCategory) . "\n";
@@ -151,32 +151,38 @@ class LeaveController extends Controller
                 $message .= "<b>Duration:</b> {$days} day(s)\n";
                 $message .= "<b>Dates:</b> {$request->start_date} to {$request->end_date}\n";
                 $message .= "<b>Reason:</b> {$request->reason}\n\n";
+                $message .= "<b>ℹ️ You have DIRECT authority. Your approval/rejection is FINAL.</b>";
                 
                 if ($isUrgent) {
-                    $message .= "<b>⚠️ ACTION REQUIRED: This is an emergency leave and needs immediate approval!</b>";
+                    $message .= "\n\n⚠️ <b>URGENT:</b> This is an emergency leave and needs immediate action!";
                 }
                 
-                $this->telegramService->sendMessage($user->manager->telegram_chat_id, $message);
+                $this->telegramService->sendMessage($superAdmin->telegram_chat_id, $message);
             }
 
-            // Also notify Admins (Role ID 2)
-            $admins = User::where('role_id', 2)->whereNotNull('telegram_chat_id')->get();
-            foreach ($admins as $admin) {
-                $adminMessage = "{$urgentTag}<b>Alert: Leave Request Received</b>\n\n";
-                $adminMessage .= "Employee: {$user->name}\n";
-                $adminMessage .= "<b>Date Applied:</b> " . now()->format('Y-m-d H:i A') . "\n";
-                $adminMessage .= "<b>Leave Category:</b> " . ucfirst($leaveCategory) . "\n";
-                $adminMessage .= "<b>Leave Type:</b> " . ucfirst($leaveType) . "\n";
-                $adminMessage .= "<b>Status:</b> " . ($isUrgent ? 'Pending Supervisor (URGENT)' : 'Pending Supervisor Approval') . "\n";
-                $adminMessage .= "<b>Dates:</b> {$request->start_date} to {$request->end_date}";
+            // Secondary: Also notify Supervisor (for awareness - they can act if Super Admin doesn't)
+            if ($user->manager && $user->manager->telegram_chat_id) {
+                $supervisorMessage = "{$urgentTag}<b>Leave Request - Awaiting Super Admin</b>\n\n";
+                $supervisorMessage .= "Employee: {$user->name}\n";
+                $supervisorMessage .= "<b>Date Applied:</b> " . now()->format('Y-m-d H:i A') . "\n";
+                $supervisorMessage .= "<b>Leave Category:</b> " . ucfirst($leaveCategory) . "\n";
+                $supervisorMessage .= "<b>Leave Type:</b> " . ucfirst($leaveType) . "\n";
+                $supervisorMessage .= "<b>Duration:</b> {$days} day(s)\n";
+                $supervisorMessage .= "<b>Dates:</b> {$request->start_date} to {$request->end_date}\n";
+                $supervisorMessage .= "<b>Reason:</b> {$request->reason}\n\n";
+                $supervisorMessage .= "<b>ℹ️ Super Admin has priority. You can approve if SA doesn't act.</b>";
                 
-                $this->telegramService->sendMessage($admin->telegram_chat_id, $adminMessage);
+                if ($isUrgent) {
+                    $supervisorMessage .= "\n⚠️ <b>URGENT</b> - Monitor for Super Admin action.";
+                }
+                
+                $this->telegramService->sendMessage($user->manager->telegram_chat_id, $supervisorMessage);
             }
         } else {
             // Supervisor/Admin/Super Admin: Notify only Super Admins
             $superAdmins = User::where('role_id', 3)->whereNotNull('telegram_chat_id')->get();
             foreach ($superAdmins as $superAdmin) {
-                $message = "{$urgentTag}<b>Leave Request from Staff</b>\n\n";
+                $message = "{$urgentTag}<b>🔴 LEAVE REQUEST FROM STAFF - SUPER ADMIN APPROVAL REQUIRED</b>\n\n";
                 $message .= "Requester: {$user->name}\n";
                 $message .= "<b>Role:</b> " . ($user->isSupervisor() ? 'Supervisor' : ($user->isAdmin() ? 'Admin' : 'Super Admin')) . "\n";
                 $message .= "<b>Date Applied:</b> " . now()->format('Y-m-d H:i A') . "\n";
@@ -185,18 +191,13 @@ class LeaveController extends Controller
                 $message .= "<b>Duration:</b> {$days} day(s)\n";
                 $message .= "<b>Dates:</b> {$request->start_date} to {$request->end_date}\n";
                 $message .= "<b>Reason:</b> {$request->reason}\n\n";
-                $message .= "<b>⚠️ Requires Super Admin Approval</b>";
+                $message .= "<b>ℹ️ Your approval/rejection is FINAL.</b>";
                 
                 $this->telegramService->sendMessage($superAdmin->telegram_chat_id, $message);
             }
         }
 
-        $message = "Leave requested successfully as <b>" . ucfirst($leaveCategory) . "</b>. System assigned type: <b>" . ucfirst($leaveType) . "</b>";
-        if ($isUrgent) {
-            $message .= ". ⚠️ Awaiting immediate supervisor approval.";
-        }
-        
-        return redirect()->route('leaves.index')->with('success', $message);
+        return redirect()->route('leaves.index')->with('success', 'Leave applied successfully.');
     }
 
     public function approvals(Request $request)
@@ -381,98 +382,101 @@ class LeaveController extends Controller
             return back()->withErrors(['error' => 'Cannot approve a rejected leave request. A rejected leave cannot be re-approved.']);
         }
 
-        // Check requester role to determine approval flow
-        $requesterRoleId = $leave->requester_role_id ?? 0;
+        // NEW APPROVAL FLOW: Super Admin has DIRECT AUTHORITY and can BYPASS supervisor
+        // Super Admin can approve/reject ANY leave and it's FINAL
+        // Supervisors can approve/reject only if Super Admin hasn't acted yet
         
-        // Employee leave: Supervisor -> Admin approval
-        if (!in_array($requesterRoleId, [1, 2, 3])) {
-            // Supervisor Approval Logic
-            if ($user->isSupervisor()) {
-                // Can only approve subordinates
-                if ($leave->user->reporting_to != $user->id) {
-                    abort(403, 'Unauthorized action.');
+        $requesterRoleId = $leave->requester_role_id ?? 0;
+        $isEmployeeLeave = !in_array($requesterRoleId, [1, 2, 3]);
+        $isStaffLeave = in_array($requesterRoleId, [1, 2, 3]);
+        
+        // CASE 1: Super Admin (Has DIRECT AUTHORITY - FINAL DECISION)
+        if ($user->isSuperAdmin()) {
+            if ($request->status === 'approved') {
+                $leave->update(['status' => 'approved', 'approved_by' => 'superadmin']);
+                // Deduct leave balance immediately
+                if ($leave->leave_type === 'paid') {
+                    $leave->user->decrement('leave_balance', $leave->days);
                 }
-                
-                if ($request->status === 'approved') {
-                    $leave->update(['status' => 'approved_by_supervisor']);
-                } else {
-                    $leave->update(['status' => 'rejected', 'rejected_by' => 'supervisor']);
-                }
-            } 
-            // Admin Approval Logic (for employee leaves)
-            elseif ($user->isAdmin()) {
-                // Admin can approve anyone's request
-                if ($request->status === 'approved') {
-                    $leave->update(['status' => 'approved']);
-                    if ($leave->leave_type === 'paid') {
-                        $leave->user->decrement('leave_balance', $leave->days);
-                    }
 
-                    // Sync with Attendance Table
-                    $currentDate = $leave->start_date->copy();
-                    $endDate = $leave->end_date->copy();
+                // Sync with Attendance Table
+                $currentDate = $leave->start_date->copy();
+                $endDate = $leave->end_date->copy();
 
-                    while ($currentDate->lte($endDate)) {
-                        \App\Models\Attendance::updateOrCreate(
-                            [
-                                'user_id' => $leave->user_id,
-                                'date' => $currentDate->toDateString()
-                            ],
-                            [
-                                'status' => 'leave',
-                                'clock_in' => null,
-                                'clock_out' => null,
-                                'duration' => null,
-                            ]
-                        );
-                        $currentDate->addDay();
-                    }
-                } else {
-                    $leave->update(['status' => 'rejected', 'rejected_by' => 'admin']);
-                }
-            }
-        }
-        // Supervisor/Admin/Super Admin leave: Only Super Admin can approve
-        else {
-            if ($user->isSuperAdmin()) {
-                if ($request->status === 'approved') {
-                    $leave->update(['status' => 'approved_by_superadmin']);
-                    if ($leave->leave_type === 'paid') {
-                        $leave->user->decrement('leave_balance', $leave->days);
-                    }
-
-                    // Sync with Attendance Table
-                    $currentDate = $leave->start_date->copy();
-                    $endDate = $leave->end_date->copy();
-
-                    while ($currentDate->lte($endDate)) {
-                        \App\Models\Attendance::updateOrCreate(
-                            [
-                                'user_id' => $leave->user_id,
-                                'date' => $currentDate->toDateString()
-                            ],
-                            [
-                                'status' => 'leave',
-                                'clock_in' => null,
-                                'clock_out' => null,
-                                'duration' => null,
-                            ]
-                        );
-                        $currentDate->addDay();
-                    }
-                } else {
-                    $leave->update(['status' => 'rejected', 'rejected_by' => 'superadmin']);
+                while ($currentDate->lte($endDate)) {
+                    \App\Models\Attendance::updateOrCreate(
+                        [
+                            'user_id' => $leave->user_id,
+                            'date' => $currentDate->toDateString()
+                        ],
+                        [
+                            'status' => 'leave',
+                            'clock_in' => null,
+                            'clock_out' => null,
+                            'duration' => null,
+                        ]
+                    );
+                    $currentDate->addDay();
                 }
             } else {
-                // Return JSON error for AJAX or redirect with error message
-                if ($request->expectsJson()) {
-                    return response()->json([
-                        'success' => false, 
-                        'message' => 'Only Super Admin can approve or reject leave requests from Supervisors, Admins, and Super Admins.'
-                    ], 403);
-                }
-                return back()->withErrors(['error' => 'Only Super Admin can approve or reject leave requests from Supervisors, Admins, and Super Admins.']);
+                $leave->update(['status' => 'rejected', 'rejected_by' => 'superadmin']);
             }
+        }
+        // CASE 2: Supervisor (Can act ONLY if Super Admin hasn't acted yet - i.e., leave is still PENDING)
+        elseif ($user->isSupervisor()) {
+            // Can only approve subordinates
+            if ($leave->user->reporting_to != $user->id) {
+                abort(403, 'Unauthorized action.');
+            }
+            
+            // Check if Super Admin has already acted (status is no longer pending)
+            if ($leave->status !== 'pending') {
+                return back()->withErrors(['error' => 'This leave request has already been reviewed by Super Admin. Supervisor cannot override.']);
+            }
+            
+            if ($request->status === 'approved') {
+                $leave->update(['status' => 'approved', 'approved_by' => 'supervisor']);
+                // Deduct leave balance
+                if ($leave->leave_type === 'paid') {
+                    $leave->user->decrement('leave_balance', $leave->days);
+                }
+
+                // Sync with Attendance Table
+                $currentDate = $leave->start_date->copy();
+                $endDate = $leave->end_date->copy();
+
+                while ($currentDate->lte($endDate)) {
+                    \App\Models\Attendance::updateOrCreate(
+                        [
+                            'user_id' => $leave->user_id,
+                            'date' => $currentDate->toDateString()
+                        ],
+                        [
+                            'status' => 'leave',
+                            'clock_in' => null,
+                            'clock_out' => null,
+                            'duration' => null,
+                        ]
+                    );
+                    $currentDate->addDay();
+                }
+            } else {
+                $leave->update(['status' => 'rejected', 'rejected_by' => 'supervisor']);
+            }
+        }
+        // CASE 3: Admin (Cannot approve employee leaves in new system - Super Admin is now primary)
+        elseif ($user->isAdmin()) {
+            return back()->withErrors(['error' => 'Admin role cannot approve leaves. Only Super Admin has authority. Please escalate to Super Admin.']);
+        }
+        else {
+            // No other role can approve
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'You do not have permission to approve or reject this leave request.'
+                ], 403);
+            }
+            return back()->withErrors(['error' => 'You do not have permission to approve or reject this leave request.']);
         }
 
         // Send Telegram Notification to Employee

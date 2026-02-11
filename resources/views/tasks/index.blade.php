@@ -175,19 +175,36 @@
                 </div>
             </div>
 
-            <!-- Toast Notification -->
+            <!-- Toast Notification - LARGE BANNER -->
             <div x-show="toast.show"
-                 x-transition
-                 class="fixed bottom-4 right-4 z-50">
-                <div class="flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-sm font-medium text-white"
-                     :class="toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'">
-                    <span x-text="toast.message"></span>
-                    <button type="button" class="ml-2 text-white/80 hover:text-white" @click="toast.show = false">×</button>
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:leave="transition ease-in duration-200"
+                 class="fixed top-0 left-0 right-0 z-50 w-full">
+                <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl"
+                     :class="toast.type === 'success' 
+                         ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
+                         : 'bg-gradient-to-r from-red-500 to-red-600'">
+                    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3 flex-1">
+                            <div class="text-3xl sm:text-4xl font-bold text-white">
+                                <span x-text="toast.type === 'success' ? '✓' : '✕'"></span>
+                            </div>
+                            <div>
+                                <p class="text-white text-lg sm:text-xl font-bold" x-text="toast.message"></p>
+                                <p class="text-white/80 text-sm mt-1" x-text="toast.type === 'success' ? 'Action completed successfully!' : 'Please try again or contact support'"></p>
+                            </div>
+                        </div>
+                        <button type="button" 
+                            class="text-white hover:text-white/80 text-3xl font-bold shrink-0 p-2"
+                            @click="toast.show = false">
+                            ×
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 transition-all duration-300" :class="toast.show ? 'mt-32 sm:mt-36' : 'mt-0'">
                 <!-- Overview: Task Cards Grid -->
                 <div x-show="view === 'overview' && filteredTasks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <template x-for="task in filteredTasks" :key="task.id">
@@ -752,7 +769,7 @@
                     clearTimeout(this.toastTimer);
                     this.toastTimer = setTimeout(() => {
                         this.toast.show = false;
-                    }, 3000);
+                    }, 5000);
                 },
 
                 getStageBadgeColor(stage) {
@@ -832,8 +849,10 @@
                         this.showDeleteConfirm = false;
                         this.taskToDelete = null;
                         this.recomputeCounts();
+                        this.showToast('✅ Task deleted successfully', 'success');
                     } catch (e) {
                         console.error('Delete failed:', e);
+                        this.showToast('❌ ' + e.message, 'error');
                     } finally {
                         this.deleteInProgress = false;
                     }
@@ -920,8 +939,10 @@
                             this.selectedTask.assignees = data.assignees || this.selectedTask.assignees;
                             this.selectedTask.taggedUsers = data.tagged_users || this.selectedTask.taggedUsers;
                         }
+                        this.showToast('✅ Assignees & tagged users updated', 'success');
                     } catch (e) {
                         console.error('Failed to update people', e);
+                        this.showToast('❌ Failed to update people assignments', 'error');
                     }
                 },
                 openAddPeopleModal() {
@@ -1120,12 +1141,14 @@
                             }
                         }
                         this.recomputeCounts();
+                        this.showToast('✅ Task status updated', 'success');
                     } catch (e) {
                         task.status = oldStatus;
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask.status = oldStatus;
                         }
                         console.error('Failed to update status');
+                        this.showToast('❌ Failed to update task status', 'error');
                     }
                 },
 
@@ -1164,8 +1187,10 @@
                                 this.selectedTask.stage = data.stage;
                             }
                         }
+                        this.showToast('✅ Due date updated successfully', 'success');
                     } catch (e) {
                         console.error('Failed to update due date', e);
+                        this.showToast('❌ Failed to update due date', 'error');
                     }
                 },
 
@@ -1238,13 +1263,15 @@
                         if (data.comment) {
                             this.upsertComment(data.comment);
                             this.newComment = '';
+                            this.showToast('✅ Comment posted successfully', 'success');
                         } else {
                             await this.loadComments(taskId);
                             this.newComment = '';
+                            this.showToast('✅ Comment posted successfully', 'success');
                         }
                     } catch (e) {
                         console.error('Failed to post comment', e);
-                        alert('Failed to post comment. Check console for details.');
+                        this.showToast('❌ Failed to post comment', 'error');
                     } finally {
                         this.isPostingComment = false;
                     }
