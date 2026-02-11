@@ -42,34 +42,46 @@
                                 <!-- Profile Image -->
                                 <div class="space-y-2 md:col-span-2">
                                     <label for="profile_image" class="text-sm font-semibold text-slate-700">Profile Image
-                                        <span class="text-red-500">*</span></label>
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    
                                     <input type="file" name="profile_image" id="profile_image" required accept="image/*"
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                                    <p class="text-xs text-slate-500">Supported formats: JPEG, PNG, JPG, GIF. Max size: 2MB.
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('profile_image') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                    <p class="text-xs text-slate-500">
+                                        Supported formats: JPEG, PNG, JPG, GIF. Max size: 2MB.
                                     </p>
+                                    @error('profile_image')
+                                        <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Name -->
                                 <div class="space-y-2">
                                     <label for="name" class="text-sm font-semibold text-slate-700">Full Name</label>
-                                    <input type="text" name="name" id="name" required
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                    <input type="text" name="name" id="name" required value="{{ old('name') }}"
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('name') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
                                         placeholder="John Doe">
+                                    @error('name')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Email -->
                                 <div class="space-y-2">
                                     <label for="email" class="text-sm font-semibold text-slate-700">Email Address</label>
-                                    <input type="email" name="email" id="email" required
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                    <input type="email" name="email" id="email" required value="{{ old('email') }}"
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('email') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
                                         placeholder="john@unitecture.com">
+                                    @error('email')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Password -->
                                 <div class="space-y-2">
                                     <label for="password" class="text-sm font-semibold text-slate-700">Password</label>
                                     <input type="password" name="password" id="password" required
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('password') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
                                         oninput="checkPasswordStrength(this.value)">
 
                                     <!-- Strength Bars -->
@@ -89,6 +101,9 @@
                                         Min. 8 characters, 1 lowercase, 1 uppercase and 1 number. ONLY the following special
                                         characters are allowed: !@#$%^
                                     </p>
+                                    @error('password')
+                                        <p class="text-xs text-red-500 mt-1 font-semibold">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Confirm Password -->
@@ -96,7 +111,7 @@
                                     <label for="password_confirmation" class="text-sm font-semibold text-slate-700">Confirm
                                         Password</label>
                                     <input type="password" name="password_confirmation" id="password_confirmation" required
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600">
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('password') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600">
                                 </div>
 
                                 <script>
@@ -150,75 +165,96 @@
                                 <div class="space-y-2">
                                     <label for="role_id" class="text-sm font-semibold text-slate-700">Role</label>
                                     <select name="role_id" id="role_id" required
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('role_id') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
                                         @foreach($roles as $role)
-                                            <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                                            <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ ucfirst($role->name) }}</option>
                                         @endforeach
                                     </select>
+                                    @error('role_id')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Primary Supervisor (required for employees) -->
                                 <div class="space-y-2">
                                     <label for="reporting_to" class="text-sm font-semibold text-slate-700">Primary Supervisor</label>
                                     <select name="reporting_to" id="reporting_to"
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('reporting_to') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
                                         <option value="">No primary supervisor</option>
                                         @foreach($managers as $manager)
-                                            <option value="{{ $manager->id }}">{{ $manager->name }}
+                                            <option value="{{ $manager->id }}" {{ old('reporting_to') == $manager->id ? 'selected' : '' }}>{{ $manager->name }}
                                                 ({{ ucfirst($manager->role->name) }})</option>
                                         @endforeach
                                     </select>
                                     <p class="text-xs text-slate-500">Required for employees. Optional for supervisors/admins.</p>
+                                    @error('reporting_to')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Secondary Supervisor (optional, for employees only) -->
                                 <div class="space-y-2" id="secondary_supervisor_wrap">
                                     <label for="secondary_supervisor_id" class="text-sm font-semibold text-slate-700">Secondary Supervisor</label>
                                     <select name="secondary_supervisor_id" id="secondary_supervisor_id"
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('secondary_supervisor_id') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
                                         <option value="">None</option>
                                         @foreach($managers as $manager)
-                                            <option value="{{ $manager->id }}">{{ $manager->name }}
+                                            <option value="{{ $manager->id }}" {{ old('secondary_supervisor_id') == $manager->id ? 'selected' : '' }}>{{ $manager->name }}
                                                 ({{ ucfirst($manager->role->name) }})</option>
                                         @endforeach
                                     </select>
                                     <p class="text-xs text-slate-500">Optional. Both supervisors can assign tasks to this employee.</p>
+                                    @error('secondary_supervisor_id')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Joining Date -->
                                 <div class="space-y-2">
                                     <label for="joining_date" class="text-sm font-semibold text-slate-700">Joining
                                         Date</label>
-                                    <input type="date" name="joining_date" id="joining_date" required
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600">
+                                    <input type="date" name="joining_date" id="joining_date" required value="{{ old('joining_date') }}"
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('joining_date') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600">
+                                    @error('joining_date')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Status -->
                                 <div class="space-y-2">
                                     <label for="status" class="text-sm font-semibold text-slate-700">Status</label>
                                     <select name="status" id="status" required
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
-                                        <option value="active">Active</option>
-                                        <option value="inactive">Inactive</option>
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('status') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600 bg-white">
+                                        <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
+                                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                                     </select>
+                                    @error('status')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Biometric ID -->
                                 <div class="space-y-2">
                                     <label for="biometric_id" class="text-sm font-semibold text-slate-700">Biometric ID</label>
-                                    <input type="text" name="biometric_id" id="biometric_id"
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                    <input type="text" name="biometric_id" id="biometric_id" value="{{ old('biometric_id') }}"
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('biometric_id') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
                                         placeholder="e.g. 101 or BIO-001">
+                                    @error('biometric_id')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <!-- Telegram Chat ID -->
                                 <div class="space-y-2">
                                     <label for="telegram_chat_id" class="text-sm font-semibold text-slate-700">Telegram Chat
                                         ID</label>
-                                    <input type="text" name="telegram_chat_id" id="telegram_chat_id"
-                                        class="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                    <input type="text" name="telegram_chat_id" id="telegram_chat_id" value="{{ old('telegram_chat_id') }}"
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('telegram_chat_id') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
                                         placeholder="e.g. 123456789">
                                     <p class="text-xs text-slate-500">Optional: Get this from @userinfobot on Telegram.</p>
+                                    @error('telegram_chat_id')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
