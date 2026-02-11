@@ -40,26 +40,20 @@ class UserController extends Controller
         if ($request->hasFile('profile_image')) {
             $uploadedFile = $request->file('profile_image');
             
-            // Check if Cloudinary credentials are set because Cloudinary package crashes if config is missing
-            $hasCloudinary = !empty(env('CLOUDINARY_URL')) || (!empty(env('CLOUDINARY_CLOUD_NAME')) && !empty(env('CLOUDINARY_KEY')) && !empty(env('CLOUDINARY_SECRET')));
-
-            if ($hasCloudinary) {
-                try {
-                    $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($uploadedFile->getRealPath(), [
-                        'folder' => 'unitecture_users',
-                        'resource_type' => 'auto'
-                    ]);
-                    $imageUrl = $uploadResult->getSecurePath();
-                } catch (\Exception $e) {
-                    \Log::error('Cloudinary upload failed: ' . $e->getMessage());
-                    // Fallback to local if Cloudinary fails
-                     $path = $uploadedFile->store('profile_images', 'public');
-                    $imageUrl = asset('storage/' . $path);
+            try {
+                // Upload to Cloudinary using Storage facade
+                $path = \Illuminate\Support\Facades\Storage::disk('cloudinary')
+                    ->putFile('unitecture_users', $uploadedFile);
+                
+                // Get the full URL from Cloudinary
+                $imageUrl = \Illuminate\Support\Facades\Storage::disk('cloudinary')->url($path);
+                
+                if (!$imageUrl) {
+                    throw new \Exception('Failed to get URL from Cloudinary');
                 }
-            } else {
-                // Fallback to local storage
-                $path = $uploadedFile->store('profile_images', 'public');
-                $imageUrl = asset('storage/' . $path);
+            } catch (\Exception $e) {
+                \Log::error('Cloudinary upload failed: ' . $e->getMessage());
+                return back()->withErrors(['profile_image' => 'Failed to upload image to Cloudinary.'])->withInput();
             }
         }
 
@@ -150,26 +144,20 @@ class UserController extends Controller
         if ($request->hasFile('profile_image')) {
             $uploadedFile = $request->file('profile_image');
 
-            // Check if Cloudinary credentials are set because Cloudinary package crashes if config is missing
-            $hasCloudinary = !empty(env('CLOUDINARY_URL')) || (!empty(env('CLOUDINARY_CLOUD_NAME')) && !empty(env('CLOUDINARY_KEY')) && !empty(env('CLOUDINARY_SECRET')));
-
-            if ($hasCloudinary) {
-                try {
-                    $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($uploadedFile->getRealPath(), [
-                        'folder' => 'unitecture_users',
-                        'resource_type' => 'auto'
-                    ]);
-                    $imageUrl = $uploadResult->getSecurePath();
-                } catch (\Exception $e) {
-                    \Log::error('Cloudinary upload failed: ' . $e->getMessage());
-                    // Fallback to local if Cloudinary fails
-                    $path = $uploadedFile->store('profile_images', 'public');
-                    $imageUrl = asset('storage/' . $path);
+            try {
+                // Upload to Cloudinary using Storage facade
+                $path = \Illuminate\Support\Facades\Storage::disk('cloudinary')
+                    ->putFile('unitecture_users', $uploadedFile);
+                
+                // Get the full URL from Cloudinary
+                $imageUrl = \Illuminate\Support\Facades\Storage::disk('cloudinary')->url($path);
+                
+                if (!$imageUrl) {
+                    throw new \Exception('Failed to get URL from Cloudinary');
                 }
-            } else {
-                // Fallback to local storage
-                $path = $uploadedFile->store('profile_images', 'public');
-                $imageUrl = asset('storage/' . $path);
+            } catch (\Exception $e) {
+                \Log::error('Cloudinary upload failed: ' . $e->getMessage());
+                return back()->withErrors(['profile_image' => 'Failed to upload image to Cloudinary.'])->withInput();
             }
         }
 
