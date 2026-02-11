@@ -16,20 +16,28 @@ class TaskController extends Controller
     private const TASKS_APP_LINK = 'http://hrms.unitecture.co/tasks';
 
     /**
-     * All available task statuses.
+     * All available task statuses with their human-readable labels.
      * New tasks default to 'not_started'.
      */
-    const STATUSES = [
-        'not_started',
-        'wip',
-        'correction',
-        'completed',
-        'revision',
-        'closed',
-        'hold',
-        'under_review',
-        'awaiting_resources',
+    const STATUS_LABELS = [
+        'not_started' => 'Not Started',
+        'wip' => 'WIP',
+        'correction' => 'Correction',
+        'completed' => 'Completed',
+        'revision' => 'Revision',
+        'closed' => 'Closed',
+        'hold' => 'Hold',
+        'under_review' => 'Under Review',
+        'awaiting_resources' => 'Awaiting Resources',
     ];
+
+    /**
+     * Get all available task status keys.
+     */
+    public static function getStatuses(): array
+    {
+        return array_keys(self::STATUS_LABELS);
+    }
 
     /**
      * All available task stages.
@@ -48,7 +56,12 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $scope = $request->get('scope', 'assigned');
+        $scopeParam = $request->get('scope', 'assigned');
+        $scopes = array_filter(explode(',', $scopeParam));
+        if (empty($scopes)) {
+            $scopes = ['assigned'];
+        }
+        $scopeParam = implode(',', $scopes);
 
         // Ensure priorities and stages reflect the latest (fallback if scheduler hasn't run yet)
         Task::bulkSyncPrioritiesFromDeadlines();
@@ -60,38 +73,49 @@ class TaskController extends Controller
                 ->with(['project', 'assignees', 'taggedUsers'])
                 ->latest()
                 ->get();
-            $scope = 'assigned';
-        } elseif ($user->isSuperAdmin() && ($scope === 'all' || $scope === 'assigned')) {
-            // Super Admin can see all tasks in the firm
-            if ($scope === 'all') {
-                $tasks = Task::with(['project', 'assignees', 'taggedUsers'])
-                    ->latest()
-                    ->get();
-            } else {
-                // If 'assigned' scope is selected, show only their tasks
-                $tasks = $user->tasks()
-                    ->with(['project', 'assignees', 'taggedUsers'])
-                    ->latest()
-                    ->get();
-            }
-        } elseif ($scope === 'team' && ($user->isSupervisor() || $user->isAdmin())) {
-            // Team tasks: tasks assigned to team members
-            $teamIds = User::where('reporting_to', $user->id)
-                ->orWhere('secondary_supervisor_id', $user->id)
-                ->pluck('id');
-            $tasks = Task::whereHas('assignees', function ($query) use ($teamIds) {
-                $query->whereIn('users.id', $teamIds);
-            })
-                ->with(['project', 'assignees', 'taggedUsers'])
-                ->latest()
-                ->get();
+            $scopeParam = 'assigned';
         } else {
-            // Assigned to me (admin/supervisor)
-            $tasks = $user->tasks()
-                ->with(['project', 'assignees', 'taggedUsers'])
-                ->latest()
-                ->get();
-            $scope = 'assigned';
+            // Admin / Supervisor / SuperAdmin
+            $query = Task::with(['project', 'assignees', 'taggedUsers']);
+
+            // If 'all' is requested and allowed (SuperAdmin), return all tasks.
+            // We prioritize 'all' if selected.
+            if ($user->isSuperAdmin() && in_array('all', $scopes)) {
+                // No additional filtering needed for all tasks
+            } else {
+                // Filter by assigned and/or team
+                $query->where(function ($q) use ($scopes, $user) {
+                    $hasCondition = false;
+
+                    if (in_array('assigned', $scopes)) {
+                        $q->orWhereHas('assignees', function ($subQ) use ($user) {
+                            $subQ->where('users.id', $user->id);
+                        });
+                        $hasCondition = true;
+                    }
+
+                    if (in_array('team', $scopes) && ($user->isSupervisor() || $user->isAdmin())) {
+                        $teamIds = User::where('reporting_to', $user->id)
+                            ->orWhere('secondary_supervisor_id', $user->id)
+                            ->pluck('id');
+
+                        $q->orWhereHas('assignees', function ($subQ) use ($teamIds) {
+                            $subQ->whereIn('users.id', $teamIds);
+                        });
+                        $hasCondition = true;
+                    }
+
+                    // Fallback to assigned if no valid restriction was added (e.g. only 'team' selected but not authorized)
+                    // Or if no scopes selected (though we defaulted to assigned above)
+                    if (!$hasCondition) {
+                        $q->whereHas('assignees', function ($subQ) use ($user) {
+                            $subQ->where('users.id', $user->id);
+                        });
+                    }
+                });
+            }
+
+            $tasks = $query->latest()->get();
         }
 
         // Format assignees' and tagged users' profile images
@@ -152,10 +176,14 @@ class TaskController extends Controller
             return $u;
         });
 
-        $statuses = self::STATUSES;
+        $statuses = self::STATUS_LABELS;
         $stages = self::STAGES;
         $showTeamToggle = $user->isSupervisor() || $user->isAdmin();
         $showAllToggle = $user->isSuperAdmin();
+
+        // Pass scope back to view (as string)
+        $scope = $scopeParam;
+
         return view('tasks.index', compact('tasks', 'statuses', 'stages', 'counts', 'employees', 'scope', 'showTeamToggle', 'showAllToggle'));
     }
 
@@ -205,7 +233,7 @@ class TaskController extends Controller
             return $task;
         });
 
-        $statuses = self::STATUSES;
+        $statuses = self::STATUS_LABELS;
         $stages = self::STAGES;
         return view('tasks.assigned', compact('tasks', 'statuses', 'stages', 'user'));
     }
@@ -224,16 +252,16 @@ class TaskController extends Controller
         Task::bulkSyncOverdueStages();
 
         $user = Auth::user();
-        
+
         // Get team member IDs (primary + secondary subordinates)
         $teamIds = User::where('reporting_to', $user->id)
             ->orWhere('secondary_supervisor_id', $user->id)
             ->pluck('id');
-        
+
         // Get tasks assigned to team members
         $tasks = Task::whereHas('assignees', function ($query) use ($teamIds) {
-                $query->whereIn('users.id', $teamIds);
-            })
+            $query->whereIn('users.id', $teamIds);
+        })
             ->with(['project', 'assignees', 'taggedUsers'])
             ->latest()
             ->get();
@@ -283,7 +311,7 @@ class TaskController extends Controller
             return $u;
         });
 
-        $statuses = self::STATUSES;
+        $statuses = self::STATUS_LABELS;
         $stages = self::STAGES;
         return view('tasks.team', compact('tasks', 'statuses', 'stages', 'user', 'employees'));
     }
@@ -299,8 +327,8 @@ class TaskController extends Controller
 
         // Get all projects created by supervisors/admins (visible to all supervisors)
         $projects = Project::whereHas('creator', function ($query) {
-                $query->whereIn('role_id', [1, 2, 3]); // Supervisor, Admin, Super Admin
-            })
+            $query->whereIn('role_id', [1, 2, 3]); // Supervisor, Admin, Super Admin
+        })
             ->orderBy('name')
             ->get();
 
@@ -400,7 +428,7 @@ class TaskController extends Controller
 
         if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor'])) {
             if ($request->has('status')) {
-                $request->validate(['status' => 'in:' . implode(',', self::STATUSES)]);
+                $request->validate(['status' => 'in:' . implode(',', self::getStatuses())]);
             }
         }
 
@@ -564,7 +592,7 @@ class TaskController extends Controller
                 'stage' => $task->stage,
             ], 403);
         }
-        $allowedStatuses = self::STATUSES;
+        $allowedStatuses = self::getStatuses();
         if ($user->isEmployee()) {
             $allowedStatuses = ['under_review', 'completed', 'wip', 'revision'];
         }
@@ -668,7 +696,7 @@ class TaskController extends Controller
             // If supervisor created the task themselves, allow deletion
             if ($taskCreatedBy === $userId) {
                 $task->delete();
-                return request()->wantsJson() 
+                return request()->wantsJson()
                     ? response()->json(['message' => 'Task deleted successfully.'])
                     : redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
             }
@@ -824,10 +852,10 @@ class TaskController extends Controller
         $oldTaggedIds = $task->taggedUsers->pluck('id')->all();
 
         $task->assignees()->sync(
-            collect($assigneeIds)->mapWithKeys(fn ($id) => [$id => ['type' => 'assignee']])->all()
+            collect($assigneeIds)->mapWithKeys(fn($id) => [$id => ['type' => 'assignee']])->all()
         );
         $task->taggedUsers()->sync(
-            collect($taggedIds)->mapWithKeys(fn ($id) => [$id => ['type' => 'tagged']])->all()
+            collect($taggedIds)->mapWithKeys(fn($id) => [$id => ['type' => 'tagged']])->all()
         );
 
         // Notify newly added assignees and tagged users
