@@ -27,17 +27,6 @@
                             class="p-8 space-y-6">
                             @csrf
 
-                            @if($errors->any())
-                                <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200"
-                                    role="alert">
-                                    <ul class="list-disc pl-5">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Profile Image -->
                                 <div class="space-y-2 md:col-span-2">
