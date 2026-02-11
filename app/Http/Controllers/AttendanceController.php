@@ -338,114 +338,256 @@ class AttendanceController extends Controller
             default => 'employee',
         };
 
+        // --- Filter Inputs ---
         $date = $request->input('date', Carbon::today()->toDateString());
+        $selectedUserId = $request->input('user_id', 'all');
+        $reqMonth = $request->input('month', Carbon::now()->month);
+        $reqYear = $request->input('year', Carbon::now()->year);
 
-        // Fetch users based on role
+        // Fetch users for dropdown (Supervisor's team or All users for Admin)
         if ($role === 'supervisor') {
             $users = $authUser->subordinates()->get();
         } else {
             $users = User::all();
         }
 
-        Log::info('Attendance List Index Accessed', [
-            'user_id' => $authUser->id,
-            'role' => $role,
-            'fetched_users_count' => $users->count(),
-            'date_filter' => $date
-        ]);
+        // --- VIEW MODE 1: MONTHLY INDIVIDUAL REPORT (Specific Employee Selected) ---
+        if ($selectedUserId !== 'all') {
+            $isMonthlyReport = true;
+            $targetUser = User::find($selectedUserId);
 
-        // --- Daily Report Logic ---
-        $daily_summary = ['total' => $users->count(), 'present' => 0, 'leave' => 0, 'absent' => 0];
-        $daily_records = [];
-
-        // Pre-fetch leaves for the specific date to avoid multiple queries
-        $leavesOnDate = \App\Models\Leave::where('status', 'approved')
-            ->whereDate('start_date', '<=', $date)
-            ->whereDate('end_date', '>=', $date)
-            ->get()
-            ->groupBy('user_id');
-
-        foreach ($users as $user) {
-            $att = Attendance::where('user_id', $user->id)
-                ->where('date', $date)
-                ->first();
-
-            $status = $att ? $att->status : 'absent'; // Default absent if no record
-
-            // Fallback: Check for Approved Leave
-            if (($status === 'absent' || !$att) && $leavesOnDate->has($user->id)) {
-                $status = 'leave';
+            // Access Control: Supervisor can only view subordinates
+            if ($role === 'supervisor' && !$authUser->subordinates->contains($targetUser->id)) {
+                abort(403, 'Unauthorized access to this employee.');
             }
 
-            // Update Summary
-            if ($status === 'present')
-                $daily_summary['present']++;
-            elseif ($status === 'leave')
-                $daily_summary['leave']++;
-            else
-                $daily_summary['absent']++;
+            $currentViewDate = Carbon::createFromDate($reqYear, $reqMonth, 1)->format('F Y');
 
-            $attType = $att ? $att->type : 'biometric';
+            $start = Carbon::createFromDate($reqYear, $reqMonth, 1)->startOfMonth();
+            $end = $start->copy()->endOfMonth();
+            $limitDate = Carbon::now()->gt($end) ? $end : Carbon::now();
 
-            $login = $att && $att->clock_in ? Carbon::parse($att->clock_in)->format('h:i A') : ($attType === 'manual' ? '-' : '-');
-            $logout = $att && $att->clock_out ? Carbon::parse($att->clock_out)->format('h:i A') : ($attType === 'manual' ? '-' : '-');
+            // 1. Fetch Attendance
+            $attRecords = Attendance::where('user_id', $targetUser->id)
+                ->whereBetween('date', [$start, $end])
+                ->get()
+                ->keyBy(fn($att) => $att->date->format('Y-m-d'));
 
-            $class = match ($status) {
-                'present' => match ($attType) {
-                        'manual' => 'bg-blue-100 text-blue-800',
-                        'hybrid' => 'bg-purple-100 text-purple-800',
-                        default => 'bg-green-100 text-green-800', // Biometric
-                    },
-                'exempted' => 'bg-indigo-100 text-indigo-800', // Distinct for Exempted
-                'absent' => 'bg-red-100 text-red-800',
-                'leave' => 'bg-yellow-100 text-yellow-800',
-                default => 'bg-gray-100 text-gray-800',
-            };
+            // 2. Fetch Leaves
+            $leaves = \App\Models\Leave::where('user_id', $targetUser->id)
+                ->where('status', 'approved')
+                ->where('start_date', '<=', $end)
+                ->where('end_date', '>=', $start)
+                ->get();
 
-            $statusText = match ($status) {
-                'present' => match ($attType) {
-                        'manual' => 'Manual Attendance',
-                        'hybrid' => 'Present (Hybrid)',
-                        default => 'Present',
-                    },
-                'exempted' => 'Exempted',
-                'absent' => 'Absent',
-                'leave' => 'On Leave',
-                default => ucfirst($status),
-            };
+            // 3. Holidays
+            $holidays = \App\Models\Holiday::whereBetween('date', [$start, $end])
+                ->pluck('date')
+                ->map(fn($d) => $d->format('Y-m-d')) // Ensure string format
+                ->toArray();
 
-            $daily_records[] = [
-                'name' => $user->name,
-                'status' => $statusText,
-                'login' => $login,
-                'logout' => $logout,
-                'duration' => $att ? $att->duration : '-',
-                'class' => $class
-            ];
+            // Generate Daily Records for the Month
+            $daily_records = [];
+            $daily_summary = ['total' => $start->daysInMonth, 'present' => 0, 'leave' => 0, 'absent' => 0];
+
+            $curr = $start->copy(); // Iterate full month (Reverse Order)
+
+            while ($curr->lte($end)) {
+                $dateStr = $curr->toDateString();
+                $isFuture = $curr->isFuture() && !$curr->isToday();
+                // Note: isFuture() is strictly > now.
+                // We want to suppress future dates unless it's a holiday/sunday maybe?
+                // Existing logic: if future, status is '-'.
+
+                $status = 'absent';
+                $login = '-';
+                $logout = '-';
+                $duration = '-';
+                $class = 'bg-red-100 text-red-800';
+
+                if ($attRecord = $attRecords->get($dateStr)) {
+                    $status = $attRecord->status;
+                    $login = $attRecord->clock_in ? Carbon::parse($attRecord->clock_in)->format('h:i A') : '-';
+                    $logout = $attRecord->clock_out ? Carbon::parse($attRecord->clock_out)->format('h:i A') : '-';
+                    $duration = $attRecord->duration ?? '-';
+                } else {
+                    if (in_array($dateStr, $holidays)) {
+                        $status = 'Holiday';
+                        $class = 'bg-pink-50 text-pink-600';
+                    } elseif ($curr->isSunday()) {
+                        $status = 'Sunday';
+                        $class = 'bg-gray-100 text-gray-600';
+                    } elseif ($curr->gt(Carbon::now())) {
+                        $status = '-';
+                        $class = 'bg-gray-50 text-gray-400';
+                    } else {
+                        // Check Leave
+                        $isLeave = false;
+                        foreach ($leaves as $leave) {
+                            if ($curr->between($leave->start_date, $leave->end_date)) {
+                                $isLeave = true;
+                                break;
+                            }
+                        }
+                        if ($isLeave) {
+                            $status = 'leave';
+                        }
+                    }
+                }
+
+                // Formatting
+                $statusText = match ($status) {
+                    'present' => 'Present',
+                    'exempted' => 'Exempted',
+                    'leave' => 'On Leave',
+                    'absent' => 'Absent',
+                    'Holiday' => 'Holiday',
+                    'Sunday' => 'Sunday',
+                    '-' => '-',
+                    default => ucfirst($status),
+                };
+
+                $class = match ($status) {
+                    'present' => 'bg-green-100 text-green-800',
+                    'exempted' => 'bg-indigo-100 text-indigo-800',
+                    'leave' => 'bg-yellow-100 text-yellow-800',
+                    'absent' => 'bg-red-100 text-red-800',
+                    'Holiday', 'Sunday', '-' => 'bg-gray-50 text-gray-500',
+                    default => 'bg-red-100 text-red-800',
+                };
+
+                if (isset($attRecord) && $attRecord->type === 'manual' && $status === 'present') {
+                    $statusText = 'Present (Manual)';
+                    $class = 'bg-blue-100 text-blue-800';
+                }
+
+                // Counts (Only up to today/limitDate for accuracy in summary)
+                if ($curr->lte($limitDate) && $status !== '-') {
+                    if ($status === 'present' || $status === 'exempted')
+                        $daily_summary['present']++;
+                    elseif ($status === 'leave')
+                        $daily_summary['leave']++;
+                    elseif ($status === 'absent')
+                        $daily_summary['absent']++;
+                }
+
+                $daily_records[] = [
+                    'date' => $curr->isoFormat('MMM DD, ddd'),
+                    'status' => $statusText,
+                    'login' => $login,
+                    'logout' => $logout,
+                    'duration' => $duration,
+                    'class' => $class
+                ];
+
+                $curr->addDay();
+            }
         }
 
-        // --- Cumulative Report Logic ---
-        $reqMonth = $request->input('month', Carbon::now()->month);
-        $reqYear = $request->input('year', Carbon::now()->year);
+        // --- VIEW MODE 2: DAILY TEAM REPORT (All Employees / Default) ---
+        else {
+            $isMonthlyReport = false;
+
+            Log::info('Attendance List Index Accessed', [
+                'user_id' => $authUser->id,
+                'role' => $role,
+                'fetched_users_count' => $users->count(),
+                'date_filter' => $date
+            ]);
+
+            // --- Daily Report Logic ---
+            $daily_summary = ['total' => $users->count(), 'present' => 0, 'leave' => 0, 'absent' => 0];
+            $daily_records = [];
+
+            // Pre-fetch leaves for the specific date to avoid multiple queries
+            $leavesOnDate = \App\Models\Leave::where('status', 'approved')
+                ->whereDate('start_date', '<=', $date)
+                ->whereDate('end_date', '>=', $date)
+                ->get()
+                ->groupBy('user_id');
+
+            foreach ($users as $user) {
+                $att = Attendance::where('user_id', $user->id)
+                    ->where('date', $date)
+                    ->first();
+
+                $status = $att ? $att->status : 'absent';
+
+                // Fallback: Check for Approved Leave
+                if (($status === 'absent' || !$att) && $leavesOnDate->has($user->id)) {
+                    $status = 'leave';
+                }
+
+                // Update Summary
+                if ($status === 'present')
+                    $daily_summary['present']++;
+                elseif ($status === 'leave')
+                    $daily_summary['leave']++;
+                else
+                    $daily_summary['absent']++;
+
+                $attType = $att ? $att->type : 'biometric';
+
+                $login = $att && $att->clock_in ? Carbon::parse($att->clock_in)->format('h:i A') : ($attType === 'manual' ? '-' : '-');
+                $logout = $att && $att->clock_out ? Carbon::parse($att->clock_out)->format('h:i A') : ($attType === 'manual' ? '-' : '-');
+
+                $class = match ($status) {
+                    'present' => match ($attType) {
+                            'manual' => 'bg-blue-100 text-blue-800',
+                            'hybrid' => 'bg-purple-100 text-purple-800',
+                            default => 'bg-green-100 text-green-800',
+                        },
+                    'exempted' => 'bg-indigo-100 text-indigo-800',
+                    'absent' => 'bg-red-100 text-red-800',
+                    'leave' => 'bg-yellow-100 text-yellow-800',
+                    default => 'bg-gray-100 text-gray-800',
+                };
+
+                $statusText = match ($status) {
+                    'present' => match ($attType) {
+                            'manual' => 'Manual Attendance',
+                            'hybrid' => 'Present (Hybrid)',
+                            default => 'Present',
+                        },
+                    'exempted' => 'Exempted',
+                    'absent' => 'Absent',
+                    'leave' => 'On Leave',
+                    default => ucfirst($status),
+                };
+
+                $daily_records[] = [
+                    'name' => $user->name,
+                    'status' => $statusText,
+                    'login' => $login,
+                    'logout' => $logout,
+                    'duration' => $att ? $att->duration : '-',
+                    'class' => $class
+                ];
+            }
+        }
+
+        // --- Common Cumulative Report Logic (Right Side) ---
+        // Always calculated for the *Selected Month/Year* regardless of left-side view
+        // Note: Logic allows filtering cumulative report by Month/Year too.
 
         $startOfMonth = Carbon::createFromDate($reqYear, $reqMonth, 1)->startOfMonth();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
         // Calculate Holidays in range (Full Month)
-        $holidays = \App\Models\Holiday::whereBetween('date', [$startOfMonth, $endOfMonth])->pluck('date')->toArray();
-        $holidayCount = count($holidays);
+        $holidaysCb = \App\Models\Holiday::whereBetween('date', [$startOfMonth, $endOfMonth])->pluck('date')->toArray();
+        $holidayCount = count($holidaysCb);
 
         // Calculate Sundays in range (Full Month)
         $sundays = 0;
         $tempDate = $startOfMonth->copy();
         while ($tempDate->lte($endOfMonth)) {
             // Check if Sunday and NOT already a holiday
-            if ($tempDate->isSunday() && !in_array($tempDate->toDateString(), $holidays)) {
+            if ($tempDate->isSunday() && !in_array($tempDate->toDateString(), $holidaysCb)) {
                 $sundays++;
             }
             $tempDate->addDay();
         }
 
-        // Calculate "Total Working Days" (Full Month Total Days - Sundays - Holidays)
+        // Calculate "Total Working Days"
         $daysInMonth = (int) $startOfMonth->diffInDays($endOfMonth) + 1;
         $totalWorkingDays = (int) ($daysInMonth - $holidayCount - $sundays);
         $totalHolidaysAndSundays = (int) ($holidayCount + $sundays);
@@ -507,7 +649,7 @@ class AttendanceController extends Controller
 
             $tempElapsed = $startOfMonth->copy();
             while ($tempElapsed->lte($limitDate)) {
-                $isHoliday = in_array($tempElapsed->toDateString(), $holidays);
+                $isHoliday = in_array($tempElapsed->toDateString(), $holidaysCb);
                 $isSunday = $tempElapsed->isSunday();
 
                 if (!$isHoliday && !$isSunday) {
@@ -516,8 +658,6 @@ class AttendanceController extends Controller
                 $tempElapsed->addDay();
             }
 
-            // Absent is Potential Working Days Elapsed - (Present + Leaves)
-            // Existing logic had explicit and implicit checks, simplified here to:
             $totalAbsent = max(0, $potentialWorkingDaysElapsed - $presentCount - $leaveCount);
 
             // Calculate Late Marks
@@ -525,7 +665,6 @@ class AttendanceController extends Controller
             foreach ($monthAtts as $att) {
                 if ($att->clock_in) {
                     $clockInTime = \Carbon\Carbon::parse($att->clock_in);
-                    // Check if time is strictly after 09:40:00
                     if ($clockInTime->format('H:i') > '09:40') {
                         $lateMarks++;
                     }
@@ -541,7 +680,7 @@ class AttendanceController extends Controller
             ];
         }
 
-        return view('attendance.list', compact('role', 'daily_summary', 'daily_records', 'cumulative_summary', 'cumulative_records', 'users'));
+        return view('attendance.list', compact('role', 'daily_summary', 'daily_records', 'cumulative_summary', 'cumulative_records', 'users', 'isMonthlyReport', 'selectedUserId', 'reqMonth', 'reqYear'));
     }
 
     public function exception()
@@ -605,16 +744,32 @@ class AttendanceController extends Controller
 
         $type = $request->input('type', 'self');
 
-        // Headers for CSV download
-        $fileName = "attendance_" . date('Y-m-d_H-i') . ".csv";
+        // Determine Filename
+        if ($type === 'employee_monthly') {
+            $targetUserId = $request->input('user_id');
+            $targetUser = $targetUserId ? \App\Models\User::find($targetUserId) : null;
+
+            if ($targetUser) {
+                $reqMonth = $request->input('month', \Carbon\Carbon::now()->month);
+                $reqYear = $request->input('year', \Carbon\Carbon::now()->year);
+                $monthName = \Carbon\Carbon::createFromDate($reqYear, $reqMonth, 1)->format('M'); // Jan, Feb etc.
+
+                // "madhav rathi jan 2026 attendance.csv"
+                $fileName = strtolower($targetUser->full_name) . " " . strtolower($monthName) . " " . $reqYear . " attendance.csv";
+            } else {
+                $fileName = "attendance_" . date('Y-m-d_H-i') . ".csv";
+            }
+        } else {
+            $fileName = "attendance_" . date('Y-m-d_H-i') . ".csv";
+        }
+
         $headers = [
             "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
+            "Content-Disposition" => "attachment; filename=\"$fileName\"",
             "Pragma" => "no-cache",
             "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
             "Expires" => "0"
         ];
-
         $callback = function () use ($user, $request, $type) {
             $file = fopen('php://output', 'w');
 
