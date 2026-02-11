@@ -102,9 +102,17 @@
                 @endif
 
                  @if(session('success'))
-                    <div class="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm">
+                    <div id="successBanner" class="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm">
                         {!! session('success') !!}
                     </div>
+                    <script>
+                        setTimeout(() => {
+                            const banner = document.getElementById('successBanner');
+                            if (banner) {
+                                banner.style.display = 'none';
+                            }
+                        }, 2000);
+                    </script>
                 @endif
 
                 <!-- Leaves List -->
@@ -155,7 +163,8 @@
                                                 // Staff Flow: Self -> Super Admin
                                                 else if ($isStaff) {
                                                     $selfDone = true;
-                                                    $superadminDone = ($s === 'approved_by_superadmin');
+                                                    // Super Admin approves = 'approved' status (or 'approved_by_superadmin' in some cases)
+                                                    $superadminDone = ($s === 'approved' || $s === 'approved_by_superadmin');
                                                     $superadminRejected = ($s === 'rejected');
                                                 }
                                             @endphp

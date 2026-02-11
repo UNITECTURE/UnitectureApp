@@ -79,9 +79,66 @@
 <body class="font-sans antialiased text-slate-800 bg-[#F8F9FB]">
     <div id="app" class="relative">
         @yield('content')
+        
+        <!-- Flash Messages / Alerts - LARGE BANNER STYLE -->
+        @if ($errors->any())
+            <div id="error-alert" class="fixed top-0 left-0 right-0 z-50 w-full animate-in slide-in-from-top-2 duration-300">
+                <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl bg-gradient-to-r from-red-500 to-red-600">
+                    <div class="max-w-7xl mx-auto flex items-start justify-between gap-4">
+                        <div class="flex items-start gap-3 flex-1">
+                            <div class="text-3xl sm:text-4xl font-bold text-white flex-shrink-0">✕</div>
+                            <div class="flex-1">
+                                <p class="text-white text-lg sm:text-xl font-bold">Validation Error</p>
+                                <div class="text-white/90 text-sm mt-2 space-y-1">
+                                    @foreach ($errors->all() as $error)
+                                        <p>• {{ $error }}</p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" 
+                            class="text-white hover:text-white/80 text-3xl font-bold flex-shrink-0 p-2"
+                            onclick="document.getElementById('error-alert').remove()">
+                            ×
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
+        
+        @if (session('error'))
+            <div id="error-alert-session" class="fixed top-0 left-0 right-0 z-50 w-full animate-in slide-in-from-top-2 duration-300">
+                <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl bg-gradient-to-r from-red-500 to-red-600">
+                    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3 flex-1">
+                            <div class="text-3xl sm:text-4xl font-bold text-white">✕</div>
+                            <div>
+                                <p class="text-white text-lg sm:text-xl font-bold">Error!</p>
+                                <p class="text-white/90 text-sm mt-1">{{ session('error') }}</p>
+                            </div>
+                        </div>
+                        <button type="button" 
+                            class="text-white hover:text-white/80 text-3xl font-bold p-2"
+                            onclick="document.getElementById('error-alert-session').remove();">
+                            ×
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alert = document.getElementById('error-alert-session');
+                    if (alert) {
+                        alert.style.opacity = '0';
+                        alert.style.transition = 'opacity 0.3s ease-in';
+                        setTimeout(() => alert.remove(), 300);
+                    }
+                }, 5000);
+            </script>
+        @endif
     </div>
 
-    {{-- Flash Messages - All popups removed, use inline messages at page top instead --}}
+    {{-- Flash Messages - Now displayed prominently at top --}}
 
     {{-- Error popup removed - errors now shown inline at page top --}}
 </body>

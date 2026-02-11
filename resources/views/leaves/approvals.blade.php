@@ -168,7 +168,8 @@
                                                 // Staff Flow: Self -> Super Admin
                                                 else if ($isStaff) {
                                                     $selfDone = true;
-                                                    $superadminDone = ($s === 'approved_by_superadmin');
+                                                    // Super Admin approves = 'approved' status (or 'approved_by_superadmin' in some cases)
+                                                    $superadminDone = ($s === 'approved' || $s === 'approved_by_superadmin');
                                                     $superadminRejected = ($s === 'rejected');
                                                 }
                                             @endphp
@@ -268,21 +269,20 @@
                                                 $isEmployee = !in_array($requesterRoleId, [1, 2, 3]);
                                                 $isStaff = in_array($requesterRoleId, [1, 2, 3]);
                                                 
-                                                // Determine if actions should be enabled
+                                                // NEW FLOW: Super Admin has DIRECT AUTHORITY
                                                 $canTakeAction = false;
                                                 
-                                                if ($isEmployee) {
-                                                    // Employee leaves: Supervisor acts on 'pending', Admin acts on 'approved_by_supervisor'
-                                                    if ($isSupervisor) {
-                                                        $canTakeAction = $leave->status === 'pending';
-                                                    } elseif ($isAdmin) {
-                                                        $canTakeAction = $leave->status === 'approved_by_supervisor';
+                                                if ($isSuperAdmin) {
+                                                    // Super Admin can act on ANY leave that is still PENDING (has priority)
+                                                    $canTakeAction = ($leave->status === 'pending');
+                                                } elseif ($isSupervisor) {
+                                                    // Supervisor can only act on EMPLOYEE leaves that are PENDING (if Super Admin hasn't acted yet)
+                                                    if ($isEmployee && $leave->status === 'pending') {
+                                                        $canTakeAction = true;
                                                     }
-                                                } elseif ($isStaff) {
-                                                    // Staff leaves: ONLY Super Admin (role_id 3) can act on 'pending'
-                                                    if ($isSuperAdmin) {
-                                                        $canTakeAction = $leave->status === 'pending';
-                                                    }
+                                                } elseif ($isAdmin) {
+                                                    // Admin cannot approve in new flow - only Super Admin can
+                                                    $canTakeAction = false;
                                                 }
                                             @endphp
 
@@ -548,11 +548,11 @@
             // Parse JSON for both successful and error responses
             return response.json().then(data => ({
                 ok: response.ok,
-                status: response.status,
+                httpStatus: response.status,
                 data: data
             }));
         })
-        .then(({ ok, status, data }) => {
+        .then(({ ok, httpStatus, data }) => {
             setLoadingState(action, false);
             if (ok && data.success) {
                 closeReviewModal();
