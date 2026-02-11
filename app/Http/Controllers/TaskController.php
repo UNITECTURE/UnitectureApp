@@ -16,20 +16,28 @@ class TaskController extends Controller
     private const TASKS_APP_LINK = 'http://hrms.unitecture.co/tasks';
 
     /**
-     * All available task statuses.
+     * All available task statuses with their human-readable labels.
      * New tasks default to 'not_started'.
      */
-    const STATUSES = [
-        'not_started',
-        'wip',
-        'correction',
-        'completed',
-        'revision',
-        'closed',
-        'hold',
-        'under_review',
-        'awaiting_resources',
+    const STATUS_LABELS = [
+        'not_started' => 'Not Started',
+        'wip' => 'WIP',
+        'correction' => 'Correction',
+        'completed' => 'Completed',
+        'revision' => 'Revision',
+        'closed' => 'Closed',
+        'hold' => 'Hold',
+        'under_review' => 'Under Review',
+        'awaiting_resources' => 'Awaiting Resources',
     ];
+
+    /**
+     * Get all available task status keys.
+     */
+    public static function getStatuses(): array
+    {
+        return array_keys(self::STATUS_LABELS);
+    }
 
     /**
      * All available task stages.
@@ -168,7 +176,7 @@ class TaskController extends Controller
             return $u;
         });
 
-        $statuses = self::STATUSES;
+        $statuses = self::STATUS_LABELS;
         $stages = self::STAGES;
         $showTeamToggle = $user->isSupervisor() || $user->isAdmin();
         $showAllToggle = $user->isSuperAdmin();
@@ -225,7 +233,7 @@ class TaskController extends Controller
             return $task;
         });
 
-        $statuses = self::STATUSES;
+        $statuses = self::STATUS_LABELS;
         $stages = self::STAGES;
         return view('tasks.assigned', compact('tasks', 'statuses', 'stages', 'user'));
     }
@@ -303,7 +311,7 @@ class TaskController extends Controller
             return $u;
         });
 
-        $statuses = self::STATUSES;
+        $statuses = self::STATUS_LABELS;
         $stages = self::STAGES;
         return view('tasks.team', compact('tasks', 'statuses', 'stages', 'user', 'employees'));
     }
@@ -420,7 +428,7 @@ class TaskController extends Controller
 
         if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor'])) {
             if ($request->has('status')) {
-                $request->validate(['status' => 'in:' . implode(',', self::STATUSES)]);
+                $request->validate(['status' => 'in:' . implode(',', self::getStatuses())]);
             }
         }
 
@@ -584,7 +592,7 @@ class TaskController extends Controller
                 'stage' => $task->stage,
             ], 403);
         }
-        $allowedStatuses = self::STATUSES;
+        $allowedStatuses = self::getStatuses();
         if ($user->isEmployee()) {
             $allowedStatuses = ['under_review', 'completed', 'wip', 'revision'];
         }

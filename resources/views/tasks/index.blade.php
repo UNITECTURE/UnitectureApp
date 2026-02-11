@@ -929,16 +929,17 @@
                 },
 
                 get statusOptions() {
+                    const allKeys = Object.keys(this.statuses);
                     // Supervisors/Admins (who can edit due dates) see all statuses
                     if (this.canEditDue) {
-                        return this.statuses;
+                        return allKeys;
                     }
 
                     // Employees are limited to these statuses.
                     // They may still SEE other statuses (e.g. "Correction") on the task,
                     // but cannot select them from the dropdown.
                     const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
-                    return this.statuses.filter(status => allowedForEmployees.includes(status));
+                    return allKeys.filter(status => allowedForEmployees.includes(status));
                 },
 
                 async saveAndClose() {
@@ -1202,7 +1203,10 @@
                 },
 
                 formatStatus(status) {
-                    return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    if (this.statuses && this.statuses[status]) {
+                        return this.statuses[status];
+                    }
+                    return status ? status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : '';
                 },
 
                 formatStage(stage) {
