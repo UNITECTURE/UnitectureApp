@@ -499,46 +499,28 @@ class LeaveController extends Controller
     /**
      * Cancel a leave request by the employee
      */
-    public function cancel(Leave $leave)
+    public function cancel(Request $request, Leave $leave)
     {
         $user = Auth::user();
         
         // Load the user relationship to access reporting_to and secondary_supervisor_id
         $leave->load('user');
 
-        // Debug logging - can be removed later
-        \Log::info('Cancel Leave Attempt', [
-            'current_user_id' => $user->id,
-            'current_user_role_id' => $user->role_id,
-            'leave_id' => $leave->id,
-            'leave_user_id' => $leave->user_id,
-            'leave_user_reporting_to' => $leave->user ? $leave->user->reporting_to : null,
-            'leave_user_secondary_supervisor' => $leave->user ? $leave->user->secondary_supervisor_id : null,
-        ]);
-
-        // Check if user can cancel this leave:
-        // - Own leave request
-        // - Supervisor (primary or secondary)
-        // - Admin or Super Admin
-        $isOwnLeave = ($leave->user_id == $user->id);
+        // Simple authorization - allow if ANY of these is true:
+        // 1. User owns the leave
+        // 2. User is admin (role_id = 2)
+        // 3. User is super admin (role_id = 3)
+        // 4. User is the supervisor
+        $isOwner = ($leave->user_id == $user->id);
+        $isAdmin = ($user->role_id == 2 || $user->role_id == 3);
         $isSupervisor = false;
+        
         if ($leave->user) {
             $isSupervisor = ($leave->user->reporting_to == $user->id || $leave->user->secondary_supervisor_id == $user->id);
         }
-        $isAdminOrSuperAdmin = in_array($user->role_id, [2, 3]);
 
-        \Log::info('Authorization Checks', [
-            'isOwnLeave' => $isOwnLeave,
-            'isSupervisor' => $isSupervisor,
-            'isAdminOrSuperAdmin' => $isAdminOrSuperAdmin,
-        ]);
-
-        if (!$isOwnLeave && !$isSupervisor && !$isAdminOrSuperAdmin) {
-            \Log::warning('Cancel Leave - Unauthorized', [
-                'user_id' => $user->id,
-                'leave_id' => $leave->id,
-            ]);
-            return back()->withErrors(['error' => 'You do not have permission to cancel this leave request.']);
+        if (!$isOwner && !$isAdmin && !$isSupervisor) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
         // Cannot cancel if the leave has already started (current date >= start date)
