@@ -503,22 +503,19 @@ class LeaveController extends Controller
     {
         $user = Auth::user();
         
-        // Load the user relationship
+        // Load the user relationship to access reporting_to and secondary_supervisor_id
         $leave->load('user');
 
-        // Allow cancellation if:
-        // 1. The user created the leave request
-        // 2. The user is the supervisor of the employee
-        // 3. The user is an admin (role_id 2)
-        // 4. The user is a super admin (role_id 3)
-        $canCancel = ($leave->user_id === $user->id) ||
-                     ($leave->user->reporting_to === $user->id) ||
-                     ($leave->user->secondary_supervisor_id === $user->id) ||
-                     ($user->role_id === 2) ||
-                     ($user->role_id === 3);
+        // Check if user can cancel this leave:
+        // - Own leave request
+        // - Supervisor (primary or secondary)
+        // - Admin or Super Admin
+        $isOwnLeave = ($leave->user_id == $user->id);
+        $isSupervisor = ($leave->user && ($leave->user->reporting_to == $user->id || $leave->user->secondary_supervisor_id == $user->id));
+        $isAdminOrSuperAdmin = in_array($user->role_id, [2, 3]);
 
-        if (!$canCancel) {
-            abort(403, 'Unauthorized action.');
+        if (!$isOwnLeave && !$isSupervisor && !$isAdminOrSuperAdmin) {
+            return back()->withErrors(['error' => 'You do not have permission to cancel this leave request.']);
         }
 
         // Cannot cancel if the leave has already started (current date >= start date)
