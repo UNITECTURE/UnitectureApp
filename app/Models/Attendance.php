@@ -40,7 +40,15 @@ class Attendance extends Model
             return;
         }
 
-        if (preg_match('/(-?\d+)\s*hrs?\s*(-?\d+)\s*mins?/i', $trimmed, $matches)) {
+        // Check for negative signs
+        if (str_contains($trimmed, '-')) {
+            \Illuminate\Support\Facades\Log::warning("Negative duration attempted for Attendance ID {$this->id}: '$trimmed'. Stack trace: " . json_encode(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)));
+
+            // Remove all negative signs
+            $trimmed = str_replace('-', '', $trimmed);
+        }
+
+        if (preg_match('/(\d+)\s*hrs?\s*(\d+)\s*mins?/i', $trimmed, $matches)) {
             $h = abs((int) $matches[1]);
             $m = abs((int) $matches[2]);
             $this->attributes['duration'] = "{$h} Hrs {$m} Mins";
@@ -49,8 +57,8 @@ class Attendance extends Model
 
         $hMatch = [];
         $mMatch = [];
-        preg_match('/(-?\d+)\s*h/i', $trimmed, $hMatch);
-        preg_match('/(-?\d+)\s*m/i', $trimmed, $mMatch);
+        preg_match('/(\d+)\s*h/i', $trimmed, $hMatch);
+        preg_match('/(\d+)\s*m/i', $trimmed, $mMatch);
 
         if (!empty($hMatch) || !empty($mMatch)) {
             $h = isset($hMatch[1]) ? abs((int) $hMatch[1]) : 0;
@@ -59,7 +67,21 @@ class Attendance extends Model
             return;
         }
 
-        $this->attributes['duration'] = $value;
+        $this->attributes['duration'] = $trimmed;
+    }
+
+    // Accessor to ensure duration is always positive when retrieved
+    public function getDurationAttribute($value)
+    {
+        if (!$value)
+            return $value;
+
+        // If it contains a negative sign, remove it for display
+        if (str_contains($value, '-')) {
+            return str_replace('-', '', $value);
+        }
+
+        return $value;
     }
 
     public function user()
