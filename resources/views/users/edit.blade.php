@@ -72,6 +72,29 @@
                                         placeholder="john@unitecture.com">
                                 </div>
 
+                                <!-- Password -->
+                                <div class="space-y-2">
+                                    <label for="password" class="text-sm font-semibold text-slate-700">Password</label>
+                                    <input type="password" name="password" id="password"
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('password') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                        placeholder="Enter new password">
+                                    <p class="text-xs text-slate-500">Leave empty to keep current password. Minimum 8 characters.</p>
+                                    @error('password')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="space-y-2">
+                                    <label for="password_confirmation" class="text-sm font-semibold text-slate-700">Confirm Password</label>
+                                    <input type="password" name="password_confirmation" id="password_confirmation"
+                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('password_confirmation') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                        placeholder="Confirm new password">
+                                    @error('password_confirmation')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
                                 <!-- Role -->
                                 <div class="space-y-2">
                                     <label for="role_id" class="text-sm font-semibold text-slate-700">Role</label>

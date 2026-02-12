@@ -13,7 +13,7 @@ class ProjectController extends Controller
     /**
      * Display a listing of all projects (visible to all supervisors).
      */
-    public function index()
+    public function index(Request $request)
     {
         // Only supervisors and admins can view projects
         if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
@@ -21,14 +21,24 @@ class ProjectController extends Controller
         }
 
         // Get all projects created by supervisors (or admins)
-        $projects = Project::with('creator')
+        $search = trim((string) $request->query('q', ''));
+
+        $projectsQuery = Project::with('creator')
             ->whereHas('creator', function ($query) {
                 $query->whereIn('role_id', [1, 2, 3]); // Supervisor, Admin, Super Admin
-            })
-            ->latest()
-            ->get();
+            });
 
-        return view('projects.index', compact('projects'));
+        if ($search !== '') {
+            $projectsQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('project_code', 'like', "%{$search}%")
+                    ->orWhere('project_custom_id', 'like', "%{$search}%");
+            });
+        }
+
+        $projects = $projectsQuery->latest()->get();
+
+        return view('projects.index', compact('projects', 'search'));
     }
 
     /**

@@ -2,17 +2,19 @@
 
 @section('content')
     <div class="flex h-screen bg-[#F8F9FB] overflow-hidden"
-         x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }}, {{ json_encode($scope ?? 'assigned') }}, {{ isset($showTeamToggle) && $showTeamToggle ? 'true' : 'false' }}, {{ isset($showAllToggle) && $showAllToggle ? 'true' : 'false' }})"
-         x-init="
-            @if(session('success'))
-                showToast('{{ addslashes(session('success')) }}', 'success');
-            @endif
-         ">
+        x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }}, {{ json_encode($scope ?? 'assigned') }}, {{ isset($showTeamToggle) && $showTeamToggle ? 'true' : 'false' }}, {{ isset($showAllToggle) && $showAllToggle ? 'true' : 'false' }})"
+        x-init="
+                        @if(session('success'))
+                            showToast('{{ addslashes(session('success')) }}', 'success');
+                        @endif
+                     ">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
-            if(auth()->user()->isAdmin()) $userRole = 'admin';
-            elseif(auth()->user()->isSupervisor()) $userRole = 'supervisor';
+            if (auth()->user()->isAdmin())
+                $userRole = 'admin';
+            elseif (auth()->user()->isSupervisor())
+                $userRole = 'supervisor';
         @endphp
         <x-sidebar :role="$userRole" />
 
@@ -47,7 +49,9 @@
                                     :class="view === 'horizontal' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
                                     title="List">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                        <path fill-rule="evenodd"
+                                            d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                            clip-rule="evenodd"></path>
                                     </svg>
                                 </button>
                             </div>
@@ -55,27 +59,29 @@
                             <!-- My Tasks / My Team Tasks / All Tasks toggle (supervisor/admin/super admin) -->
                             <template x-if="showTeamToggle">
                                 <div class="flex bg-white border border-slate-200 shadow-sm p-0.5 rounded-lg gap-0.5">
-                                    <a href="{{ route('tasks.index', ['scope' => 'assigned']) }}"
+                                    <button type="button" @click="toggleScope('assigned')"
                                         class="p-2 rounded-md transition-all duration-200 flex items-center justify-center"
-                                        :class="scope === 'assigned' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
+                                        :class="hasScope('assigned') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
                                         title="My Tasks">
                                         <img src="{{ asset('images/single.svg') }}" class="w-5 h-5" alt="My Tasks" />
-                                    </a>
-                                    <a href="{{ route('tasks.index', ['scope' => 'team']) }}"
+                                    </button>
+                                    <button type="button" @click="toggleScope('team')"
                                         class="p-2 rounded-md transition-all duration-200 flex items-center justify-center"
-                                        :class="scope === 'team' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
+                                        :class="hasScope('team') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
                                         title="My Team Tasks">
                                         <img src="{{ asset('images/group.svg') }}" class="w-5 h-5" alt="My Team Tasks" />
-                                    </a>
+                                    </button>
                                     <template x-if="showAllToggle">
-                                        <a href="{{ route('tasks.index', ['scope' => 'all']) }}"
+                                        <button type="button" @click="toggleScope('all')"
                                             class="p-2 rounded-md transition-all duration-200 flex items-center justify-center"
-                                            :class="scope === 'all' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
+                                            :class="hasScope('all') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'"
                                             title="All Tasks">
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                                <path fill-rule="evenodd"
+                                                    d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd"></path>
                                             </svg>
-                                        </a>
+                                        </button>
                                     </template>
                                 </div>
                             </template>
@@ -84,7 +90,9 @@
                                 <a href="{{ route('tasks.create') }}"
                                     class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 shadow-md w-fit transition-all">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                        <path fill-rule="evenodd"
+                                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                            clip-rule="evenodd"></path>
                                     </svg>
                                     <span>Add Task</span>
                                 </a>
@@ -135,40 +143,49 @@
                         <div class="relative">
                             <input type="text" x-model="search" placeholder="Search tasks..."
                                 class="w-48 sm:w-56 pl-9 pr-4 py-2 border border-slate-200 rounded-full text-xs sm:text-sm bg-white text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
-                            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
                         <div x-show="showEmployeeFilter" class="relative flex-shrink-0" x-data="{ open: false }">
                             <button type="button" @click="open = !open"
                                 class="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-full text-xs sm:text-sm font-semibold bg-white text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-200 shadow-sm">
                                 <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                    </path>
                                 </svg>
                                 <span>Filter</span>
-                            <span x-show="filterEmployeeIds.length > 0" class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full" x-text="filterEmployeeIds.length"></span>
-                            <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        <div x-show="open" @click.outside="open = false"
-                            x-transition
-                            class="absolute right-0 mt-2 w-72 max-h-80 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg z-20 py-2">
-                            <div class="px-3 py-2 border-b border-slate-100">
-                                <button type="button" @click="filterEmployeeIds = []; open = false"
-                                    class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Clear filter</button>
+                                <span x-show="filterEmployeeIds.length > 0"
+                                    class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full"
+                                    x-text="filterEmployeeIds.length"></span>
+                                <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div x-show="open" @click.outside="open = false" x-transition
+                                class="absolute right-0 mt-2 w-72 max-h-80 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg z-20 py-2">
+                                <div class="px-3 py-2 border-b border-slate-100">
+                                    <button type="button" @click="filterEmployeeIds = []; open = false"
+                                        class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Clear
+                                        filter</button>
+                                </div>
+                                <template x-for="emp in employees" :key="emp.id">
+                                    <label class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 cursor-pointer">
+                                        <input type="checkbox" :checked="filterEmployeeIds.includes(emp.id)"
+                                            @change="toggleEmployeeFilter(emp.id)"
+                                            class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                        <img :src="emp.profile_image_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(emp.full_name || emp.name || '') + '&background=6366f1&color=fff&size=64')"
+                                            class="w-6 h-6 rounded-full object-cover" :alt="emp.full_name">
+                                        <span class="text-sm font-medium text-slate-700 truncate"
+                                            x-text="emp.full_name || emp.name || 'Unknown'"></span>
+                                    </label>
+                                </template>
                             </div>
-                            <template x-for="emp in employees" :key="emp.id">
-                                <label class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 cursor-pointer">
-                                    <input type="checkbox" :checked="filterEmployeeIds.includes(emp.id)"
-                                        @change="toggleEmployeeFilter(emp.id)"
-                                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                                    <img :src="emp.profile_image_url || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(emp.full_name || emp.name || '') + '&background=6366f1&color=fff&size=64')"
-                                        class="w-6 h-6 rounded-full object-cover" :alt="emp.full_name">
-                                    <span class="text-sm font-medium text-slate-700 truncate" x-text="emp.full_name || emp.name || 'Unknown'"></span>
-                                </label>
-                            </template>
-                        </div>
                         </div>
                     </div>
 
@@ -176,14 +193,11 @@
             </div>
 
             <!-- Toast Notification - LARGE BANNER -->
-            <div x-show="toast.show"
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:leave="transition ease-in duration-200"
-                 class="fixed top-0 left-0 right-0 z-50 w-full">
-                <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl"
-                     :class="toast.type === 'success' 
-                         ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
-                         : 'bg-gradient-to-r from-red-500 to-red-600'">
+            <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
+                x-transition:leave="transition ease-in duration-200" class="fixed top-0 left-0 right-0 z-50 w-full">
+                <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl" :class="toast.type === 'success' 
+                                     ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
+                                     : 'bg-gradient-to-r from-red-500 to-red-600'">
                     <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
                         <div class="flex items-center gap-3 flex-1">
                             <div class="text-3xl sm:text-4xl font-bold text-white">
@@ -191,11 +205,12 @@
                             </div>
                             <div>
                                 <p class="text-white text-lg sm:text-xl font-bold" x-text="toast.message"></p>
-                                <p class="text-white/80 text-sm mt-1" x-text="toast.type === 'success' ? 'Action completed successfully!' : 'Please try again or contact support'"></p>
+                                <p class="text-white/80 text-sm mt-1"
+                                    x-text="toast.type === 'success' ? 'Action completed successfully!' : 'Please try again or contact support'">
+                                </p>
                             </div>
                         </div>
-                        <button type="button" 
-                            class="text-white hover:text-white/80 text-3xl font-bold shrink-0 p-2"
+                        <button type="button" class="text-white hover:text-white/80 text-3xl font-bold shrink-0 p-2"
                             @click="toast.show = false">
                             ×
                         </button>
@@ -204,46 +219,48 @@
             </div>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 transition-all duration-300" :class="toast.show ? 'mt-32 sm:mt-36' : 'mt-0'">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 transition-all duration-300"
+                :class="toast.show ? 'mt-32 sm:mt-36' : 'mt-0'">
                 <!-- Overview: Task Cards Grid -->
-                <div x-show="view === 'overview' && filteredTasks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div x-show="view === 'overview' && filteredTasks.length > 0"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <template x-for="task in filteredTasks" :key="task.id">
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer group"
                             @click="openModal(task)">
                             <!-- Header: project + priority -->
                             <div class="flex items-start justify-between gap-3">
-                                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide" x-text="task.project?.name || 'No Project'"></div>
+                                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide"
+                                    x-text="task.project?.name || 'No Project'"></div>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold"
                                     :class="{
-                                        'bg-red-100 text-red-700': task.priority === 'high',
-                                        'bg-yellow-100 text-yellow-700': task.priority === 'medium',
-                                        'bg-green-100 text-green-700': task.priority === 'low',
-                                        'bg-purple-100 text-purple-700': task.priority === 'free'
-                                    }"
+                                                    'bg-red-100 text-red-700': task.priority === 'high',
+                                                    'bg-yellow-100 text-yellow-700': task.priority === 'medium',
+                                                    'bg-green-100 text-green-700': task.priority === 'low',
+                                                    'bg-purple-100 text-purple-700': task.priority === 'free'
+                                                }"
                                     x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
                                 </span>
                             </div>
 
                             <!-- Description -->
-                            <p class="mt-3 text-lg font-semibold leading-snug line-clamp-1"
-                                :class="task.status === 'closed'
-                                    ? 'text-slate-400 line-through'
-                                    : 'text-slate-900'"
-                                :title="task.description || ''"
-                                x-text="(task.description || '').length > 30 ? (task.description || '').substring(0, 30) + '...' : (task.description || '')"></p>
+                            <p class="mt-3 text-lg font-semibold leading-snug line-clamp-1" :class="task.status === 'closed'
+                                                ? 'text-slate-400 line-through'
+                                                : 'text-slate-900'" :title="task.description || ''"
+                                x-text="(task.description || '').length > 30 ? (task.description || '').substring(0, 30) + '...' : (task.description || '')">
+                            </p>
 
                             <!-- Status row -->
                             <div class="mt-4 mb-3 flex flex-wrap items-center gap-2">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
-                                    :class="getStatusBadgeColor(task.status)"
-                                    x-text="formatStatus(task.status)"></span>
+                                    :class="getStatusBadgeColor(task.status)" x-text="formatStatus(task.status)"></span>
                             </div>
 
                             <!-- Footer -->
                             <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-5 gap-3">
                                 <div class="flex items-center gap-2 min-w-0">
                                     <div class="flex -space-x-2 shrink-0">
-                                        <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
+                                        <template x-for="(assignee, index) in task.assignees.slice(0, 3)"
+                                            :key="assignee.id">
                                             <img :src="getProfileImageUrl(assignee)"
                                                 :alt="assignee.full_name || assignee.name"
                                                 :title="assignee.full_name || assignee.name"
@@ -275,9 +292,12 @@
                 </div>
 
                 <!-- Empty State (Overview) -->
-                <div x-show="view === 'overview' && filteredTasks.length === 0" class="flex flex-col items-center justify-center py-20">
+                <div x-show="view === 'overview' && filteredTasks.length === 0"
+                    class="flex flex-col items-center justify-center py-20">
                     <svg class="w-16 h-16 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                        </path>
                     </svg>
                     <p class="text-slate-500 font-medium">No tasks found</p>
                 </div>
@@ -286,58 +306,89 @@
                 <div x-show="view === 'vertical'" class="h-full overflow-x-auto overflow-y-hidden">
                     <div class="flex h-full gap-3 sm:gap-4 md:gap-6 items-start pb-4 w-full min-w-max">
                         <template x-for="stage in stages" :key="stage">
-                            <div class="flex-1 min-w-[280px] sm:min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-lg sm:rounded-xl border border-slate-200 max-h-full">
-                                <div class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-lg sm:rounded-t-xl">
+                            <div
+                                class="flex-1 min-w-[280px] sm:min-w-[20rem] flex flex-col h-full bg-slate-50 rounded-lg sm:rounded-xl border border-slate-200 max-h-full">
+                                <div
+                                    class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-lg sm:rounded-t-xl">
                                     <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0"
-                                            :class="{
-                                                'bg-red-500': stage === 'overdue',
-                                                'bg-yellow-500': stage === 'pending',
-                                                'bg-blue-500': stage === 'in_progress',
-                                                'bg-green-500': stage === 'completed'
-                                            }"></div>
-                                        <span class="text-xs sm:text-sm font-bold text-slate-700 uppercase truncate" x-text="formatStage(stage)"></span>
-                                        <span class="bg-slate-200 text-slate-600 px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold shrink-0" x-text="tasksByStage(stage).length"></span>
+                                        <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0" :class="{
+                                                            'bg-red-500': stage === 'overdue',
+                                                            'bg-yellow-500': stage === 'pending',
+                                                            'bg-blue-500': stage === 'in_progress',
+                                                            'bg-green-500': stage === 'completed'
+                                                        }"></div>
+                                        <span class="text-xs sm:text-sm font-bold text-slate-700 uppercase truncate"
+                                            x-text="formatStage(stage)"></span>
+                                        <span
+                                            class="bg-slate-200 text-slate-600 px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold shrink-0"
+                                            x-text="tasksByStage(stage).length"></span>
                                     </div>
                                 </div>
-                                <div class="flex-1 overflow-y-auto p-2 sm:p-3 space-y-2 sm:space-y-3" style="min-height: 100px;">
+                                <div class="flex-1 overflow-y-auto p-2 sm:p-3 space-y-2 sm:space-y-3"
+                                    style="min-height: 100px;">
                                     <template x-for="task in tasksByStage(stage)" :key="task.id">
                                         <div class="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-slate-100 cursor-pointer hover:shadow-md transition-all"
                                             @click="openModal(task)">
                                             <div class="flex items-start justify-between gap-2 mb-1.5 sm:mb-2">
-                                                <span class="text-sm sm:text-base font-bold shrink-0" :class="dueInClass(task)" x-text="dueIn(task)"></span>
+                                                <span class="text-sm sm:text-base font-bold shrink-0"
+                                                    :class="dueInClass(task)" x-text="dueIn(task)"></span>
                                                 <div class="flex flex-col items-end gap-0.5 min-w-0">
-                                                    <span class="text-[9px] sm:text-[10px] text-slate-500 truncate max-w-full" x-text="task.project?.name || 'No Project'"></span>
-                                                    <span class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0" :class="{
-                                                        'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                        'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
-                                                        'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                        'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
-                                                    }" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
+                                                    <span
+                                                        class="text-[9px] sm:text-[10px] text-slate-500 truncate max-w-full"
+                                                        x-text="task.project?.name || 'No Project'"></span>
+                                                    <span
+                                                        class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0"
+                                                        :class="{
+                                                                    'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                                    'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
+                                                                    'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                                    'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
+                                                                }"
+                                                        x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
                                             <p class="text-xs sm:text-sm font-bold leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words"
-                                               :class="task.status === 'closed'
-                                                   ? 'text-slate-400 line-through'
-                                                   : 'text-slate-800'"
-                                               x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')"></p>
-                                            <div class="flex flex-col gap-0.5 text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
+                                                :class="task.status === 'closed'
+                                                               ? 'text-slate-400 line-through'
+                                                               : 'text-slate-800'"
+                                                x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')">
+                                            </p>
+                                            <div
+                                                class="flex flex-col gap-0.5 text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
                                                 <div class="flex items-center gap-1">
-                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                        </path>
+                                                    </svg>
                                                     <span>Due: <span x-text="formatDate(task.end_date)"></span></span>
                                                 </div>
                                                 <div class="flex items-center gap-1">
-                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
                                                     <span>End: <span x-text="formatTime(task.end_date)"></span></span>
                                                 </div>
                                             </div>
-                                            <div class="flex items-center justify-between border-t border-slate-50 pt-2 sm:pt-3 mt-1.5 sm:mt-2 gap-2">
+                                            <div
+                                                class="flex items-center justify-between border-t border-slate-50 pt-2 sm:pt-3 mt-1.5 sm:mt-2 gap-2">
                                                 <div class="flex -space-x-1.5 sm:-space-x-2 overflow-hidden shrink-0">
-                                                    <template x-for="(assignee, index) in task.assignees.slice(0, 3)" :key="assignee.id">
-                                                        <img :src="getProfileImageUrl(assignee)" :alt="assignee.full_name || assignee.name" :title="assignee.full_name || assignee.name" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white object-cover shadow-sm">
+                                                    <template x-for="(assignee, index) in task.assignees.slice(0, 3)"
+                                                        :key="assignee.id">
+                                                        <img :src="getProfileImageUrl(assignee)"
+                                                            :alt="assignee.full_name || assignee.name"
+                                                            :title="assignee.full_name || assignee.name"
+                                                            class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white object-cover shadow-sm">
                                                     </template>
                                                     <template x-if="task.assignees.length > 3">
-                                                        <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[9px] sm:text-[10px] font-bold text-slate-600" :title="'+' + (task.assignees.length - 3)" x-text="'+' + (task.assignees.length - 3)"></div>
+                                                        <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[9px] sm:text-[10px] font-bold text-slate-600"
+                                                            :title="'+' + (task.assignees.length - 3)"
+                                                            x-text="'+' + (task.assignees.length - 3)"></div>
                                                     </template>
                                                 </div>
                                             </div>
@@ -350,44 +401,62 @@
                 </div>
 
                 <!-- Horizontal Table View -->
-                <div x-show="view === 'horizontal'" class="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden">
+                <div x-show="view === 'horizontal'"
+                    class="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-xs sm:text-sm min-w-[800px]">
                             <thead>
                                 <tr class="border-b border-slate-200 bg-slate-50">
-                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Sr No</th>
-                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Project Code</th>
-                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Task</th>
-                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Status</th>
-                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Stage</th>
-                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Assigned To</th>
-                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Start Date</th>
-                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">End Date</th>
-                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">Priority</th>
+                                    <th
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">
+                                        Sr No</th>
+                                    <th
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">
+                                        Project Code</th>
+                                    <th
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">
+                                        Task</th>
+                                    <th
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">
+                                        Status</th>
+                                    <th
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">
+                                        Stage</th>
+                                    <th
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">
+                                        Assigned To</th>
+                                    <th
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">
+                                        Start Date</th>
+                                    <th
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">
+                                        End Date</th>
+                                    <th
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-left font-bold text-slate-700 whitespace-nowrap">
+                                        Priority</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template x-for="(task, index) in filteredTasks" :key="task.id">
-                                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer" @click="openModal(task)">
-                                        <td class="px-3 sm:px-4 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="String(index + 1).padStart(2, '0')"></td>
-                                        <td class="px-3 sm:px-4 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap" x-text="task.project?.project_code || 'N/A'"></td>
+                                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
+                                        @click="openModal(task)">
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap"
+                                            x-text="String(index + 1).padStart(2, '0')"></td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 font-bold text-slate-900 whitespace-nowrap"
+                                            x-text="task.project?.project_code || 'N/A'"></td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 min-w-[200px]">
-                                            <div class="font-medium break-words line-clamp-2"
-                                                 :class="task.status === 'closed'
-                                                     ? 'text-slate-400 line-through'
-                                                     : 'text-slate-900'"
-                                                 x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')"></div>
+                                            <div class="font-medium break-words line-clamp-2" :class="task.status === 'closed'
+                                                                 ? 'text-slate-400 line-through'
+                                                                 : 'text-slate-900'"
+                                                x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')">
+                                            </div>
                                         </td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap" @click.stop>
-                                            <select
-                                                @change="updateStatus(task.id, $event.target.value)"
+                                            <select @change="updateStatus(task.id, $event.target.value)"
                                                 class="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                                                :class="getStatusSelectColor(task.status)"
-                                                :value="task.status"
+                                                :class="getStatusSelectColor(task.status)" :value="task.status"
                                                 :disabled="task.status === 'closed'">
-                                                <option
-                                                    :value="task.status"
-                                                    :selected="true"
+                                                <option :value="task.status" :selected="true"
                                                     :disabled="!statusOptions.includes(task.status)"
                                                     x-text="formatStatus(task.status)"></option>
                                                 <template x-for="status in statusOptions" :key="status">
@@ -396,22 +465,35 @@
                                             </select>
                                         </td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold" :class="getStageSelectColor(task.stage)" x-text="formatStage(task.stage)"></span>
+                                            <span
+                                                class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold"
+                                                :class="getStageSelectColor(task.stage)"
+                                                x-text="formatStage(task.stage)"></span>
                                         </td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
                                             <div class="flex -space-x-1.5 sm:-space-x-2">
                                                 <template x-for="assignee in task.assignees.slice(0, 3)" :key="assignee.id">
-                                                    <img :src="getProfileImageUrl(assignee)" :alt="assignee.full_name || assignee.name" :title="assignee.full_name || assignee.name" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white object-cover shadow-sm">
+                                                    <img :src="getProfileImageUrl(assignee)"
+                                                        :alt="assignee.full_name || assignee.name"
+                                                        :title="assignee.full_name || assignee.name"
+                                                        class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white object-cover shadow-sm">
                                                 </template>
                                                 <template x-if="task.assignees.length > 3">
-                                                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] sm:text-xs font-bold text-slate-600" :title="'+' + (task.assignees.length - 3)" x-text="'+' + (task.assignees.length - 3)"></div>
+                                                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] sm:text-xs font-bold text-slate-600"
+                                                        :title="'+' + (task.assignees.length - 3)"
+                                                        x-text="'+' + (task.assignees.length - 3)"></div>
                                                 </template>
                                             </div>
                                         </td>
-                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-slate-600 whitespace-nowrap" x-text="formatDate(task.start_date)"></td>
-                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-slate-600 whitespace-nowrap" x-text="formatDate(task.end_date) + ' ' + formatTime(task.end_date)"></td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-slate-600 whitespace-nowrap"
+                                            x-text="formatDate(task.start_date)"></td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-slate-600 whitespace-nowrap"
+                                            x-text="formatDate(task.end_date) + ' ' + formatTime(task.end_date)"></td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold" :class="getPriorityColor(task.priority)" x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
+                                            <span
+                                                class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold"
+                                                :class="getPriorityColor(task.priority)"
+                                                x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                         </td>
                                     </tr>
                                 </template>
@@ -419,7 +501,12 @@
                         </table>
                     </div>
                     <div x-show="filteredTasks.length === 0" class="text-center py-12">
-                        <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
                         <p class="text-slate-500 font-medium">No tasks found</p>
                     </div>
                 </div>
@@ -429,291 +516,311 @@
             <template x-teleport="body">
                 <div x-show="selectedTask"
                     class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 bg-slate-900/50 backdrop-blur-sm"
-                    style="z-index: 99999; display: none;"
-                    x-transition.opacity
-                @click.self="selectedTask = null">
-                <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
-                    @click.stop>
-                    <template x-if="selectedTask">
-                        <div>
-                            <div class="p-4 sm:p-6 border-b border-slate-100 flex justify-between items-start gap-3">
-                                <div class="min-w-0 flex-1">
-                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
-                                        :class="{
-                                              'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
-                                              'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
-                                          }" x-text="selectedTask.priority"></span>
-                                    <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words" x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')"></h2>
-                                    <p class="text-xs sm:text-sm text-slate-500 font-medium truncate" x-text="selectedTask.project?.name"></p>
-                                </div>
-                                <button @click="selectedTask = null"
-                                    class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition-colors shrink-0">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            </div>
-
-                            <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
-                                <!-- Description -->
-                                <div>
-                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Description</h3>
-                                    <div class="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-wrap break-words"
-                                        x-text="selectedTask.description"></div>
-                                </div>
-
-                                <!-- Details Grid -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                                    <div>
-                                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</h3>
-                                        <p class="text-[11px] text-slate-600 mb-1">
-                                            Current:
-                                            <span class="font-semibold" x-text="formatStatus(selectedTask.status)"></span>
-                                        </p>
-                                        <select
-                                            @change="updateStatus(selectedTask.id, $event.target.value)"
-                                            class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50"
-                                            :disabled="selectedTask.status === 'closed'">
-                                            <option
-                                                :value="selectedTask.status"
-                                                :selected="true"
-                                                :disabled="!statusOptions.includes(selectedTask.status)"
-                                                x-text="formatStatus(selectedTask.status)"></option>
-                                            <template x-for="status in statusOptions" :key="status">
-                                                <option :value="status" :selected="selectedTask.status === status"
-                                                    x-text="formatStatus(status)"></option>
-                                            </template>
-                                        </select>
+                    style="z-index: 99999; display: none;" x-transition.opacity @click.self="selectedTask = null">
+                    <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
+                        @click.stop>
+                        <template x-if="selectedTask">
+                            <div>
+                                <div class="p-4 sm:p-6 border-b border-slate-100 flex justify-between items-start gap-3">
+                                    <div class="min-w-0 flex-1">
+                                        <span
+                                            class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
+                                            :class="{
+                                                          'bg-red-50 text-red-600': selectedTask.priority === 'high',
+                                                          'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
+                                                          'bg-green-50 text-green-600': selectedTask.priority === 'low',
+                                                          'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
+                                                      }" x-text="selectedTask.priority"></span>
+                                        <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words"
+                                            x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')">
+                                        </h2>
+                                        <p class="text-xs sm:text-sm text-slate-500 font-medium truncate"
+                                            x-text="selectedTask.project?.name"></p>
                                     </div>
-                                    <div>
-                                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Stage</h3>
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
-                                            :class="getStageBadgeColor(selectedTask.stage)"
-                                            x-text="formatStage(selectedTask.stage)"></span>
-                                        <p class="text-[11px] text-slate-400 mt-1">Stage is set automatically based on status and due date.</p>
-                                    </div>
-                                    <div class="sm:col-span-2">
-                                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due Date</h3>
-                                        <template x-if="!canEditDue">
-                                            <p class="text-xs sm:text-sm font-bold text-slate-700"
-                                                x-text="formatDate(selectedTask.end_date, true)"></p>
-                                        </template>
-                                        <template x-if="canEditDue">
-                                            <div class="space-y-2">
-                                                <p class="text-[11px] text-slate-400">
-                                                    Current:
-                                                    <span class="font-semibold text-slate-600"
-                                                        x-text="formatDate(selectedTask.end_date, true)"></span>
-                                                </p>
-                                                <div class="flex flex-col sm:flex-row gap-2">
-                                                    <input type="date"
-                                                        x-model="editEndDate"
-                                                        class="flex-1 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500">
-                                                    <input type="time"
-                                                        x-model="editEndTime"
-                                                        :disabled="selectedTask.priority === 'free'"
-                                                        class="w-full sm:w-24 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400">
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </div>
-                                <div class="sm:col-span-2">
-                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assignees</h3>
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <template x-for="assignee in editAssignees" :key="assignee.id">
-                                            <div class="flex items-center gap-1.5 sm:gap-2 bg-indigo-50 px-2 py-1 rounded-lg">
-                                                <img :src="getProfileImageUrl(assignee)"
-                                                    :alt="assignee.full_name || assignee.name"
-                                                    class="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover">
-                                                <span class="text-xs font-bold text-indigo-800 truncate max-w-[120px] sm:max-w-none"
-                                                    x-text="assignee.full_name || assignee.name"></span>
-                                                <template x-if="canEditDue">
-                                                    <button type="button" @click="removeEditAssignee(assignee.id)"
-                                                        class="text-slate-500 hover:text-red-600 -mr-0.5">×</button>
-                                                </template>
-                                            </div>
-                                        </template>
-                                        <template x-if="canEditDue">
-                                            <button type="button" @click="openAddPeopleModal()"
-                                                class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 text-lg leading-none">+</button>
-                                        </template>
-                                    </div>
-                                </div>
-                                <div class="sm:col-span-2">
-                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tagged</h3>
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <template x-for="user in editTagged" :key="user.id">
-                                            <div class="flex items-center gap-1.5 sm:gap-2 bg-slate-100 px-2 py-1 rounded-lg">
-                                                <img :src="getProfileImageUrl(user)" :alt="user.full_name || user.name"
-                                                    class="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover">
-                                                <span class="text-xs font-bold text-slate-700 truncate max-w-[120px] sm:max-w-none"
-                                                    x-text="user.full_name || user.name"></span>
-                                                <template x-if="canEditDue">
-                                                    <button type="button" @click="removeEditTagged(user.id)"
-                                                        class="text-slate-500 hover:text-red-600 -mr-0.5">×</button>
-                                                </template>
-                                            </div>
-                                        </template>
-                                        <template x-if="canEditDue">
-                                            <button type="button" @click="openTagModal()"
-                                                class="w-8 h-8 rounded-full bg-slate-500 text-white flex items-center justify-center hover:bg-slate-600 text-lg leading-none">+</button>
-                                        </template>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Add people modal -->
-                            <template x-if="canEditDue">
-                                <div x-show="showAddPeopleModal" x-transition
-                                    class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/50"
-                                    style="display: none;" @click.self="showAddPeopleModal = false">
-                                    <div class="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col" @click.stop>
-                                        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-                                            <h3 class="text-base font-bold text-slate-800">Add people</h3>
-                                            <button type="button" @click="showAddPeopleModal = false" class="text-slate-400 hover:text-slate-600">×</button>
-                                        </div>
-                                        <div class="flex-1 overflow-y-auto p-3 space-y-2">
-                                            <template x-for="emp in availableEmployees" :key="emp.id">
-                                                <label class="flex items-center gap-3 p-2 rounded-lg cursor-pointer"
-                                                    :class="isEditAssignee(emp.id) ? 'bg-indigo-50' : 'hover:bg-slate-50'">
-                                                    <input type="checkbox" :checked="isEditAssignee(emp.id)" @change="toggleEditAssignee(emp)" class="rounded border-slate-300 text-indigo-600">
-                                                    <img :src="getProfileImageUrl(emp)" class="w-8 h-8 rounded-full object-cover" :alt="emp.full_name">
-                                                    <span class="text-sm font-medium text-slate-700" x-text="emp.full_name"></span>
-                                                </label>
-                                            </template>
-                                        </div>
-                                        <div class="px-4 py-3 border-t border-slate-200 flex justify-end">
-                                            <button type="button" @click="showAddPeopleModal = false"
-                                                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Done</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-                            <!-- Tag people modal -->
-                            <template x-if="canEditDue">
-                                <div x-show="showTagModal" x-transition
-                                    class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/50"
-                                    style="display: none;" @click.self="showTagModal = false">
-                                    <div class="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col" @click.stop>
-                                        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-                                            <h3 class="text-base font-bold text-slate-800">Tag people</h3>
-                                            <button type="button" @click="showTagModal = false" class="text-slate-400 hover:text-slate-600">×</button>
-                                        </div>
-                                        <div class="flex-1 overflow-y-auto p-3 space-y-2">
-                                            <template x-for="emp in availableEmployees" :key="emp.id">
-                                                <label class="flex items-center gap-3 p-2 rounded-lg cursor-pointer"
-                                                    :class="isEditTagged(emp.id) ? 'bg-slate-100' : 'hover:bg-slate-50'">
-                                                    <input type="checkbox" :checked="isEditTagged(emp.id)" @change="toggleEditTagged(emp)" class="rounded border-slate-300 text-indigo-600">
-                                                    <img :src="getProfileImageUrl(emp)" class="w-8 h-8 rounded-full object-cover" :alt="emp.full_name">
-                                                    <span class="text-sm font-medium text-slate-700" x-text="emp.full_name"></span>
-                                                </label>
-                                            </template>
-                                        </div>
-                                        <div class="px-4 py-3 border-t border-slate-200 flex justify-end">
-                                            <button type="button" @click="showTagModal = false"
-                                                class="px-4 py-2 text-sm font-medium text-white bg-slate-600 rounded-lg hover:bg-slate-700">Done</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <!-- Comments -->
-                            <div class="px-4 sm:px-6 pb-4 sm:pb-6 space-y-3 border-t border-slate-100">
-                                <div class="flex items-center justify-between">
-                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Comments</h3>
-                                    <button type="button"
-                                        class="text-[11px] font-medium text-slate-500 hover:text-slate-700"
-                                        @click="loadComments(selectedTask.id)">
-                                        Refresh
+                                    <button @click="selectedTask = null"
+                                        class="text-slate-400 hover:text-slate-600 bg-slate-50 p-2 rounded-full transition-colors shrink-0">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
                                     </button>
                                 </div>
 
-                                <div class="max-h-48 overflow-y-auto space-y-3 pr-1">
-                                    <template x-if="commentsLoading">
-                                        <p class="text-xs text-slate-400 italic">Loading comments...</p>
-                                    </template>
-                                    <template x-if="!commentsLoading && taskComments.length === 0">
-                                        <p class="text-xs text-slate-400 italic">No comments yet. Start the discussion.</p>
-                                    </template>
-                                    <template x-for="comment in taskComments" :key="comment.id">
-                                        <div class="flex items-start gap-2">
-                                            <div
-                                                class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-700">
-                                                <span x-text="(comment.user.name || 'U').slice(0, 2).toUpperCase()"></span>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="flex items-center justify-between">
-                                                    <span class="text-xs font-semibold text-slate-700"
-                                                        x-text="comment.user.name"></span>
-                                                    <span class="text-[10px] text-slate-400"
-                                                        x-text="comment.created_at_human"></span>
+                                <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
+                                    <!-- Description -->
+                                    <div>
+                                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                            Description</h3>
+                                        <div class="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-wrap break-words"
+                                            x-text="selectedTask.description"></div>
+                                    </div>
+
+                                    <!-- Details Grid -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                        <div>
+                                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Status</h3>
+
+                                            <select @change="updateStatus(selectedTask.id, $event.target.value)"
+                                                class="w-full rounded-lg border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50"
+                                                :disabled="selectedTask.status === 'closed'">
+                                                <option :value="selectedTask.status" :selected="true"
+                                                    x-show="!statusOptions.includes(selectedTask.status)"
+                                                    x-text="formatStatus(selectedTask.status)"></option>
+                                                <template x-for="status in statusOptions" :key="status">
+                                                    <option :value="status" :selected="selectedTask.status === status"
+                                                        x-text="formatStatus(status)"></option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Stage
+                                            </h3>
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                                :class="getStageBadgeColor(selectedTask.stage)"
+                                                x-text="formatStage(selectedTask.stage)"></span>
+
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Due
+                                                Date</h3>
+                                            <template x-if="!canEditDue">
+                                                <p class="text-xs sm:text-sm font-bold text-slate-700"
+                                                    x-text="formatDate(selectedTask.end_date, true)"></p>
+                                            </template>
+                                            <template x-if="canEditDue">
+                                                <div class="space-y-2">
+
+                                                    <div class="flex flex-col sm:flex-row gap-2">
+                                                        <input type="date" x-model="editEndDate"
+                                                            class="flex-1 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500">
+                                                        <input type="time" x-model="editEndTime"
+                                                            :disabled="selectedTask.priority === 'free'"
+                                                            class="w-full sm:w-24 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400">
+                                                    </div>
                                                 </div>
-                                                <p class="text-xs text-slate-600 mt-0.5 whitespace-pre-wrap"
-                                                    x-text="comment.comment"></p>
+                                            </template>
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                                Assignees</h3>
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <template x-for="assignee in editAssignees" :key="assignee.id">
+                                                    <div
+                                                        class="flex items-center gap-1.5 sm:gap-2 bg-indigo-50 px-2 py-1 rounded-lg">
+                                                        <img :src="getProfileImageUrl(assignee)"
+                                                            :alt="assignee.full_name || assignee.name"
+                                                            class="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover">
+                                                        <span
+                                                            class="text-xs font-bold text-indigo-800 truncate max-w-[120px] sm:max-w-none"
+                                                            x-text="assignee.full_name || assignee.name"></span>
+                                                        <template x-if="canEditDue">
+                                                            <button type="button" @click="removeEditAssignee(assignee.id)"
+                                                                class="text-slate-500 hover:text-red-600 -mr-0.5">×</button>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                                <template x-if="canEditDue">
+                                                    <button type="button" @click="openAddPeopleModal()"
+                                                        class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 text-lg leading-none">+</button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                                Tagged</h3>
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <template x-for="user in editTagged" :key="user.id">
+                                                    <div
+                                                        class="flex items-center gap-1.5 sm:gap-2 bg-slate-100 px-2 py-1 rounded-lg">
+                                                        <img :src="getProfileImageUrl(user)"
+                                                            :alt="user.full_name || user.name"
+                                                            class="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover">
+                                                        <span
+                                                            class="text-xs font-bold text-slate-700 truncate max-w-[120px] sm:max-w-none"
+                                                            x-text="user.full_name || user.name"></span>
+                                                        <template x-if="canEditDue">
+                                                            <button type="button" @click="removeEditTagged(user.id)"
+                                                                class="text-slate-500 hover:text-red-600 -mr-0.5">×</button>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                                <template x-if="canEditDue">
+                                                    <button type="button" @click="openTagModal()"
+                                                        class="w-8 h-8 rounded-full bg-slate-500 text-white flex items-center justify-center hover:bg-slate-600 text-lg leading-none">+</button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Add people modal -->
+                                    <template x-if="canEditDue">
+                                        <div x-show="showAddPeopleModal" x-transition
+                                            class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/50"
+                                            style="display: none;" @click.self="showAddPeopleModal = false">
+                                            <div class="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col"
+                                                @click.stop>
+                                                <div
+                                                    class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                                                    <h3 class="text-base font-bold text-slate-800">Add people</h3>
+                                                    <button type="button" @click="showAddPeopleModal = false"
+                                                        class="text-slate-400 hover:text-slate-600">×</button>
+                                                </div>
+                                                <div class="flex-1 overflow-y-auto p-3 space-y-2">
+                                                    <template x-for="emp in availableEmployees" :key="emp.id">
+                                                        <label class="flex items-center gap-3 p-2 rounded-lg cursor-pointer"
+                                                            :class="isEditAssignee(emp.id) ? 'bg-indigo-50' : 'hover:bg-slate-50'">
+                                                            <input type="checkbox" :checked="isEditAssignee(emp.id)"
+                                                                @change="toggleEditAssignee(emp)"
+                                                                class="rounded border-slate-300 text-indigo-600">
+                                                            <img :src="getProfileImageUrl(emp)"
+                                                                class="w-8 h-8 rounded-full object-cover"
+                                                                :alt="emp.full_name">
+                                                            <span class="text-sm font-medium text-slate-700"
+                                                                x-text="emp.full_name"></span>
+                                                        </label>
+                                                    </template>
+                                                </div>
+                                                <div class="px-4 py-3 border-t border-slate-200 flex justify-end">
+                                                    <button type="button" @click="showAddPeopleModal = false"
+                                                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Done</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </template>
-                                </div>
+                                    <!-- Tag people modal -->
+                                    <template x-if="canEditDue">
+                                        <div x-show="showTagModal" x-transition
+                                            class="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/50"
+                                            style="display: none;" @click.self="showTagModal = false">
+                                            <div class="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col"
+                                                @click.stop>
+                                                <div
+                                                    class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                                                    <h3 class="text-base font-bold text-slate-800">Tag people</h3>
+                                                    <button type="button" @click="showTagModal = false"
+                                                        class="text-slate-400 hover:text-slate-600">×</button>
+                                                </div>
+                                                <div class="flex-1 overflow-y-auto p-3 space-y-2">
+                                                    <template x-for="emp in availableEmployees" :key="emp.id">
+                                                        <label class="flex items-center gap-3 p-2 rounded-lg cursor-pointer"
+                                                            :class="isEditTagged(emp.id) ? 'bg-slate-100' : 'hover:bg-slate-50'">
+                                                            <input type="checkbox" :checked="isEditTagged(emp.id)"
+                                                                @change="toggleEditTagged(emp)"
+                                                                class="rounded border-slate-300 text-indigo-600">
+                                                            <img :src="getProfileImageUrl(emp)"
+                                                                class="w-8 h-8 rounded-full object-cover"
+                                                                :alt="emp.full_name">
+                                                            <span class="text-sm font-medium text-slate-700"
+                                                                x-text="emp.full_name"></span>
+                                                        </label>
+                                                    </template>
+                                                </div>
+                                                <div class="px-4 py-3 border-t border-slate-200 flex justify-end">
+                                                    <button type="button" @click="showTagModal = false"
+                                                        class="px-4 py-2 text-sm font-medium text-white bg-slate-600 rounded-lg hover:bg-slate-700">Done</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
 
-                                <form @submit.prevent="saveAndClose()" class="space-y-2">
-                                    <textarea x-model="newComment"
-                                        class="w-full text-xs rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 px-3 py-2"
-                                        rows="2"
-                                        placeholder="Add a comment..."></textarea>
-                                    <div class="flex justify-end">
-                                        <button type="button" @click="newComment = ''"
-                                            class="text-[11px] font-medium text-slate-500 hover:text-slate-700">
-                                            Clear
+                                    <!-- Comments -->
+                                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 space-y-3 border-t border-slate-100">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Comments
+                                            </h3>
+                                            <button type="button"
+                                                class="text-[11px] font-medium text-slate-500 hover:text-slate-700"
+                                                @click="loadComments(selectedTask.id)">
+                                                Refresh
+                                            </button>
+                                        </div>
+
+                                        <div class="max-h-48 overflow-y-auto space-y-3 pr-1">
+                                            <template x-if="commentsLoading">
+                                                <p class="text-xs text-slate-400 italic">Loading comments...</p>
+                                            </template>
+                                            <template x-if="!commentsLoading && taskComments.length === 0">
+                                                <p class="text-xs text-slate-400 italic">No comments yet. Start the
+                                                    discussion.</p>
+                                            </template>
+                                            <template x-for="comment in taskComments" :key="comment.id">
+                                                <div class="flex items-start gap-2">
+                                                    <div
+                                                        class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-700">
+                                                        <span
+                                                            x-text="(comment.user.name || 'U').slice(0, 2).toUpperCase()"></span>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <div class="flex items-center justify-between">
+                                                            <span class="text-xs font-semibold text-slate-700"
+                                                                x-text="comment.user.name"></span>
+                                                            <span class="text-[10px] text-slate-400"
+                                                                x-text="comment.created_at_human"></span>
+                                                        </div>
+                                                        <p class="text-xs text-slate-600 mt-0.5 whitespace-pre-wrap"
+                                                            x-text="comment.comment"></p>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+
+                                        <form @submit.prevent="saveAndClose()" class="space-y-2">
+                                            <textarea x-model="newComment"
+                                                class="w-full text-xs rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 px-3 py-2"
+                                                rows="2" placeholder="Add a comment..."></textarea>
+                                            <div class="flex justify-end">
+                                                <button type="button" @click="newComment = ''"
+                                                    class="text-[11px] font-medium text-slate-500 hover:text-slate-700">
+                                                    Clear
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div x-show="showDeleteConfirm" x-cloak x-transition class="px-4 sm:px-6 pb-4">
+                                        <div class="bg-white border border-red-200 rounded-lg p-4 shadow-sm">
+                                            <h3 class="text-sm font-bold text-slate-900 mb-1">Delete task?</h3>
+                                            <p class="text-xs text-slate-600 mb-3" x-show="taskToDelete">
+                                                Are you sure you want to delete this task? This action cannot be undone.
+                                            </p>
+                                            <div class="flex justify-end gap-3">
+                                                <button type="button"
+                                                    @click="showDeleteConfirm = false; taskToDelete = null"
+                                                    :disabled="deleteInProgress"
+                                                    class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 disabled:opacity-50">
+                                                    Cancel
+                                                </button>
+                                                <button type="button" @click="confirmDeleteTask()"
+                                                    :disabled="deleteInProgress"
+                                                    class="px-3 py-1.5 text-xs font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50"
+                                                    style="background-color:#dc2626;color:#ffffff;">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-b-xl sm:rounded-b-2xl">
+                                        <button x-show="canEditDue && selectedTask" type="button"
+                                            @click="showDeleteConfirm = true; taskToDelete = selectedTask"
+                                            class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
+                                            Delete task
+                                        </button>
+                                        <button type="button" @click="saveAndClose()"
+                                            class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                            :disabled="saving">
+                                            Save & close
                                         </button>
                                     </div>
-                                </form>
-                            </div>
-
-                            <div x-show="showDeleteConfirm" x-cloak x-transition
-                                class="px-4 sm:px-6 pb-4">
-                                <div class="bg-white border border-red-200 rounded-lg p-4 shadow-sm">
-                                    <h3 class="text-sm font-bold text-slate-900 mb-1">Delete task?</h3>
-                                    <p class="text-xs text-slate-600 mb-3" x-show="taskToDelete">
-                                        Are you sure you want to delete this task? This action cannot be undone.
-                                    </p>
-                                    <div class="flex justify-end gap-3">
-                                        <button type="button" @click="showDeleteConfirm = false; taskToDelete = null"
-                                            :disabled="deleteInProgress"
-                                            class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 disabled:opacity-50">
-                                            Cancel
-                                        </button>
-                                        <button type="button" @click="confirmDeleteTask()"
-                                            :disabled="deleteInProgress"
-                                            class="px-3 py-1.5 text-xs font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50"
-                                            style="background-color:#dc2626;color:#ffffff;">
-                                            Delete
-                                        </button>
-                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="bg-slate-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-b-xl sm:rounded-b-2xl">
-                                <button
-                                    x-show="canEditDue && selectedTask"
-                                    type="button"
-                                    @click="showDeleteConfirm = true; taskToDelete = selectedTask"
-                                    class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
-                                    Delete task
-                                </button>
-                                <button type="button" @click="saveAndClose()"
-                                    class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                    :disabled="saving">
-                                    Save & close
-                                </button>
-                            </div>
-                        </div>
-                    </template>
+                        </template>
                     </div>
             </template>
-            </div>
         </div>
+    </div>
     </div>
 
     <script>
@@ -772,6 +879,36 @@
                     }, 5000);
                 },
 
+                hasScope(target) {
+                    if (!this.scope) return false;
+                    let scopes = this.scope.split(',').filter(s => s);
+                    return scopes.includes(target);
+                },
+
+                toggleScope(target) {
+                    let currentScopes = this.scope ? this.scope.split(',').filter(s => s) : [];
+
+                    if (target === 'all') {
+                        // If all is selected, we just go to all (exclusive)
+                        window.location.href = "{{ route('tasks.index') }}?scope=all";
+                        return;
+                    }
+
+                    // If 'all' was in there, clear it
+                    if (currentScopes.includes('all')) {
+                        currentScopes = [];
+                    }
+
+                    if (currentScopes.includes(target)) {
+                        currentScopes = currentScopes.filter(s => s !== target);
+                    } else {
+                        currentScopes.push(target);
+                    }
+
+                    let newScope = currentScopes.join(',');
+                    window.location.href = "{{ route('tasks.index') }}?scope=" + newScope;
+                },
+
                 getStageBadgeColor(stage) {
                     const colors = {
                         'overdue': 'bg-red-100 text-red-700',
@@ -783,16 +920,17 @@
                 },
 
                 get statusOptions() {
+                    const allKeys = Object.keys(this.statuses);
                     // Supervisors/Admins (who can edit due dates) see all statuses
                     if (this.canEditDue) {
-                        return this.statuses;
+                        return allKeys;
                     }
 
                     // Employees are limited to these statuses.
                     // They may still SEE other statuses (e.g. "Correction") on the task,
                     // but cannot select them from the dropdown.
                     const allowedForEmployees = ['under_review', 'completed', 'wip', 'revision'];
-                    return this.statuses.filter(status => allowedForEmployees.includes(status));
+                    return allKeys.filter(status => allowedForEmployees.includes(status));
                 },
 
                 async saveAndClose() {
@@ -1056,7 +1194,10 @@
                 },
 
                 formatStatus(status) {
-                    return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    if (this.statuses && this.statuses[status]) {
+                        return this.statuses[status];
+                    }
+                    return status ? status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : '';
                 },
 
                 formatStage(stage) {
@@ -1252,13 +1393,13 @@
                             },
                             body: JSON.stringify({ comment: text })
                         });
-                        
+
                         if (!response.ok) {
-                             const errText = await response.text();
-                             console.error('Server Error:', errText);
-                             throw new Error('Server responded with ' + response.status);
+                            const errText = await response.text();
+                            console.error('Server Error:', errText);
+                            throw new Error('Server responded with ' + response.status);
                         }
-                        
+
                         const data = await response.json();
                         if (data.comment) {
                             this.upsertComment(data.comment);

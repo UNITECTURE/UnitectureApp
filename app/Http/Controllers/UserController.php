@@ -6,18 +6,29 @@ use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
     public function create()
     {
         $roles = Role::all();
-        $managers = User::whereIn('role_id', [1, 2])->get(); // Supervisors and Admins
+        $managers = User::whereIn('role_id', [1, 2, 3])->get(); // Supervisors, Admins, and Super Admins
         return view('users.create', compact('roles', 'managers'));
     }
 
     public function store(Request $request)
     {
+        // Store uploaded image temporarily if present (before validation)
+        $tempImagePath = null;
+        if ($request->hasFile('profile_image')) {
+            $tempImagePath = $request->file('profile_image')->store('temp_uploads', 'public');
+            session(['temp_profile_image' => $tempImagePath]);
+        } elseif (session('temp_profile_image') && Storage::disk('public')->exists(session('temp_profile_image'))) {
+            // Use previously uploaded temp image
+            $tempImagePath = session('temp_profile_image');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -29,7 +40,7 @@ class UserController extends Controller
             'status' => 'required|in:active,inactive',
             'telegram_chat_id' => 'nullable|string|max:50',
             'biometric_id' => 'nullable|string|max:20|unique:users,biometric_id',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_image' => $tempImagePath ? 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' : 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         // Employees must have a primary supervisor
         if ((int) $request->role_id === 0 && empty($request->reporting_to)) {
@@ -42,15 +53,41 @@ class UserController extends Controller
             
             try {
                 // Upload to Cloudinary using Storage facade
-                $path = \Illuminate\Support\Facades\Storage::disk('cloudinary')
+                $path = Storage::disk('cloudinary')
                     ->putFile('unitecture_users', $uploadedFile);
                 
                 // Get the full URL from Cloudinary
-                $imageUrl = \Illuminate\Support\Facades\Storage::disk('cloudinary')->url($path);
+                $imageUrl = Storage::disk('cloudinary')->url($path);
                 
                 if (!$imageUrl) {
                     throw new \Exception('Failed to get URL from Cloudinary');
                 }
+            } catch (\Exception $e) {
+                \Log::error('Cloudinary upload failed: ' . $e->getMessage());
+                return back()->withErrors(['profile_image' => 'Failed to upload image to Cloudinary.'])->withInput();
+            }
+        } elseif ($tempImagePath && Storage::disk('public')->exists($tempImagePath)) {
+            // Upload the temp file to Cloudinary
+            try {
+                $tempFile = Storage::disk('public')->path($tempImagePath);
+                $path = Storage::disk('cloudinary')
+                    ->putFile('unitecture_users', new \Illuminate\Http\File($tempFile));
+                
+                $imageUrl = Storage::disk('cloudinary')->url($path);
+                
+                if (!$imageUrl) {
+                    throw new \Exception('Failed to get URL from Cloudinary');
+                }
+                
+                // Delete temp file
+                Storage::disk('public')->delete($tempImagePath);
+                
+                if (!$imageUrl) {
+                    throw new \Exception('Failed to get URL from Cloudinary');
+                }
+                
+                // Delete temp file
+                Storage::disk('public')->delete($tempImagePath);
             } catch (\Exception $e) {
                 \Log::error('Cloudinary upload failed: ' . $e->getMessage());
                 return back()->withErrors(['profile_image' => 'Failed to upload image to Cloudinary.'])->withInput();
@@ -108,7 +145,7 @@ class UserController extends Controller
         }
         $user = User::findOrFail($id);
         $roles = Role::all();
-        $managers = User::whereIn('role_id', [1, 2])->get();
+        $managers = User::whereIn('role_id', [1, 2, 3])->get(); // Supervisors, Admins, and Super Admins
         return view('users.edit', compact('user', 'roles', 'managers'));
     }
 
@@ -126,6 +163,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
             'reporting_to' => 'nullable|exists:users,id',
             'secondary_supervisor_id' => 'nullable|exists:users,id',
@@ -163,6 +201,12 @@ class UserController extends Controller
 
         $user->full_name = $request->name;
         $user->email = $request->email;
+        
+        // Only update password if provided
+        if ($request->filled('password')) {
+            $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
+        
         $user->role_id = $request->role_id;
         $user->reporting_to = $request->reporting_to;
         $user->secondary_supervisor_id = $request->secondary_supervisor_id;
@@ -191,7 +235,7 @@ class UserController extends Controller
             ])
             ->orderBy('full_name')
             ->get();
-        $supervisorsList = User::whereIn('role_id', [1, 2])->orderBy('full_name')->get(); // for secondary dropdown
+        $supervisorsList = User::whereIn('role_id', [1, 2, 3])->orderBy('full_name')->get(); // Supervisors, Admins, and Super Admins
         return view('teams.index', compact('supervisors', 'supervisorsList'));
     }
 
