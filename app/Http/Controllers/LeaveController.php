@@ -551,18 +551,25 @@ class LeaveController extends Controller
             }
         }
 
-        // Update status to cancelled
-        $leave->update(['status' => 'cancelled']);
+        $previousStatus = $leave->getOriginal('status') ?? $leave->status;
+        $leaveType = $leave->leave_type;
+        $leaveDays = $leave->days;
+        $leaveStart = $leave->start_date;
+        $leaveEnd = $leave->end_date;
+        $leaveReason = $leave->reason;
+
+        // Delete cancelled leave so it does not appear in history or totals
+        $leave->delete();
 
         // Send Telegram Notification to Supervisor
         if ($user->manager && $user->manager->telegram_chat_id) {
             $message = "<b>🚫 Leave Cancelled</b>\n\n";
             $message .= "Employee: {$user->name}\n";
             $message .= "<b>Cancelled By:</b> {$user->name} (Self)\n";
-            $message .= "<b>Leave Type:</b> " . ucfirst($leave->leave_type) . "\n";
-            $message .= "<b>Duration:</b> {$leave->days} day(s)\n";
-            $message .= "<b>Dates:</b> {$leave->start_date->format('Y-m-d')} to {$leave->end_date->format('Y-m-d')}\n";
-            $message .= "<b>Reason for Leave:</b> {$leave->reason}\n";
+            $message .= "<b>Leave Type:</b> " . ucfirst($leaveType) . "\n";
+            $message .= "<b>Duration:</b> {$leaveDays} day(s)\n";
+            $message .= "<b>Dates:</b> {$leaveStart->format('Y-m-d')} to {$leaveEnd->format('Y-m-d')}\n";
+            $message .= "<b>Reason for Leave:</b> {$leaveReason}\n";
             $message .= "<b>Cancelled At:</b> " . now()->format('Y-m-d H:i A');
             
             $this->telegramService->sendMessage($user->manager->telegram_chat_id, $message);
@@ -574,9 +581,9 @@ class LeaveController extends Controller
             $adminMessage = "<b>🚫 Leave Cancelled Alert</b>\n\n";
             $adminMessage .= "Employee: {$user->name}\n";
             $adminMessage .= "<b>Cancelled By:</b> {$user->name}\n";
-            $adminMessage .= "<b>Leave Type:</b> " . ucfirst($leave->leave_type) . "\n";
-            $adminMessage .= "<b>Previous Status:</b> " . ucfirst(str_replace('_', ' ', $leave->getOriginal('status'))) . "\n";
-            $adminMessage .= "<b>Dates:</b> {$leave->start_date->format('Y-m-d')} to {$leave->end_date->format('Y-m-d')}\n";
+            $adminMessage .= "<b>Leave Type:</b> " . ucfirst($leaveType) . "\n";
+            $adminMessage .= "<b>Previous Status:</b> " . ucfirst(str_replace('_', ' ', $previousStatus)) . "\n";
+            $adminMessage .= "<b>Dates:</b> {$leaveStart->format('Y-m-d')} to {$leaveEnd->format('Y-m-d')}\n";
             $adminMessage .= "<b>Cancelled At:</b> " . now()->format('Y-m-d H:i A');
             
             $this->telegramService->sendMessage($admin->telegram_chat_id, $adminMessage);
