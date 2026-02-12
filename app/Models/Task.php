@@ -51,7 +51,7 @@ class Task extends Model
     {
         $now = $now ?? now();
 
-        if ($this->status === 'closed') {
+        if (in_array($this->status, ['closed', 'completed'], true)) {
             $this->stage = 'completed';
             return;
         }

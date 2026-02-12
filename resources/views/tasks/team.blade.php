@@ -111,8 +111,8 @@
             <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
                 x-transition:leave="transition ease-in duration-200" class="fixed top-0 left-0 right-0 z-50 w-full">
                 <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl" :class="toast.type === 'success' 
-                                     ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
-                                     : 'bg-gradient-to-r from-red-500 to-red-600'">
+                                             ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
+                                             : 'bg-gradient-to-r from-red-500 to-red-600'">
                     <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
                         <div class="flex items-center gap-3 flex-1">
                             <div class="text-3xl sm:text-4xl font-bold text-white">
@@ -148,11 +148,11 @@
                                     class="p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-xl">
                                     <div class="flex items-center gap-2">
                                         <div class="w-3 h-3 rounded-full" :class="{
-                                                            'bg-red-500': stage === 'overdue',
-                                                            'bg-yellow-500': stage === 'pending',
-                                                            'bg-blue-500': stage === 'in_progress',
-                                                            'bg-green-500': stage === 'completed'
-                                                        }"></div>
+                                                                    'bg-red-500': stage === 'overdue',
+                                                                    'bg-yellow-500': stage === 'pending',
+                                                                    'bg-blue-500': stage === 'in_progress',
+                                                                    'bg-green-500': stage === 'completed'
+                                                                }"></div>
                                         <span class="text-sm font-bold text-slate-700 uppercase"
                                             x-text="formatStage(stage)"></span>
                                         <span class="bg-slate-200 text-slate-600 px-2 py-0.5 rounded text-xs font-bold"
@@ -176,19 +176,19 @@
                                                         x-text="task.project?.name || 'No Project'"></span>
                                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded border shrink-0"
                                                         :class="{
-                                                                      'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                                      'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
-                                                                      'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                                      'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
-                                                                  }"
+                                                                              'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                                              'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
+                                                                              'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                                              'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
+                                                                          }"
                                                         x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
 
                                             <!-- Description -->
                                             <p class="text-sm font-bold leading-tight mb-2 line-clamp-2" :class="task.status === 'closed'
-                                                               ? 'text-slate-400 line-through'
-                                                               : 'text-slate-800'"
+                                                                       ? 'text-slate-400 line-through'
+                                                                       : 'text-slate-800'"
                                                 x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')">
                                             </p>
 
@@ -198,7 +198,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
-                                                <span x-text="formatTime(task.end_date)"></span>
+                                                <span x-text="formatDateTime(task.end_date)"></span>
                                             </div>
 
                                             <!-- Footer -->
@@ -221,17 +221,6 @@
                                                     </template>
                                                 </div>
 
-                                                <!-- Due Date -->
-                                                <div class="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                        </path>
-                                                    </svg>
-                                                    <span x-text="formatDate(task.end_date)"></span>
-                                                </div>
                                             </div>
                                         </div>
                                     </template>
@@ -269,8 +258,8 @@
                                                 x-text="task.project?.project_code || 'N/A'"></td>
                                             <td class="px-6 py-3">
                                                 <div class="font-medium line-clamp-2" :class="task.status === 'closed'
-                                                                     ? 'text-slate-400 line-through'
-                                                                     : 'text-slate-900'"
+                                                                             ? 'text-slate-400 line-through'
+                                                                             : 'text-slate-900'"
                                                     x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')">
                                                 </div>
                                             </td>
@@ -311,7 +300,8 @@
                                                 </div>
                                             </td>
                                             <td class="px-6 py-3 text-slate-600" x-text="formatDate(task.start_date)"></td>
-                                            <td class="px-6 py-3 text-slate-600" x-text="formatDate(task.end_date)"></td>
+                                            <td class="px-6 py-3 text-slate-600" x-text="formatDateTime(task.end_date)">
+                                            </td>
                                             <td class="px-6 py-3">
                                                 <span
                                                     class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold"
@@ -352,11 +342,11 @@
                                     <span
                                         class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                         :class="{
-                                                      'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                                      'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
-                                                      'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                                      'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
-                                                  }" x-text="selectedTask.priority"></span>
+                                                              'bg-red-50 text-red-600': selectedTask.priority === 'high',
+                                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
+                                                              'bg-green-50 text-green-600': selectedTask.priority === 'low',
+                                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
+                                                          }" x-text="selectedTask.priority"></span>
                                     <h2 class="text-xl font-bold text-slate-900"
                                         x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')">
                                     </h2>
@@ -411,7 +401,7 @@
                                         </h3>
                                         <template x-if="!canEditDue">
                                             <p class="text-sm font-bold text-slate-700"
-                                                x-text="formatDate(selectedTask.end_date, true)"></p>
+                                                x-text="formatDateTime(selectedTask.end_date)"></p>
                                         </template>
                                         <template x-if="canEditDue">
                                             <div class="space-y-2">
@@ -879,12 +869,37 @@
                 },
 
                 formatDate(dateString, full = false) {
-                    if (!dateString) return 'N/A';
+                    if (!dateString) return '-';
                     const date = new Date(dateString);
-                    if (full) {
-                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    }
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    if (full) return date.toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                    const now = new Date();
+                    const isThisYear = date.getFullYear() === now.getFullYear();
+
+                    return date.toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: isThisYear ? undefined : 'numeric'
+                    });
+                },
+
+                formatDateTime(dateString) {
+                    if (!dateString) return '-';
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const isThisYear = date.getFullYear() === now.getFullYear();
+
+                    const datePart = date.toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: isThisYear ? undefined : 'numeric'
+                    });
+                    const timePart = date.toLocaleTimeString(undefined, {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    return `${datePart}, ${timePart}`;
                 },
 
                 formatTime(dateString) {
