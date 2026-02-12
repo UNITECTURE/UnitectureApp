@@ -73,7 +73,7 @@
                     <div class="flex-1 flex flex-col min-w-0">
                         <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full relative">
                             <div class="p-6 pb-24 flex flex-col flex-1 min-h-0">
-                                <h2 class="text-lg font-semibold text-slate-800 mb-4">{{ 'Daily Report' }}</h2>
+                                <h2 class="text-lg font-semibold text-slate-800 mb-4">{{ 'Monthly Report' }}</h2>
 
                                 {{-- Date Selector --}}
                                 <!-- Backend Ready: Ensure 'name="date"' allows this to be submitted as a form filter -->
@@ -114,7 +114,22 @@
                                                         <td class="px-2 py-4">
                                                             <span
                                                                 class="px-2.5 py-1 inline-block text-xs leading-4 font-semibold rounded-full text-center {{ $record['class'] }}">
-                                                                {!! str_replace(['(', ')'], '', str_replace('(Manual)', '<br><span class="text-[10px] opacity-80">Manual</span>', $record['status'])) !!}
+                                                                @php
+                                                                    $displayStatus = $record['status'];
+                                                                    $subLabel = '';
+                                                                    
+                                                                    if (str_contains($displayStatus, '(Manual)')) {
+                                                                        $displayStatus = 'Present';
+                                                                        $subLabel = 'Manual';
+                                                                    } elseif (str_contains($displayStatus, '(Hybrid)')) {
+                                                                        $displayStatus = 'Present';
+                                                                        $subLabel = 'Hybrid';
+                                                                    }
+                                                                @endphp
+                                                                {{ $displayStatus }}
+                                                                @if($subLabel)
+                                                                    <br><span class="text-[10px] opacity-80">{{ $subLabel }}</span>
+                                                                @endif
                                                             </span>
                                                         </td>
                                                         <td class="px-2 py-4 text-sm text-slate-600">
@@ -137,9 +152,9 @@
                                 </div>
 
                                 <div class="mt-auto absolute bottom-0 left-0 right-0 p-6 pt-0 bg-white rounded-b-xl">
-                                    <a href="{{ route('attendance.export', ['type' => 'self_daily', 'date' => request('date') ?? now()->format('Y-m-d')]) }}"
+                                    <a href="{{ route('attendance.export', ['type' => 'self', 'month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}"
                                         class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
-                                        {{ 'Download Daily Report' }}
+                                        {{ 'Download Monthly Report' }}
                                     </a>
                                 </div>
                             </div>
@@ -225,7 +240,7 @@
                                 {{-- Footer Action --}}
                                 <div class="absolute bottom-0 left-0 right-0 p-6 pt-0 bg-white rounded-b-xl">
                                     <hr class="border-slate-300 w-full mb-6">
-                                    <a href="{{ route('attendance.export', ['type' => 'self', 'month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}"
+                                    <a href="{{ route('attendance.export', ['type' => 'self_cumulative', 'month' => request('month', now()->month), 'year' => request('year', now()->year)]) }}"
                                         class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm transition-colors shadow-sm hover:shadow-md text-center">
                                         {{ 'Download Attendance' }}
                                     </a>
