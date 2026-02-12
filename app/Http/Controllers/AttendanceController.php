@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Attendance;
+use App\Models\Holiday;
 use Carbon\Carbon;
 
 use App\Models\ManualAttendanceRequest;
@@ -209,10 +210,15 @@ class AttendanceController extends Controller
                 default => 'bg-red-100 text-red-800',
             };
 
-            // Special case for Manual in text
-            if (isset($attRecord) && $attRecord->type === 'manual' && $status === 'present') {
-                $statusText = 'Present (Manual)';
-                $class = 'bg-blue-100 text-blue-800';
+            // Special case for Manual/Hybrid in text
+            if (isset($attRecord) && $status === 'present') {
+                if ($attRecord->type === 'manual') {
+                    $statusText = 'Present (Manual)';
+                    $class = 'bg-blue-100 text-blue-800';
+                } elseif ($attRecord->type === 'hybrid') {
+                    $statusText = 'Present (Hybrid)';
+                    $class = 'bg-purple-100 text-purple-800';
+                }
             }
 
             // Add to Summary Counts (Only for valid stats)
@@ -759,6 +765,27 @@ class AttendanceController extends Controller
             } else {
                 $fileName = "attendance_" . date('Y-m-d_H-i') . ".csv";
             }
+        } elseif ($type === 'self') {
+            // Self Monthly Report
+            $reqMonth = $request->input('month', \Carbon\Carbon::now()->month);
+            $reqYear = $request->input('year', \Carbon\Carbon::now()->year);
+            $monthName = \Carbon\Carbon::createFromDate($reqYear, $reqMonth, 1)->format('F'); // January, February etc.
+
+            $fileName = strtolower($user->full_name) . " " . strtolower($monthName) . " " . $reqYear . " attendance.csv";
+        } elseif ($type === 'self_cumulative') {
+            // Self Cumulative Summary
+            $reqMonth = $request->input('month', \Carbon\Carbon::now()->month);
+            $reqYear = $request->input('year', \Carbon\Carbon::now()->year);
+            $monthName = \Carbon\Carbon::createFromDate($reqYear, $reqMonth, 1)->format('F'); // January, February etc.
+
+            $fileName = strtolower($user->full_name) . " cumulative report " . strtolower($monthName) . " " . $reqYear . ".csv";
+        } elseif ($type === 'team_cumulative') {
+            // Team Cumulative Report
+            $reqMonth = $request->input('month', \Carbon\Carbon::now()->month);
+            $reqYear = $request->input('year', \Carbon\Carbon::now()->year);
+            $monthName = \Carbon\Carbon::createFromDate($reqYear, $reqMonth, 1)->format('M'); // Jan, Feb etc.
+
+            $fileName = "team cumulative report for " . strtolower($monthName) . " " . $reqYear . ".csv";
         } else {
             $fileName = "attendance_" . date('Y-m-d_H-i') . ".csv";
         }
@@ -805,7 +832,7 @@ class AttendanceController extends Controller
                 }
             } elseif ($type === 'team_cumulative') {
                 // Team Cumulative Export
-                fputcsv($file, ['Name', 'Present Days', 'Leave Days', 'Absent Days', 'Total Month Days']);
+                fputcsv($file, ['Name', 'Present Days', 'Leave Days', 'Absent Days', 'Late Marks', 'Total Month Days']);
 
                 $reqMonth = $request->input('month', Carbon::now()->month);
                 $reqYear = $request->input('year', Carbon::now()->year);
@@ -849,7 +876,18 @@ class AttendanceController extends Controller
                     $leave = $monthAtts->where('status', 'leave')->count();
                     $absent = max(0, $elapsed - $present - $leave);
 
-                    fputcsv($file, [$u->full_name, $present, $leave, $absent, $monthDays]);
+                    // Calculate Late Marks
+                    $lateMarks = 0;
+                    foreach ($monthAtts as $att) {
+                        if ($att->clock_in) {
+                            $clockInTime = Carbon::parse($att->clock_in);
+                            if ($clockInTime->format('H:i') > '09:40') {
+                                $lateMarks++;
+                            }
+                        }
+                    }
+
+                    fputcsv($file, [$u->full_name, $present, $leave, $absent, $lateMarks, $monthDays]);
                 }
 
             } elseif ($type === 'self_daily') {
@@ -945,8 +983,9 @@ class AttendanceController extends Controller
                     $curr->addDay();
                 }
 
-            } else {
-                // Self Export (Monthly Report) - Existing Default "else"
+
+            } elseif ($type === 'self') {
+                // Self Export (Monthly Report) - Existing Default
                 fputcsv($file, ['Date', 'Status', 'In Time', 'Out Time', 'Duration']);
 
                 $reqMonth = $request->input('month', Carbon::now()->month);
@@ -1012,7 +1051,76 @@ class AttendanceController extends Controller
                     fputcsv($file, [$dateStr, $status, $in, $out, $dur]);
                     $curr->addDay();
                 }
+            } elseif ($type === 'self_cumulative') {
+                // Self Cumulative Export - Summary format
+                $reqMonth = $request->input('month', Carbon::now()->month);
+                $reqYear = $request->input('year', Carbon::now()->year);
+
+                $monthName = date('F', mktime(0, 0, 0, $reqMonth, 1));
+
+                // Header with Month and Year
+                fputcsv($file, ["Attendance Summary for {$monthName} {$reqYear}"]);
+                fputcsv($file, []); // Empty row
+
+                // Calculate Total Working Days
+                $start = Carbon::createFromDate($reqYear, $reqMonth, 1)->startOfMonth();
+                $end = $start->copy()->endOfMonth();
+
+                $holidays = Holiday::whereBetween('date', [$start, $end])->pluck('date')->toArray();
+                $holidayCount = count($holidays);
+                $sundays = 0;
+                $temp = $start->copy();
+                while ($temp->lte($end)) {
+                    if ($temp->isSunday() && !in_array($temp->toDateString(), $holidays)) {
+                        $sundays++;
+                    }
+                    $temp->addDay();
+                }
+                $daysInMonth = $start->daysInMonth;
+                $totalWorkingDays = $daysInMonth - $holidayCount - $sundays;
+
+                fputcsv($file, ["Total Working Days: {$totalWorkingDays}"]);
+                fputcsv($file, []); // Empty row
+
+                // Table Header
+                fputcsv($file, ['Name', 'Present', 'Leave', 'Absent', 'Late Marks']);
+
+                // Calculate stats for the user
+                $attRecords = Attendance::where('user_id', $user->id)
+                    ->whereBetween('date', [$start, $end])
+                    ->get();
+
+                $presentCount = $attRecords->whereIn('status', ['present', 'exempted'])->count();
+                $leaveCount = $attRecords->where('status', 'leave')->count();
+
+                // Calculate potential working days elapsed
+                $limitDate = $end->isFuture() ? Carbon::now() : $end;
+                $potentialWorkingDaysElapsed = 0;
+                $tempElapsed = $start->copy();
+                while ($tempElapsed->lte($limitDate)) {
+                    $isHoliday = in_array($tempElapsed->toDateString(), $holidays);
+                    $isSunday = $tempElapsed->isSunday();
+                    if (!$isHoliday && !$isSunday) {
+                        $potentialWorkingDaysElapsed++;
+                    }
+                    $tempElapsed->addDay();
+                }
+                $absentCount = max(0, $potentialWorkingDaysElapsed - $presentCount - $leaveCount);
+
+                // Calculate Late Marks
+                $lateMarks = 0;
+                foreach ($attRecords as $att) {
+                    if ($att->clock_in) {
+                        $clockInTime = Carbon::parse($att->clock_in);
+                        if ($clockInTime->format('H:i') > '09:40') {
+                            $lateMarks++;
+                        }
+                    }
+                }
+
+                fputcsv($file, [$user->full_name, $presentCount, $leaveCount, $absentCount, $lateMarks]);
             }
+
 
             fclose($file);
         };
