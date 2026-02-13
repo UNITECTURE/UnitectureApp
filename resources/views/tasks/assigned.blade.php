@@ -6,6 +6,27 @@
         <x-sidebar :role="auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+            <!-- Toast Notification - CENTERED MODAL STYLE -->
+            <div x-show="toast.show" x-transition class="fixed inset-0 flex items-center justify-center p-4 z-50" style="display: none;" @click.self="toast.show = false">
+                <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md border-l-4" 
+                     :class="toast.type === 'success' ? 'border-emerald-500' : 'border-red-500'">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-white"
+                             :class="toast.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'">
+                            <span x-text="toast.type === 'success' ? '✓' : '✕'"></span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-800" x-show="toast.type === 'success'">Success!</h3>
+                            <h3 class="text-lg font-bold text-slate-800" x-show="toast.type === 'error'">Error</h3>
+                            <p class="text-sm text-slate-600 mt-1" x-text="toast.message"></p>
+                        </div>
+                        <button type="button" @click="toast.show = false" class="text-slate-400 hover:text-slate-600 text-xl font-bold">
+                            ×
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Header -->
             <header class="bg-white border-b border-slate-200 py-5 px-6 shrink-0 z-10">
                 <div class="flex flex-col gap-4">
@@ -641,6 +662,23 @@
                 showTagModal: false,
                 currentUserId: currentUserId,
 
+                toast: {
+                    show: false,
+                    message: '',
+                    type: 'success'
+                },
+                toastTimer: null,
+
+                showToast(message, type = 'success') {
+                    this.toast.message = message;
+                    this.toast.type = type;
+                    this.toast.show = true;
+                    clearTimeout(this.toastTimer);
+                    this.toastTimer = setTimeout(() => {
+                        this.toast.show = false;
+                    }, 4000);
+                },
+
                 get statusOptions() {
                     const allKeys = Object.keys(this.statuses);
                     // Supervisors/Admins (who can edit due dates) see all statuses
@@ -697,6 +735,7 @@
                         }
                         this.showDeleteConfirm = false;
                         this.taskToDelete = null;
+                        this.showToast('✅ Task deleted successfully', 'success');
                     } catch (e) {
                         console.error('Delete failed:', e);
                     } finally {
@@ -736,6 +775,7 @@
                             this.selectedTask.assignees = data.assignees || this.selectedTask.assignees;
                             this.selectedTask.taggedUsers = data.tagged_users || this.selectedTask.taggedUsers;
                         }
+                        this.showToast('✅ People assignments updated', 'success');
                     } catch (e) {
                         console.error('Failed to update people', e);
                     }
@@ -955,12 +995,13 @@
                                 this.selectedTask.stage = data.stage;
                             }
                         }
+                        this.showToast('✅ Task status updated', 'success');
                     } catch (e) {
                         task.status = oldStatus;
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask.status = oldStatus;
                         }
-                        alert('Failed to update status');
+                        this.showToast('❌ Failed to update task status', 'error');
                     }
                 },
 
@@ -1022,6 +1063,7 @@
                                 this.selectedTask.stage = data.stage;
                             }
                         }
+                        this.showToast('✅ Due date updated successfully', 'success');
                     } catch (e) {
                         console.error('Failed to update due date', e);
                     }
@@ -1072,13 +1114,15 @@
                         if (data.comment) {
                             this.upsertComment(data.comment);
                             this.newComment = '';
+                            this.showToast('✅ Comment posted successfully', 'success');
                         } else {
                             await this.loadComments(taskId);
                             this.newComment = '';
+                            this.showToast('✅ Comment posted successfully', 'success');
                         }
                     } catch (e) {
                         console.error('Failed to post comment', e);
-                        alert('Failed to post comment. Check console for details.');
+                        this.showToast('❌ Failed to post comment', 'error');
                     } finally {
                         this.isPostingComment = false;
                     }

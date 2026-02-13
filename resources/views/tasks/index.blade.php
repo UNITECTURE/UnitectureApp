@@ -192,26 +192,21 @@
                 </div>
             </div>
 
-            <!-- Toast Notification - LARGE BANNER -->
-            <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
-                x-transition:leave="transition ease-in duration-200" class="fixed top-0 left-0 right-0 z-50 w-full">
-                <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl" :class="toast.type === 'success' 
-                                             ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
-                                             : 'bg-gradient-to-r from-red-500 to-red-600'">
-                    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                        <div class="flex items-center gap-3 flex-1">
-                            <div class="text-3xl sm:text-4xl font-bold text-white">
-                                <span x-text="toast.type === 'success' ? '✓' : '✕'"></span>
-                            </div>
-                            <div>
-                                <p class="text-white text-lg sm:text-xl font-bold" x-text="toast.message"></p>
-                                <p class="text-white/80 text-sm mt-1"
-                                    x-text="toast.type === 'success' ? 'Action completed successfully!' : 'Please try again or contact support'">
-                                </p>
-                            </div>
+            <!-- Toast Notification - CENTERED MODAL STYLE -->
+            <div x-show="toast.show" x-transition class="fixed inset-0 flex items-center justify-center p-4 z-50" style="display: none;" @click.self="toast.show = false">
+                <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md border-l-4" 
+                     :class="toast.type === 'success' ? 'border-emerald-500' : 'border-red-500'">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-white"
+                             :class="toast.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'">
+                            <span x-text="toast.type === 'success' ? '✓' : '✕'"></span>
                         </div>
-                        <button type="button" class="text-white hover:text-white/80 text-3xl font-bold shrink-0 p-2"
-                            @click="toast.show = false">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-800" x-show="toast.type === 'success'">Success!</h3>
+                            <h3 class="text-lg font-bold text-slate-800" x-show="toast.type === 'error'">Error</h3>
+                            <p class="text-sm text-slate-600 mt-1" x-text="toast.message"></p>
+                        </div>
+                        <button type="button" @click="toast.show = false" class="text-slate-400 hover:text-slate-600 text-xl font-bold">
                             ×
                         </button>
                     </div>
@@ -219,8 +214,7 @@
             </div>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 transition-all duration-300"
-                :class="toast.show ? 'mt-32 sm:mt-36' : 'mt-0'">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50">
                 <!-- Overview: Task Cards Grid -->
                 <div x-show="view === 'overview' && filteredTasks.length > 0"
                     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

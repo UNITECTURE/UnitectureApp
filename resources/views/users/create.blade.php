@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+    <style>
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+    </style>
     <div class="flex h-screen bg-slate-50 overflow-hidden" x-data="{ sidebarOpen: true }">
         <x-sidebar :role="Auth::user()->isAdmin() ? 'admin' : (Auth::user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
@@ -69,9 +75,26 @@
                                 <!-- Password -->
                                 <div class="space-y-2">
                                     <label for="password" class="text-sm font-semibold text-slate-700">Password</label>
-                                    <input type="password" name="password" id="password" required
-                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('password') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
-                                        oninput="checkPasswordStrength(this.value)">
+                                    <div class="relative">
+                                        <input type="password" name="password" id="password" required
+                                            class="w-full px-4 py-2.5 pr-12 rounded-lg border {{ $errors->has('password') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600"
+                                            oninput="checkPasswordStrength(this.value)">
+                                        <button type="button"
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                            aria-label="Toggle password visibility"
+                                            onclick="togglePasswordVisibility('password', 'password-eye-show', 'password-eye-hide')">
+                                            <svg id="password-eye-show" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                <circle cx="12" cy="12" r="3" stroke-width="2" />
+                                            </svg>
+                                            <svg id="password-eye-hide" class="w-5 h-5" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.88 5.09A9.96 9.96 0 0112 5c4.477 0 8.268 2.943 9.542 7a10.03 10.03 0 01-4.132 5.366" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.1 6.1A10.03 10.03 0 002.458 12C3.732 16.057 7.523 19 12 19c1.03 0 2.03-.156 2.97-.447" />
+                                            </svg>
+                                        </button>
+                                    </div>
 
                                     <!-- Strength Bars -->
                                     <div class="flex gap-1 mt-2 h-1">
@@ -99,8 +122,25 @@
                                 <div class="space-y-2">
                                     <label for="password_confirmation" class="text-sm font-semibold text-slate-700">Confirm
                                         Password</label>
-                                    <input type="password" name="password_confirmation" id="password_confirmation" required
-                                        class="w-full px-4 py-2.5 rounded-lg border {{ $errors->has('password') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600">
+                                    <div class="relative">
+                                        <input type="password" name="password_confirmation" id="password_confirmation" required
+                                            class="w-full px-4 py-2.5 pr-12 rounded-lg border {{ $errors->has('password') ? 'border-red-500' : 'border-slate-200' }} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none text-slate-600">
+                                        <button type="button"
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                            aria-label="Toggle confirm password visibility"
+                                            onclick="togglePasswordVisibility('password_confirmation', 'password-confirm-eye-show', 'password-confirm-eye-hide')">
+                                            <svg id="password-confirm-eye-show" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                <circle cx="12" cy="12" r="3" stroke-width="2" />
+                                            </svg>
+                                            <svg id="password-confirm-eye-hide" class="w-5 h-5" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.88 5.09A9.96 9.96 0 0112 5c4.477 0 8.268 2.943 9.542 7a10.03 10.03 0 01-4.132 5.366" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.1 6.1A10.03 10.03 0 002.458 12C3.732 16.057 7.523 19 12 19c1.03 0 2.03-.156 2.97-.447" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <script>
@@ -147,6 +187,19 @@
                                                 bars[i].classList.add(colors[Math.min(strength - 1, 3)]);
                                             }
                                         }
+                                    }
+
+                                    function togglePasswordVisibility(inputId, showId, hideId) {
+                                        const input = document.getElementById(inputId);
+                                        const showIcon = document.getElementById(showId);
+                                        const hideIcon = document.getElementById(hideId);
+
+                                        if (!input || !showIcon || !hideIcon) return;
+
+                                        const isPassword = input.type === 'password';
+                                        input.type = isPassword ? 'text' : 'password';
+                                        showIcon.hidden = isPassword;
+                                        hideIcon.hidden = !isPassword;
                                     }
                                 </script>
 

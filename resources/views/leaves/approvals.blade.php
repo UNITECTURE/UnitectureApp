@@ -426,6 +426,21 @@
     </div>
 </div>
 
+{{-- Error Toast - Centered error notification --}}
+<div id="errorToast" class="hidden fixed z-[60] bg-white rounded-2xl shadow-2xl px-8 py-6 border-2 border-red-500" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-lg font-bold text-slate-800">Error</p>
+            <p id="errorToastMessage" class="text-sm text-slate-600">An error occurred. Please try again.</p>
+        </div>
+    </div>
+</div>
+
 <script>
     let currentLeaveId = null;
     let currentAction = null;
@@ -470,6 +485,17 @@
             toast.classList.add('hidden');
             location.reload();
         }, 1500);
+    }
+
+    function showErrorToast(message) {
+        const toast = document.getElementById('errorToast');
+        const toastMessage = document.getElementById('errorToastMessage');
+        toastMessage.textContent = message || 'An error occurred. Please try again.';
+        toast.classList.remove('hidden');
+        
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 4000);
     }
 
     function setLoadingState(action, isLoading) {
@@ -562,13 +588,13 @@
                 setTimeout(() => window.location.reload(), 1500);
             } else {
                 // Show actual error message from server
-                alert(data.message || 'An error occurred while processing the request.');
+                showErrorToast(data.message || 'An error occurred while processing the request.');
             }
         })
         .catch(error => {
             setLoadingState(action, false);
             console.error('Error:', error);
-            alert('An error occurred while processing the request. Please try again.');
+            showErrorToast('An error occurred while processing the request. Please try again.');
         });
     }
 </script>
