@@ -381,11 +381,10 @@ class TaskController extends Controller
         // Load comments to pre-fill the comment field if desired
         $task->load(['comments.user', 'assignees', 'taggedUsers']);
 
-        $initialComments = $task->comments->map(function ($c) {
-            return ($c->user->full_name ?? $c->user->name ?? 'User') . ": " . $c->comment;
-        })->reverse()->implode("\n\n");
+        $initialComments = '';
+        $clonedFromId = $task->id;
 
-        return view('tasks.create', compact('projects', 'users', 'task', 'initialComments'));
+        return view('tasks.create', compact('projects', 'users', 'task', 'initialComments', 'clonedFromId'));
     }
 
     /**
@@ -464,6 +463,7 @@ class TaskController extends Controller
             'priority' => 'required|in:high,medium,low,free',
             // Optional initial comment from the creator when creating the task
             'comments' => 'nullable|string|max:2000',
+            'cloned_from_id' => 'nullable|exists:tasks,id',
         ]);
 
         if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor'])) {
@@ -484,7 +484,7 @@ class TaskController extends Controller
         }
 
         // Prepare data for saving
-        $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged', 'comments']);
+        $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged', 'comments', 'cloned_from_id']);
         $data['end_date'] = $endDate;
 
         $task = new Task($data);
@@ -492,6 +492,22 @@ class TaskController extends Controller
         // Stage is set automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->created_by = Auth::id();
         $task->save();
+
+        // Copy comments from original task if cloning
+        if ($request->filled('cloned_from_id')) {
+            $originalTask = Task::find($request->cloned_from_id);
+            if ($originalTask) {
+                foreach ($originalTask->comments as $oldComment) {
+                    $newComment = new TaskComment([
+                        'task_id' => $task->id,
+                        'user_id' => $oldComment->user_id,
+                        'comment' => $oldComment->comment,
+                    ]);
+                    $newComment->created_at = $oldComment->created_at; // Preserve original timestamp
+                    $newComment->save();
+                }
+            }
+        }
 
         // Persist initial comment (if provided) as a TaskComment
         $initialCommentText = trim((string) $request->input('comments', ''));

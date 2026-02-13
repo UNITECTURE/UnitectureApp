@@ -31,6 +31,9 @@
                         <form action="{{ route('tasks.store') }}" method="POST"
                             class="bg-white rounded-xl sm:rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
                             @csrf
+                            @if(isset($clonedFromId))
+                                <input type="hidden" name="cloned_from_id" value="{{ $clonedFromId }}">
+                            @endif
 
                             <!-- Modal Header -->
                             <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 border-b border-slate-100">
