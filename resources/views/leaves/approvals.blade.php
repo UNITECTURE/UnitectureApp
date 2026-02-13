@@ -411,32 +411,33 @@
     </div>
 </div>
 
-{{-- Success Toast - Positioned in middle of content area --}}
-<div id="successToast" class="hidden fixed z-[60] bg-white rounded-2xl shadow-2xl px-8 py-6 border-2 border-green-500" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
-    <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-        </div>
-        <div>
-            <p class="text-lg font-bold text-slate-800">Success!</p>
-            <p id="toastMessage" class="text-sm text-slate-600">Leave status updated successfully.</p>
+{{-- Success Toast - Professional Large Modal --}}
+<div id="successToast" class="hidden fixed inset-0 flex items-center justify-center p-4 z-50 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 max-w-lg border-l-8 border-emerald-500 transform transition-all">
+        <div class="flex items-start justify-between gap-6">
+            <div class="flex-1">
+                <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2">Success!</h2>
+                <p class="text-lg sm:text-xl text-slate-700 font-semibold leading-relaxed" id="toastMessage">Leave status updated successfully.</p>
+                <p class="text-sm sm:text-base text-slate-500 font-medium mt-3">Your action has been completed successfully</p>
+            </div>
         </div>
     </div>
 </div>
 
-{{-- Error Toast - Centered error notification --}}
-<div id="errorToast" class="hidden fixed z-[60] bg-white rounded-2xl shadow-2xl px-8 py-6 border-2 border-red-500" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
-    <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-        </div>
-        <div>
-            <p class="text-lg font-bold text-slate-800">Error</p>
-            <p id="errorToastMessage" class="text-sm text-slate-600">An error occurred. Please try again.</p>
+{{-- Error Toast - Professional Large Modal --}}
+<div id="errorToast" class="hidden fixed inset-0 flex items-center justify-center p-4 z-50 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 max-w-lg border-l-8 border-red-500 transform transition-all">
+        <div class="flex items-start justify-between gap-6">
+            <div class="flex-1">
+                <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2">Error</h2>
+                <p class="text-lg sm:text-xl text-slate-700 font-semibold leading-relaxed" id="errorToastMessage">An error occurred. Please try again.</p>
+                <p class="text-sm sm:text-base text-slate-500 font-medium mt-3">Please check your input and try again, or contact support</p>
+            </div>
+            <button type="button" onclick="document.getElementById('errorToast').classList.add('hidden')" class="flex-shrink-0 text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
     </div>
 </div>

@@ -6,22 +6,30 @@
         <x-sidebar :role="auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
-            <!-- Toast Notification - CENTERED MODAL STYLE -->
-            <div x-show="toast.show" x-transition class="fixed inset-0 flex items-center justify-center p-4 z-50" style="display: none;" @click.self="toast.show = false">
-                <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md border-l-4" 
+            <!-- Toast Notification - PROFESSIONAL LARGE MODAL -->
+            <div x-show="toast.show" x-transition class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-black/40 backdrop-blur-sm" style="display: none;" @click.self="toast.show = false">
+                <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 max-w-lg border-l-8 transform transition-all" 
                      :class="toast.type === 'success' ? 'border-emerald-500' : 'border-red-500'">
-                    <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-white"
-                             :class="toast.type === 'success' ? 'bg-emerald-500' : 'bg-red-500'">
-                            <span x-text="toast.type === 'success' ? '✓' : '✕'"></span>
-                        </div>
+                    <div class="flex items-start justify-between gap-6">
+                        <!-- Message Content -->
                         <div class="flex-1">
-                            <h3 class="text-lg font-bold text-slate-800" x-show="toast.type === 'success'">Success!</h3>
-                            <h3 class="text-lg font-bold text-slate-800" x-show="toast.type === 'error'">Error</h3>
-                            <p class="text-sm text-slate-600 mt-1" x-text="toast.message"></p>
+                            <!-- Title -->
+                            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2" x-show="toast.type === 'success'">Success!</h2>
+                            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2" x-show="toast.type === 'error'">Error</h2>
+                            
+                            <!-- Message -->
+                            <p class="text-lg sm:text-xl text-slate-700 font-semibold leading-relaxed" x-text="toast.message"></p>
+                            
+                            <!-- Subtext -->
+                            <p class="text-sm sm:text-base text-slate-500 font-medium mt-3" x-show="toast.type === 'success'">Your action has been completed successfully</p>
+                            <p class="text-sm sm:text-base text-slate-500 font-medium mt-3" x-show="toast.type === 'error'">Please check your input and try again, or contact support</p>
                         </div>
-                        <button type="button" @click="toast.show = false" class="text-slate-400 hover:text-slate-600 text-xl font-bold">
-                            ×
+                        
+                        <!-- Close Button -->
+                        <button type="button" @click="toast.show = false" class="flex-shrink-0 text-slate-400 hover:text-slate-600 transition-colors">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
                         </button>
                     </div>
                 </div>

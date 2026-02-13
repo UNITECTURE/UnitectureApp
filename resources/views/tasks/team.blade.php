@@ -107,34 +107,37 @@
                 </div>
             </header>
 
-            <!-- Toast Notification - LARGE BANNER -->
-            <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
-                x-transition:leave="transition ease-in duration-200" class="fixed top-0 left-0 right-0 z-50 w-full">
-                <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl" :class="toast.type === 'success' 
-                                             ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
-                                             : 'bg-gradient-to-r from-red-500 to-red-600'">
-                    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                        <div class="flex items-center gap-3 flex-1">
-                            <div class="text-3xl sm:text-4xl font-bold text-white">
-                                <span x-text="toast.type === 'success' ? '✓' : '✕'"></span>
-                            </div>
-                            <div>
-                                <p class="text-white text-lg sm:text-xl font-bold" x-text="toast.message"></p>
-                                <p class="text-white/80 text-sm mt-1"
-                                    x-text="toast.type === 'success' ? 'Action completed successfully!' : 'Please try again or contact support'">
-                                </p>
-                            </div>
+            <!-- Toast Notification - PROFESSIONAL LARGE MODAL -->
+            <div x-show="toast.show" x-transition class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-black/40 backdrop-blur-sm" style="display: none;" @click.self="toast.show = false">
+                <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 max-w-lg border-l-8 transform transition-all" 
+                     :class="toast.type === 'success' ? 'border-emerald-500' : 'border-red-500'">
+                    <div class="flex items-start justify-between gap-6">
+                        <!-- Message Content -->
+                        <div class="flex-1">
+                            <!-- Title -->
+                            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2" x-show="toast.type === 'success'">Success!</h2>
+                            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2" x-show="toast.type === 'error'">Error</h2>
+                            
+                            <!-- Message -->
+                            <p class="text-lg sm:text-xl text-slate-700 font-semibold leading-relaxed" x-text="toast.message"></p>
+                            
+                            <!-- Subtext -->
+                            <p class="text-sm sm:text-base text-slate-500 font-medium mt-3" x-show="toast.type === 'success'">Your action has been completed successfully</p>
+                            <p class="text-sm sm:text-base text-slate-500 font-medium mt-3" x-show="toast.type === 'error'">Please check your input and try again, or contact support</p>
                         </div>
-                        <button type="button" class="text-white hover:text-white/80 text-3xl font-bold shrink-0 p-2"
-                            @click="toast.show = false">
-                            ×
+                        
+                        <!-- Close Button -->
+                        <button type="button" @click="toast.show = false" class="flex-shrink-0 text-slate-400 hover:text-slate-600 transition-colors">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-auto" :class="toast.show ? 'mt-24 sm:mt-28' : ''">
+            <main class="flex-1 overflow-auto">
                 <!-- Vertical Kanban View -->
                 <div x-show="view === 'vertical'" class="h-full overflow-x-auto overflow-y-hidden p-3 sm:p-4 md:p-6">
                     <div class="flex h-full gap-3 sm:gap-4 md:gap-6 items-start pb-4 w-full"
