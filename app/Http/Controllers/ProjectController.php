@@ -22,11 +22,20 @@ class ProjectController extends Controller
 
         // Get all projects created by supervisors (or admins)
         $search = trim((string) $request->query('q', ''));
+        $view = $request->query('view', 'active');
 
-        $projectsQuery = Project::with('creator')
-            ->whereHas('creator', function ($query) {
-                $query->whereIn('role_id', [1, 2, 3]); // Supervisor, Admin, Super Admin
-            });
+        $projectsQuery = Project::with('creator');
+
+        if ($view === 'parked') {
+            $projectsQuery->withoutGlobalScope('exclude_parked')->where('is_parked', true);
+        } else {
+            // Default active view uses the global scope automatically
+            $projectsQuery->where('is_parked', false);
+        }
+
+        $projectsQuery->whereHas('creator', function ($query) {
+            $query->whereIn('role_id', [1, 2, 3]); // Supervisor, Admin, Super Admin
+        });
 
         if ($search !== '') {
             $projectsQuery->where(function ($query) use ($search) {
@@ -181,5 +190,36 @@ class ProjectController extends Controller
         }
 
         return redirect()->route('projects.index')->with('success', 'Project updated successfully!');
+    }
+    /**
+     * Park the specified project.
+     */
+    public function park(Project $project)
+    {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $project->is_parked = true;
+        $project->save();
+
+        return redirect()->route('projects.index')->with('success', 'Project parked successfully! It is now hidden from all views.');
+    }
+
+    /**
+     * Unpark the specified project.
+     */
+    public function unpark($id)
+    {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // We use withoutGlobalScope because parked projects are hidden by default
+        $project = Project::withoutGlobalScope('exclude_parked')->findOrFail($id);
+        $project->is_parked = false;
+        $project->save();
+
+        return redirect()->route('projects.index')->with('success', 'Project unparked successfully!');
     }
 }
