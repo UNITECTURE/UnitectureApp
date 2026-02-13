@@ -321,7 +321,7 @@ class AttendanceController extends Controller
     public function manualAccess()
     {
         $user = Auth::user();
-        $myRequests = $user->manualRequests()->orderBy('created_at', 'desc')->get();
+        $myRequests = $user->manualRequests()->orderBy('created_at', 'desc')->paginate(10);
 
         $role = match ((int) $user->role_id) {
             2, 3 => 'admin',
@@ -396,9 +396,9 @@ class AttendanceController extends Controller
             $daily_records = [];
             $daily_summary = ['total' => $start->daysInMonth, 'present' => 0, 'leave' => 0, 'absent' => 0];
 
-            $curr = $start->copy(); // Iterate full month (Reverse Order)
+            $curr = $limitDate->copy(); // Start from most recent date (Descending Order)
 
-            while ($curr->lte($end)) {
+            while ($curr->gte($start)) {
                 $dateStr = $curr->toDateString();
                 $isFuture = $curr->isFuture() && !$curr->isToday();
                 // Note: isFuture() is strictly > now.
@@ -462,9 +462,14 @@ class AttendanceController extends Controller
                     default => 'bg-red-100 text-red-800',
                 };
 
-                if (isset($attRecord) && $attRecord->type === 'manual' && $status === 'present') {
-                    $statusText = 'Present (Manual)';
-                    $class = 'bg-blue-100 text-blue-800';
+                if (isset($attRecord) && $status === 'present') {
+                    if ($attRecord->type === 'manual') {
+                        $statusText = 'Present (Manual)';
+                        $class = 'bg-blue-100 text-blue-800';
+                    } elseif ($attRecord->type === 'hybrid') {
+                        $statusText = 'Present (Hybrid)';
+                        $class = 'bg-purple-100 text-purple-800';
+                    }
                 }
 
                 // Counts (Only up to today/limitDate for accuracy in summary)
@@ -486,7 +491,7 @@ class AttendanceController extends Controller
                     'class' => $class
                 ];
 
-                $curr->addDay();
+                $curr->subDay();
             }
         }
 
@@ -827,6 +832,8 @@ class AttendanceController extends Controller
 
                     if ($att && $att->type === 'manual')
                         $status .= ' (Manual)';
+                    elseif ($att && $att->type === 'hybrid')
+                        $status .= ' (Hybrid)';
 
                     fputcsv($file, [$u->full_name, $date, $status, $in, $out, $dur]);
                 }
@@ -901,6 +908,8 @@ class AttendanceController extends Controller
                 $status = $att ? ucfirst($att->status) : 'Absent';
                 if ($att && $att->type === 'manual')
                     $status .= ' (Manual)';
+                elseif ($att && $att->type === 'hybrid')
+                    $status .= ' (Hybrid)';
 
                 $in = $att && $att->clock_in ? Carbon::parse($att->clock_in)->format('h:i A') : '-';
                 $out = $att && $att->clock_out ? Carbon::parse($att->clock_out)->format('h:i A') : '-';
@@ -954,6 +963,8 @@ class AttendanceController extends Controller
                         $status = ucfirst($att->status);
                         if ($att->type === 'manual')
                             $status .= ' (Manual)';
+                        elseif ($att->type === 'hybrid')
+                            $status .= ' (Hybrid)';
 
                         // Accessor handles negative cleanup on retrieval
                         $dur = $att->duration ?? '-';
@@ -1021,6 +1032,8 @@ class AttendanceController extends Controller
                         $status = ucfirst($att->status);
                         if ($att->type === 'manual')
                             $status .= ' (Manual)';
+                        elseif ($att->type === 'hybrid')
+                            $status .= ' (Hybrid)';
 
                         $in = $att->clock_in ? \Carbon\Carbon::parse($att->clock_in)->format('h:i A') : '-';
                         $out = $att->clock_out ? \Carbon\Carbon::parse($att->clock_out)->format('h:i A') : '-';

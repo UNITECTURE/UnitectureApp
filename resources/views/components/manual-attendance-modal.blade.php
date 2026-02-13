@@ -9,6 +9,9 @@
             endTime: '18:15',
             duration: '0h 0m',
             reasonDescription: '',
+            hasOverlap: false,
+            overlapMessage: '',
+            checkingOverlap: false,
 
             dragging: false,
             dragX: 0,
@@ -26,7 +29,9 @@
                     this.reasonDescription.trim().length > 0 &&
                     this.wordCount <= 30 &&
                     this.duration !== 'Invalid Range' &&
-                    this.duration !== '...';
+                    this.duration !== '...' &&
+                    !this.hasOverlap &&
+                    !this.checkingOverlap;
             },
 
             init() {
@@ -38,6 +43,11 @@
                 window.addEventListener('open-manual-attendance-modal', () => {
                     this.show = true;
                 });
+
+                // Auto-open modal if there are validation errors
+                @if ($errors->any())
+                    this.show = true;
+                @endif
 
                 this.$nextTick(() => {
                     if (typeof flatpickr !== 'undefined') {
@@ -51,9 +61,16 @@
                     this.calculateDuration();
                 });
 
-                // Watchers for time calculation
-                this.$watch('startTime', () => this.calculateDuration());
-                this.$watch('endTime', () => this.calculateDuration());
+                // Watchers for time calculation and overlap checking
+                this.$watch('startTime', () => {
+                    this.calculateDuration();
+                    this.checkOverlap();
+                });
+                this.$watch('endTime', () => {
+                    this.calculateDuration();
+                    this.checkOverlap();
+                });
+                this.$watch('date', () => this.checkOverlap());
             },
 
             calculateDuration() {
@@ -106,6 +123,31 @@
 
             stopDrag() {
                 this.dragging = false;
+            },
+
+            async checkOverlap() {
+                if (!this.date || !this.startTime || !this.endTime) {
+                    this.hasOverlap = false;
+                    this.overlapMessage = '';
+                    return;
+                }
+
+                this.checkingOverlap = true;
+                try {
+                    const response = await fetch('{{ route("attendance.check-overlap") }}?' + new URLSearchParams({
+                        user_id: '{{ Auth::id() }}',
+                        date: this.date,
+                        start_time: this.startTime,
+                        end_time: this.endTime
+                    }));
+                    const data = await response.json();
+                    this.hasOverlap = data.has_overlap || false;
+                    this.overlapMessage = data.message || '';
+                } catch (error) {
+                    this.hasOverlap = false;
+                    this.overlapMessage = '';
+                }
+                this.checkingOverlap = false;
             }
         }))
     })
@@ -153,6 +195,32 @@
                 @csrf
                 <input type="hidden" name="user_id" value="{{ Auth::id() ?? 1 }}">
                 <input type="hidden" name="duration" :value="duration">
+
+                {{-- Error Messages Display --}}
+                @if ($errors->any())
+                    <div class="mx-8 mt-6 mb-0 bg-red-50 border border-red-200 rounded-xl p-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <h3 class="text-sm font-semibold text-red-800">
+                                    {{ $errors->has('error') ? 'Validation Error' : 'Please correct the following errors:' }}
+                                </h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Body (Scrollable) --}}
                 <div class="px-8 py-6 space-y-6 overflow-y-auto custom-scrollbar">
@@ -202,6 +270,21 @@
                         <span class="text-sm font-bold"
                             :class="duration === 'Invalid Range' ? 'text-red-500' : 'text-slate-800'"
                             x-text="duration">...</span>
+                    </div>
+
+                    {{-- Overlap Warning --}}
+                    <div x-show="hasOverlap" class="bg-red-50 border border-red-200 rounded-xl p-3.5" x-transition>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-red-800" x-text="overlapMessage"></p>
+                            </div>
+                        </div>
                     </div>
 
 

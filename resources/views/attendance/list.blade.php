@@ -188,7 +188,25 @@
                                                 <td class="px-2 py-4 text-center">
                                                     <span
                                                         class="inline-block px-2.5 py-1 text-xs leading-4 font-semibold rounded-full {{ $rec['class'] }}">
-                                                        {!! str_replace('Manual Attendance', 'Manual<br><span class="text-[10px] opacity-75">Attendance</span>', $rec['status'] == 'leave' ? 'On Leave' : $rec['status']) !!}
+                                                        @php
+                                                            $displayStatus = $rec['status'] == 'leave' ? 'On Leave' : $rec['status'];
+                                                            $subLabel = '';
+                                                            
+                                                            if (str_contains($displayStatus, '(Manual)')) {
+                                                                $displayStatus = 'Present';
+                                                                $subLabel = 'Manual';
+                                                            } elseif (str_contains($displayStatus, '(Hybrid)')) {
+                                                                $displayStatus = 'Present';
+                                                                $subLabel = 'Hybrid';
+                                                            } elseif ($displayStatus === 'Manual Attendance') {
+                                                                $displayStatus = 'Present';
+                                                                $subLabel = 'Manual';
+                                                            }
+                                                        @endphp
+                                                        {{ $displayStatus }}
+                                                        @if($subLabel)
+                                                            <br><span class="text-[10px] opacity-75">{{ $subLabel }}</span>
+                                                        @endif
                                                     </span>
                                                 </td>
                                                 <td class="px-2 py-4 text-center text-sm text-slate-600">

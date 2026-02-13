@@ -118,6 +118,13 @@
                                 </div>
                             @endif
                         </div>
+                        
+                        {{-- Pagination Links --}}
+                        @if(isset($myRequests) && $myRequests->count() > 0)
+                            <div class="px-6 py-4 border-t border-slate-100">
+                                {{ $myRequests->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

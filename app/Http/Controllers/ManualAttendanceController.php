@@ -51,6 +51,35 @@ class ManualAttendanceController extends Controller
             ],
         ]);
 
+        // Check for overlapping manual attendance requests on the same date
+        if ($request->start_time && $request->end_time) {
+            $requestStart = Carbon::parse($request->date . ' ' . $request->start_time);
+            $requestEnd = Carbon::parse($request->date . ' ' . $request->end_time);
+
+            // Find existing requests for the same user and date (pending or approved)
+            $existingRequests = ManualAttendanceRequest::where('user_id', $request->user_id)
+                ->where('date', $request->date)
+                ->whereIn('status', ['pending', 'approved'])
+                ->get();
+
+            foreach ($existingRequests as $existing) {
+                if ($existing->start_time && $existing->end_time) {
+                    $existingStart = Carbon::parse($existing->date . ' ' . $existing->start_time);
+                    $existingEnd = Carbon::parse($existing->date . ' ' . $existing->end_time);
+
+                    // Check for overlap: new request overlaps if it starts before existing ends AND ends after existing starts
+                    if ($requestStart->lt($existingEnd) && $requestEnd->gt($existingStart)) {
+                        return redirect()->back()
+                            ->withErrors([
+                                'error' => 'You already have a manual attendance request for an overlapping time period (' .
+                                    $existing->start_time . ' - ' . $existing->end_time . ') on this date.'
+                            ])
+                            ->withInput();
+                    }
+                }
+            }
+        }
+
         $manualRequest = ManualAttendanceRequest::create([
             'user_id' => $request->user_id,
             'date' => $request->date,
@@ -199,6 +228,51 @@ class ManualAttendanceController extends Controller
         $manualRequest->save();
 
         return redirect()->back()->with('success', 'Manual attendance request cancelled and hours reverted.');
+    }
+
+    /**
+     * API endpoint to check for overlapping manual attendance requests
+     */
+    public function checkOverlap(Request $request)
+    {
+        $userId = $request->input('user_id');
+        $date = $request->input('date');
+        $startTime = $request->input('start_time');
+        $endTime = $request->input('end_time');
+
+        if (!$userId || !$date || !$startTime || !$endTime) {
+            return response()->json(['has_overlap' => false]);
+        }
+
+        try {
+            $requestStart = Carbon::parse($date . ' ' . $startTime);
+            $requestEnd = Carbon::parse($date . ' ' . $endTime);
+
+            // Find existing requests for the same user and date (pending or approved)
+            $existingRequests = ManualAttendanceRequest::where('user_id', $userId)
+                ->where('date', $date)
+                ->whereIn('status', ['pending', 'approved'])
+                ->get();
+
+            foreach ($existingRequests as $existing) {
+                if ($existing->start_time && $existing->end_time) {
+                    $existingStart = Carbon::parse($existing->date . ' ' . $existing->start_time);
+                    $existingEnd = Carbon::parse($existing->date . ' ' . $existing->end_time);
+
+                    // Check for overlap
+                    if ($requestStart->lt($existingEnd) && $requestEnd->gt($existingStart)) {
+                        return response()->json([
+                            'has_overlap' => true,
+                            'message' => 'You already have a request for ' . $existing->start_time . ' - ' . $existing->end_time . ' on this date.'
+                        ]);
+                    }
+                }
+            }
+
+            return response()->json(['has_overlap' => false]);
+        } catch (\Exception $e) {
+            return response()->json(['has_overlap' => false]);
+        }
     }
 
 

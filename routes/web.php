@@ -73,7 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
     Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
     Route::get('/my-team', [App\Http\Controllers\UserController::class, 'team'])->name('team.index');
-    
+
     // Admin User Management
     Route::get('/users/manage', [App\Http\Controllers\UserController::class, 'manageUsers'])->name('users.manage');
     Route::get('/users/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
@@ -102,6 +102,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/manual/{id}/cancel', [ManualAttendanceController::class, 'cancel'])->name('attendance.manual.cancel');
 
     Route::get('/attendance/manual', [AttendanceController::class, 'manualAccess'])->name('attendance.manual');
+    Route::get('/api/attendance/check-overlap', [ManualAttendanceController::class, 'checkOverlap'])->name('attendance.check-overlap');
     Route::get('/attendance/export', [AttendanceController::class, 'export'])->name('attendance.export');
 
     // Admin Routes

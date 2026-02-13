@@ -176,12 +176,65 @@ class ProcessAttendance extends Command
         // Logic uses $manualReq to set type='manual'.
         $manualReq = $approvedReqs->first();
 
-        // 3. Calculate Totals
-        // Sum biometric and manual minutes
-        $totalMinutes = (int) $biometricDurationMinutes + (int) $manualDurationMinutes;
+        // Parse manual attendance time range
+        $manualStartTime = null;
+        $manualEndTime = null;
+
+        if ($manualReq && $manualReq->start_time && $manualReq->end_time) {
+            try {
+                // Parse times on the given date
+                $manualStartTime = Carbon::parse($date->toDateString() . ' ' . $manualReq->start_time);
+                $manualEndTime = Carbon::parse($date->toDateString() . ' ' . $manualReq->end_time);
+            } catch (\Exception $e) {
+                // If parsing fails, log and ignore manual times
+                \Illuminate\Support\Facades\Log::warning("Failed to parse manual attendance times for user {$user->id} on {$date->toDateString()}: {$e->getMessage()}");
+            }
+        }
+
+        // Save original biometric times for type determination
+        $originalBioClockIn = $clockIn;
+        $originalBioClockOut = $clockOut;
+
+        // 3. Calculate Maximum Coverage (Option 2)
+        // Use maximum of biometric or combined duration
+        // Calculate total coverage from earliest punch-in to latest punch-out
+        // Add manual duration only if it extends beyond biometric coverage
+        $finalClockIn = null;
+        $finalClockOut = null;
+        $totalMinutes = 0;
+
+        if ($clockIn && $clockOut && $manualStartTime && $manualEndTime) {
+            // Both biometric and manual exist - use maximum coverage
+            $finalClockIn = $clockIn->lt($manualStartTime) ? $clockIn : $manualStartTime;
+            $finalClockOut = $clockOut->gt($manualEndTime) ? $clockOut : $manualEndTime;
+            $totalMinutes = abs($finalClockIn->diffInMinutes($finalClockOut));
+        } elseif ($clockIn && $clockOut) {
+            // Only biometric exists
+            $finalClockIn = $clockIn;
+            $finalClockOut = $clockOut;
+            $totalMinutes = $biometricDurationMinutes;
+        } elseif ($manualStartTime && $manualEndTime) {
+            // Only manual exists
+            $finalClockIn = $manualStartTime;
+            $finalClockOut = $manualEndTime;
+            $totalMinutes = abs($manualStartTime->diffInMinutes($manualEndTime));
+        }
+
+        // Update clock_in and clock_out to use final values
+        $clockIn = $finalClockIn;
+        $clockOut = $finalClockOut;
 
         // Determine Type
-        if ($biometricDurationMinutes > 0 && $manualDurationMinutes > 0) {
+        // Check if manual attendance actually contributed to coverage
+        $manualExtendedCoverage = false;
+        if ($manualStartTime && $manualEndTime && $biometricDurationMinutes > 0) {
+            // Manual extends if it starts before biometric or ends after biometric
+            if ($manualStartTime->lt($originalBioClockIn) || $manualEndTime->gt($originalBioClockOut)) {
+                $manualExtendedCoverage = true;
+            }
+        }
+
+        if ($biometricDurationMinutes > 0 && $manualReq) {
             $type = 'hybrid';
         } elseif ($manualReq) {
             $type = 'manual';
@@ -242,7 +295,11 @@ class ProcessAttendance extends Command
             ]
         );
 
-        $this->info("Processed User {$user->id}: Bio={$biometricDurationMinutes}m, Manual={$manualDurationMinutes}m, Total={$durationString}");
+        $this->info("Processed User {$user->id}: " .
+            "Bio=" . ($biometricDurationMinutes > 0 ? "{$biometricDurationMinutes}m" : "None") .
+            ", Manual=" . ($manualReq ? "{$manualDurationMinutes}m" : "None") .
+            ", Coverage={$durationString}" .
+            ($manualExtendedCoverage ? " (Manual Extended)" : ""));
 
     }
 
