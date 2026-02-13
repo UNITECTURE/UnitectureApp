@@ -132,7 +132,8 @@
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by Employee name"
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Search by Employee name"
                             class="block w-full pl-11 pr-3 py-2.5 border border-slate-200 rounded-lg leading-5 bg-white placeholder-slate-400 focus:outline-none focus:placeholder-slate-300 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 sm:text-sm shadow-sm transition-shadow duration-200">
                     </div>
                 </form>
@@ -192,7 +193,8 @@
                                                             <td class="px-3 py-3 whitespace-nowrap text-sm text-slate-600">
                                                                 {{ \Carbon\Carbon::parse($request->created_at)->format('M d, Y') }}
                                                                 <div class="text-xs text-slate-400">
-                                                                    {{ \Carbon\Carbon::parse($request->created_at)->format('h:i A') }}</div>
+                                                                    {{ \Carbon\Carbon::parse($request->created_at)->format('h:i A') }}
+                                                                </div>
                                                             </td>
                                                             <td class="px-3 py-3 whitespace-nowrap text-sm text-slate-600">
                                                                 {{ \Carbon\Carbon::parse($request->date)->format('M d, Y') }}
@@ -211,7 +213,7 @@
                                                             <td class="px-3 py-3 whitespace-nowrap text-center">
                                                                 <span
                                                                     class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium
-                                                                                                                            {{ $request->status === 'approved' ? 'bg-green-100 text-green-600' :
+                                                                                                                                                        {{ $request->status === 'approved' ? 'bg-green-100 text-green-600' :
                                     ($request->status === 'rejected' ? 'bg-red-100 text-red-600' : 'bg-yellow-50 text-yellow-700') }}">
                                                                     {{ ucfirst($request->status) }}
                                                                 </span>
@@ -269,12 +271,9 @@
                             </tbody>
                         </table>
                     </div>
-                    {{-- Pagination Feedback --}}
-                    <div
-                        class="px-3 py-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                        <div class="flex items-center space-x-4">
-                            <span>Showing {{ $requests->count() }} entries</span>
-                        </div>
+                    {{-- Pagination --}}
+                    <div class="px-6 py-4 border-t border-slate-100">
+                        {{ $requests->links() }}
                     </div>
                 </div>
             </div>

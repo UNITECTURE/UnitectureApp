@@ -8,9 +8,20 @@
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[#F8F9FB]">
                 <div class="container mx-auto px-6 py-8">
                     <!-- Header -->
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-slate-800">My Team</h2>
-                        <p class="text-slate-400 text-sm mt-1 font-medium">Overview of your team members</p>
+                    <div class="mb-8 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <button onclick="history.back()"
+                                class="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-full hover:bg-slate-100">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                </svg>
+                            </button>
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-800">My Team</h2>
+                                <p class="text-slate-400 text-sm mt-1 font-medium">Overview of your team members</p>
+                            </div>
+                        </div>
                     </div>
 
                     @if($team->isEmpty())

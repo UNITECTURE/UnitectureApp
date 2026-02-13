@@ -66,7 +66,7 @@ class AttendanceController extends Controller
             });
         }
 
-        $requests = $baseQuery->with('user')->orderBy('created_at', 'desc')->get();
+        $requests = $baseQuery->with('user')->orderBy('created_at', 'desc')->paginate(10);
         Log::info('Attendance Approvals Page Accessed', [
             'user_id' => $user->id,
             'role' => $role,
@@ -712,7 +712,7 @@ class AttendanceController extends Controller
         $exceptions = Attendance::where('status', 'exempted')
             ->with('user')
             ->orderBy('date', 'desc')
-            ->get();
+            ->paginate(10);
 
         return view('attendance.exception', compact('users', 'exceptions'));
     }

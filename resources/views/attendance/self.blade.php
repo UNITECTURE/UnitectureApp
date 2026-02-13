@@ -124,6 +124,9 @@
                                                                     } elseif (str_contains($displayStatus, '(Hybrid)')) {
                                                                         $displayStatus = 'Present';
                                                                         $subLabel = 'Hybrid';
+                                                                    } elseif (str_contains($displayStatus, 'Exempted')) {
+                                                                        $displayStatus = 'Exempted';
+                                                                        $subLabel = '9 Hrs';
                                                                     }
                                                                 @endphp
                                                                 {{ $displayStatus }}

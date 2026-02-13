@@ -9,9 +9,19 @@
                 <div class="container mx-auto px-6 py-8">
                     <!-- Header -->
                     <div class="mb-4 flex items-center justify-between">
-                        <div>
-                            <h2 class="text-2xl font-bold text-slate-800">Projects Overview</h2>
-                            <p class="text-slate-400 text-sm mt-1 font-medium">View all projects created by supervisors</p>
+                        <div class="flex items-center gap-4">
+                            <button onclick="history.back()"
+                                class="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-full hover:bg-slate-100">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                </svg>
+                            </button>
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-800">Projects Overview</h2>
+                                <p class="text-slate-400 text-sm mt-1 font-medium">View all projects created by supervisors
+                                </p>
+                            </div>
                         </div>
                         @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
                             <a href="{{ route('projects.create') }}"
@@ -26,13 +36,16 @@
                     </div>
 
                     <div class="mb-8">
-                        <form id="projectSearchForm" action="{{ route('projects.index') }}" method="GET" class="w-full sm:w-80">
+                        <form id="projectSearchForm" action="{{ route('projects.index') }}" method="GET"
+                            class="w-full sm:w-80">
                             <div class="relative">
                                 <input type="text" id="projectSearchInput" name="q" value="{{ $search ?? '' }}"
                                     placeholder="Search by title, code, or ID"
                                     class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
-                                <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </div>
                         </form>
@@ -57,9 +70,9 @@
                                         </div>
                                         <span
                                             class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold
-                                                                    {{ $project->status === 'active' ? 'bg-green-100 text-green-700' : '' }}
-                                                                    {{ $project->status === 'completed' ? 'bg-blue-100 text-blue-700' : '' }}
-                                                                    {{ $project->status === 'archived' ? 'bg-slate-100 text-slate-700' : '' }}">
+                                                                                {{ $project->status === 'active' ? 'bg-green-100 text-green-700' : '' }}
+                                                                                {{ $project->status === 'completed' ? 'bg-blue-100 text-blue-700' : '' }}
+                                                                                {{ $project->status === 'archived' ? 'bg-slate-100 text-slate-700' : '' }}">
                                             {{ ucfirst($project->status) }}
                                         </span>
                                     </div>

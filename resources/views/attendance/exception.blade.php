@@ -11,8 +11,12 @@
             <header class="bg-white border-b border-slate-200 z-10 transition-all duration-300">
                 <div class="px-6 py-4 flex items-center justify-between">
                     <div class="flex items-center">
-                        <button @click="sidebarOpen = !sidebarOpen" class="text-slate-500 hover:text-slate-600 focus:outline-none mr-4 lg:hidden">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        <button @click="sidebarOpen = !sidebarOpen"
+                            class="text-slate-500 hover:text-slate-600 focus:outline-none mr-4 lg:hidden">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
                         </button>
                         <h1 class="text-xl font-bold text-slate-800">Attendance Exception</h1>
                     </div>
@@ -22,14 +26,16 @@
 
             {{-- Content Area --}}
             <main class="flex-1 overflow-y-auto p-6 bg-[#F8F9FB]">
-                <div class="max-w-2xl mx-auto">
-                    
+                <div class="w-full">
+
                     {{-- Success Message --}}
                     @if(session('success'))
                         <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg flex items-center shadow-sm">
                             <div class="flex-shrink-0">
                                 <svg class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </div>
                             <div class="ml-3">
@@ -38,20 +44,23 @@
                         </div>
                     @endif
 
-                    <div class="bg-white rounded-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
+                    <div
+                        class="bg-white rounded-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
                         <div class="p-6 border-b border-slate-100 bg-slate-50/30">
                             <h2 class="text-lg font-bold text-slate-800">Mark Attendance Exception</h2>
-                            <p class="text-sm text-slate-500 mt-1">Exempt an employee from biometric rules for a specific day. This will set their duration to 9 Hours.</p>
+                            <p class="text-sm text-slate-500 mt-1">Exempt an employee from biometric rules for a specific
+                                day. This will set their duration to 9 Hours.</p>
                         </div>
 
                         <form action="{{ route('admin.attendance.storeException') }}" method="POST" class="p-8 space-y-6">
                             @csrf
-                            
+
                             {{-- Employee Selector --}}
                             <div>
-                                <label for="user_id" class="block text-sm font-semibold text-slate-700 mb-2">Select Employee</label>
+                                <label for="user_id" class="block text-sm font-semibold text-slate-700 mb-2">Select
+                                    Employee</label>
                                 <div class="relative">
-                                    <select name="user_id" id="user_id" required 
+                                    <select name="user_id" id="user_id" required
                                         class="block w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 text-sm py-3 px-4 shadow-sm transition-colors">
                                         <option value="">-- Choose Employee --</option>
                                         @foreach($users as $user)
@@ -63,17 +72,20 @@
 
                             {{-- Date Selector --}}
                             <div>
-                                <label for="date" class="block text-sm font-semibold text-slate-700 mb-2">Select Date</label>
-                                <input type="date" name="date" id="date" required
-                                    max="{{ date('Y-m-d') }}"
+                                <label for="date" class="block text-sm font-semibold text-slate-700 mb-2">Select
+                                    Date</label>
+                                <input type="date" name="date" id="date" required max="{{ date('Y-m-d') }}"
                                     class="block w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 text-sm py-3 px-4 shadow-sm transition-colors">
                             </div>
 
                             {{-- Actions --}}
                             <div class="pt-6 flex justify-end">
-                                <button type="submit" 
+                                <button type="submit"
                                     class="inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all shadow-blue-200/50">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg>
                                     Mark as Exempted
                                 </button>
                             </div>
@@ -81,7 +93,8 @@
                     </div>
 
                     {{-- Exemption History Table --}}
-                    <div class="bg-white rounded-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden mt-8">
+                    <div
+                        class="bg-white rounded-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden mt-8">
                         <div class="p-6 border-b border-slate-100 bg-slate-50/30">
                             <h2 class="text-lg font-bold text-slate-800">Exemption History</h2>
                             <p class="text-sm text-slate-500 mt-1">Record of all manual exemptions granted.</p>
@@ -90,52 +103,70 @@
                             <table class="min-w-full divide-y divide-slate-100">
                                 <thead class="bg-slate-50/50">
                                     <tr>
-                                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
-                                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
-                                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Duration</th>
-                                        <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Action</th>
+                                        <th
+                                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                            Name</th>
+                                        <th
+                                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                            Date</th>
+                                        <th
+                                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                            Duration</th>
+                                        <th
+                                            class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                            Status</th>
+                                        <th
+                                            class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                            Action</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-slate-100">
                                     @forelse($exceptions as $exception)
-                                    <tr class="hover:bg-slate-50/50 transition-colors">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-9 w-9 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-xs font-bold border border-indigo-200">
-                                                    {{ substr($exception->user->full_name ?? 'U', 0, 2) }}
+                                        <tr class="hover:bg-slate-50/50 transition-colors">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div
+                                                        class="flex-shrink-0 h-9 w-9 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-xs font-bold border border-indigo-200">
+                                                        {{ substr($exception->user->full_name ?? 'U', 0, 2) }}
+                                                    </div>
+                                                    <div class="ml-3">
+                                                        <div class="text-sm font-medium text-slate-900">
+                                                            {{ $exception->user->full_name ?? 'Unknown' }}
+                                                        </div>
+                                                        <div class="text-xs text-slate-500">{{ $exception->user->email ?? '' }}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="ml-3">
-                                                    <div class="text-sm font-medium text-slate-900">{{ $exception->user->full_name ?? 'Unknown' }}</div>
-                                                    <div class="text-xs text-slate-500">{{ $exception->user->email ?? '' }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                                            {{ \Carbon\Carbon::parse($exception->date)->format('M d, Y') }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">
-                                            {{ $exception->duration }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-700">
-                                                Exempted
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                            <span class="text-slate-400 text-xs">Completed</span>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                                {{ \Carbon\Carbon::parse($exception->date)->format('M d, Y') }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">
+                                                {{ $exception->duration }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-700">
+                                                    Exempted
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                                <span class="text-slate-400 text-xs">Completed</span>
+                                            </td>
+                                        </tr>
                                     @empty
-                                    <tr>
-                                        <td colspan="5" class="px-6 py-12 text-center text-slate-500">
-                                            <p class="text-base font-medium text-slate-900">No exemptions found</p>
-                                            <p class="text-sm mt-1">Exemptions granted will appear here.</p>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                                                <p class="text-base font-medium text-slate-900">No exemptions found</p>
+                                                <p class="text-sm mt-1">Exemptions granted will appear here.</p>
+                                            </td>
+                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="px-6 py-4 border-t border-slate-100">
+                            {{ $exceptions->links() }}
                         </div>
                     </div>
                 </div>

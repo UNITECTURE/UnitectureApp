@@ -9,9 +9,18 @@
             <div class="space-y-6">
                 {{-- Header --}}
                 <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">Leave Approvals</h2>
-                        <p class="text-slate-400 text-sm mt-1">Review and manage leave requests from your team.</p>
+                    <div class="flex items-center gap-4">
+                        <button onclick="history.back()"
+                            class="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-full hover:bg-slate-100">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </button>
+                        <div>
+                            <h2 class="text-3xl font-bold text-slate-800">Leave Approvals</h2>
+                            <p class="text-slate-400 text-sm mt-1">Review and manage leave requests from your team.</p>
+                        </div>
                     </div>
                     @if(Auth::user()->isAdmin())
                     <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg flex items-center gap-2 transition-colors">
