@@ -73,7 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
     Route::post('/users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
     Route::get('/my-team', [App\Http\Controllers\UserController::class, 'team'])->name('team.index');
-    
+
     // Admin User Management
     Route::get('/users/manage', [App\Http\Controllers\UserController::class, 'manageUsers'])->name('users.manage');
     Route::get('/users/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
@@ -148,7 +148,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/tasks/{task}/people', [App\Http\Controllers\TaskController::class, 'updatePeople'])->name('tasks.updatePeople');
     Route::get('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'show'])->name('tasks.show');
     Route::get('/api/tasks/employees', [App\Http\Controllers\TaskController::class, 'getEmployees'])->name('tasks.employees');
-    Route::get('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'comments'])->name('tasks.comments.index');
+    Route::get('/tasks/{task}/clone', [App\Http\Controllers\TaskController::class, 'clone'])->name('tasks.clone');
     Route::post('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'addComment'])->name('tasks.comments.store');
 });
 
