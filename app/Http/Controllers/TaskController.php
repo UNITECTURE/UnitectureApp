@@ -1008,6 +1008,33 @@ class TaskController extends Controller
     /**
      * Store a new comment on a task.
      */
+    public function getComments(Task $task)
+    {
+        $user = Auth::user();
+        if (!$this->canViewTask($user, $task)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $comments = TaskComment::with('user')
+            ->where('task_id', $task->id)
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($comment) {
+                return [
+                    'id' => $comment->id,
+                    'comment' => $comment->comment,
+                    'created_at' => $comment->created_at->toDateTimeString(),
+                    'created_at_human' => $comment->created_at->format('M j, Y g:i A'),
+                    'user' => [
+                        'id' => $comment->user->id,
+                        'name' => $comment->user->full_name ?? $comment->user->name,
+                    ],
+                ];
+            });
+
+        return response()->json($comments);
+    }
+
     public function addComment(Request $request, Task $task)
     {
         $user = Auth::user();

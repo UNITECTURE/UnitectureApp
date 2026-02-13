@@ -151,6 +151,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'show'])->name('tasks.show');
     Route::get('/api/tasks/employees', [App\Http\Controllers\TaskController::class, 'getEmployees'])->name('tasks.employees');
     Route::get('/tasks/{task}/clone', [App\Http\Controllers\TaskController::class, 'clone'])->name('tasks.clone');
+    Route::get('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'getComments'])->name('tasks.comments.index');
     Route::post('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'addComment'])->name('tasks.comments.store');
 });
 
