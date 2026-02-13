@@ -19,8 +19,19 @@ class Project extends Model
         'end_date',
         'description',
         'status',
+        'is_parked',
         'created_by',
     ];
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope('exclude_parked', function ($builder) {
+            $builder->where('is_parked', false);
+        });
+    }
 
     /**
      * Get the user who created the project.

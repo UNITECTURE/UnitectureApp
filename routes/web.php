@@ -134,6 +134,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects/{project}', [App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
     Route::get('/projects/{project}/edit', [App\Http\Controllers\ProjectController::class, 'edit'])->name('projects.edit');
     Route::put('/projects/{project}', [App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
+    Route::post('/projects/{project}/park', [App\Http\Controllers\ProjectController::class, 'park'])->name('projects.park');
+    Route::post('/projects/{id}/unpark', [App\Http\Controllers\ProjectController::class, 'unpark'])->name('projects.unpark');
 
     // Task Management
     Route::get('/tasks', [App\Http\Controllers\TaskController::class, 'index'])->name('tasks.index');
