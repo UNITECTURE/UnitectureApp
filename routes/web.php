@@ -153,6 +153,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tasks/{task}/clone', [App\Http\Controllers\TaskController::class, 'clone'])->name('tasks.clone');
     Route::get('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'getComments'])->name('tasks.comments.index');
     Route::post('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'addComment'])->name('tasks.comments.store');
+
+    // Calendar Notes
+    Route::get('/api/calendar-notes', [App\Http\Controllers\CalendarNoteController::class, 'index'])->name('calendar-notes.index');
+    Route::get('/api/calendar-notes/range', [App\Http\Controllers\CalendarNoteController::class, 'getByDateRange'])->name('calendar-notes.range');
+    Route::post('/api/calendar-notes', [App\Http\Controllers\CalendarNoteController::class, 'store'])->name('calendar-notes.store');
+    Route::patch('/api/calendar-notes/{calendarNote}', [App\Http\Controllers\CalendarNoteController::class, 'update'])->name('calendar-notes.update');
+    Route::delete('/api/calendar-notes/{calendarNote}', [App\Http\Controllers\CalendarNoteController::class, 'destroy'])->name('calendar-notes.destroy');
 });
 
 // Test Telegram Route
