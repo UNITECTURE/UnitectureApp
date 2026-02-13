@@ -145,12 +145,6 @@ class ProcessAttendance extends Command
                 } else {
                     $biometricDurationMinutes = abs($clockIn->diffInMinutes($clockOut));
                 }
-
-
-                // Ensure ClockIn is formatted as string for DB if needed, or Carbon object is fine for Eloquent
-                // But let's keep consistency with original which assigned $logs->first()->punch_time (string/datetime)
-                // We'll wrap in typical Carbon format or leave as Carbon instance (Eloquent handles it)
-
             }
         }
 
@@ -166,8 +160,7 @@ class ProcessAttendance extends Command
         foreach ($rawReqs as $req) {
             $st = strtolower(trim($req->status));
             if ($st === 'approved') {
-                $parsed = $this->parseDuration($req->duration);
-                $manualDurationMinutes += $parsed;
+                $manualDurationMinutes += $this->parseDuration($req->duration);
                 $approvedReqs->push($req);
             }
         }
@@ -183,6 +176,7 @@ class ProcessAttendance extends Command
         if ($manualReq && $manualReq->start_time && $manualReq->end_time) {
             try {
                 // Parse times on the given date
+                // Handle cross-day manual times if needed (not supported by simple string concat, but assuming same day for now)
                 $manualStartTime = Carbon::parse($date->toDateString() . ' ' . $manualReq->start_time);
                 $manualEndTime = Carbon::parse($date->toDateString() . ' ' . $manualReq->end_time);
             } catch (\Exception $e) {
@@ -204,12 +198,12 @@ class ProcessAttendance extends Command
         $totalMinutes = 0;
 
         if ($clockIn && $clockOut && $manualStartTime && $manualEndTime) {
-            // Both biometric and manual exist - use maximum coverage
+            // Both biometric (complete) and manual exist - use maximum coverage
             $finalClockIn = $clockIn->lt($manualStartTime) ? $clockIn : $manualStartTime;
             $finalClockOut = $clockOut->gt($manualEndTime) ? $clockOut : $manualEndTime;
             $totalMinutes = abs($finalClockIn->diffInMinutes($finalClockOut));
         } elseif ($clockIn && $clockOut) {
-            // Only biometric exists
+            // Only biometric (complete) exists
             $finalClockIn = $clockIn;
             $finalClockOut = $clockOut;
             $totalMinutes = $biometricDurationMinutes;
@@ -218,6 +212,11 @@ class ProcessAttendance extends Command
             $finalClockIn = $manualStartTime;
             $finalClockOut = $manualEndTime;
             $totalMinutes = abs($manualStartTime->diffInMinutes($manualEndTime));
+        } elseif ($clockIn) {
+            // Only partial biometric (Clock In only)
+            $finalClockIn = $clockIn;
+            $finalClockOut = null; // No clock out yet
+            $totalMinutes = 0; // No duration yet
         }
 
         // Update clock_in and clock_out to use final values
@@ -247,8 +246,8 @@ class ProcessAttendance extends Command
         $isHoliday = Holiday::where('date', $date->toDateString())->exists();
         $isSunday = $date->isSunday();
 
-        if (($isSunday || $isHoliday) && $totalMinutes == 0) {
-            // If strictly no approved work, do NOT mark absent.
+        if (($isSunday || $isHoliday) && $totalMinutes == 0 && !$clockIn) {
+            // If strictly no approved work AND no clock-in, do NOT mark absent.
             // If an "absent" record exists (e.g. from previous run), delete it
             // so the system defaults to "Sunday/Holiday".
             Attendance::where('user_id', $user->id)
@@ -261,13 +260,12 @@ class ProcessAttendance extends Command
         }
 
         // Determine Status
-        // Determine Status
         $isToday = $date->isToday();
 
         if ($isToday) {
             // For TODAY (Live Monitoring): Mark as present if they have clocked in at all.
             // We cannot enforce 9 hours yet for the 10 AM report.
-            $status = ($totalMinutes > 0 || $manualReq) ? 'present' : 'absent';
+            $status = ($totalMinutes > 0 || $manualReq || $clockIn) ? 'present' : 'absent';
         } else {
             // For PAST dates (Finalizing): Enforce strict 9-Hour Rule
             // Users are absent if they do not complete 9 hours (540 minutes)
