@@ -8,10 +8,12 @@
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[#F8F9FB]">
                 <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 md:py-8 min-w-0">
                     <!-- Header -->
-                    <div class="mb-4 sm:mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                    <div
+                        class="mb-4 sm:mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                         <div class="min-w-0">
                             <h2 class="text-xl sm:text-2xl font-bold text-slate-800">Create Task</h2>
-                            <p class="text-slate-400 text-xs sm:text-sm mt-1 font-medium hidden sm:block">Assign a new task to team members</p>
+                            <p class="text-slate-400 text-xs sm:text-sm mt-1 font-medium hidden sm:block">Assign a new task
+                                to team members</p>
                         </div>
                         <a href="{{ route('tasks.index') }}"
                             class="text-slate-500 hover:text-slate-700 font-medium text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0">
@@ -23,9 +25,9 @@
                         </a>
                     </div>
 
-                    <div class="max-w-4xl mx-auto" 
-                         x-data="taskForm({{ json_encode($projects) }}, '{{ now()->format('Y-m-d') }}')">
-                        
+                    <div class="max-w-4xl mx-auto"
+                        x-data="taskForm({{ json_encode($projects) }}, '{{ now()->format('Y-m-d') }}', {{ isset($task) ? json_encode($task) : 'null' }}, {{ isset($initialComments) ? json_encode($initialComments) : 'null' }})">
+
                         <form action="{{ route('tasks.store') }}" method="POST"
                             class="bg-white rounded-xl sm:rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 overflow-hidden">
                             @csrf
@@ -33,11 +35,15 @@
                             <!-- Modal Header -->
                             <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 border-b border-slate-100">
                                 <div class="flex items-center justify-between gap-3">
-                                    <h2 class="text-lg sm:text-xl font-bold text-slate-800 truncate">Add New Task</h2>
+                                    <h2 class="text-lg sm:text-xl font-bold text-slate-800 truncate">
+                                        {{ isset($task) ? 'Clone Task' : 'Add New Task' }}
+                                    </h2>
                                     <a href="{{ route('tasks.index') }}"
                                         class="text-slate-400 hover:text-slate-600 transition-colors shrink-0">
-                                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"></path>
                                         </svg>
                                     </a>
                                 </div>
@@ -47,7 +53,8 @@
                             <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 space-y-4 sm:space-y-5 md:space-y-6">
                                 <!-- Project Selection -->
                                 <div>
-                                    <label for="project_id" class="block text-sm font-semibold text-slate-700 mb-2">Project</label>
+                                    <label for="project_id"
+                                        class="block text-sm font-semibold text-slate-700 mb-2">Project</label>
                                     <div class="relative">
                                         <select name="project_id" id="project_id" x-model="selectedProjectId"
                                             class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 text-slate-800 bg-slate-50 transition-all duration-200"
@@ -65,11 +72,12 @@
 
                                 <!-- Description -->
                                 <div>
-                                    <label for="description" class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+                                    <label for="description"
+                                        class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
                                     <textarea name="description" id="description" rows="4"
                                         class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 text-slate-800 bg-slate-50 placeholder:text-slate-400 transition-all duration-200"
                                         placeholder="Enter task description..."
-                                        required>{{ old('description') }}</textarea>
+                                        required>{{ old('description', $task->description ?? '') }}</textarea>
                                     @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
 
@@ -77,39 +85,51 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                     <!-- Start Date -->
                                     <div>
-                                        <label for="start_date" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Start Date</label>
-                                        <div class="relative rounded-xl border border-slate-200 bg-slate-50 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
-                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        <label for="start_date"
+                                            class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Start
+                                            Date</label>
+                                        <div
+                                            class="relative rounded-xl border border-slate-200 bg-slate-50 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
+                                            <div
+                                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                    </path>
                                                 </svg>
                                             </div>
-                                            <input type="date" name="start_date" id="start_date"
-                                                x-model="startDate"
-                                                :min="todayDate"
-                                                :max="maxDate"
+                                            <input type="date" name="start_date" id="start_date" x-model="startDate"
+                                                :min="todayDate" :max="maxDate"
                                                 class="block w-full min-h-[2.75rem] sm:min-h-[3rem] rounded-xl border-0 bg-transparent text-xs sm:text-sm py-2.5 sm:py-3 pr-3 sm:pr-4 pl-11 sm:pl-12 text-slate-800 placeholder:text-slate-400 focus:ring-0 focus:outline-none transition-colors"
                                                 required>
                                         </div>
-                                        @error('start_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                        @error('start_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
 
                                     <!-- End Date -->
                                     <div>
-                                        <label for="end_date_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Date</label>
-                                        <div class="relative rounded-xl border border-slate-200 bg-slate-50 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
-                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        <label for="end_date_input"
+                                            class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End
+                                            Date</label>
+                                        <div
+                                            class="relative rounded-xl border border-slate-200 bg-slate-50 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all duration-200">
+                                            <div
+                                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 shrink-0" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                    </path>
                                                 </svg>
                                             </div>
-                                            <input type="date" name="end_date_input" id="end_date_input"
-                                                x-model="endDate"
-                                                :min="startDate || todayDate"
-                                                :max="maxDate"
+                                            <input type="date" name="end_date_input" id="end_date_input" x-model="endDate"
+                                                :min="startDate || todayDate" :max="maxDate"
                                                 class="block w-full min-h-[2.75rem] sm:min-h-[3rem] rounded-xl border-0 bg-transparent text-xs sm:text-sm py-2.5 sm:py-3 pr-3 sm:pr-4 pl-11 sm:pl-12 text-slate-800 placeholder:text-slate-400 focus:ring-0 focus:outline-none transition-colors">
                                         </div>
-                                        @error('end_date_input') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                        @error('end_date_input') <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -117,10 +137,11 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                     <!-- Priority Radio Buttons - Left -->
                                     <div>
-                                        <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Priority</label>
+                                        <label
+                                            class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Priority</label>
                                         <div class="flex flex-wrap gap-3 sm:gap-4">
                                             <label class="flex items-center gap-2 cursor-pointer group">
-                                                <input type="radio" name="priority" value="high" x-model="priority" 
+                                                <input type="radio" name="priority" value="high" x-model="priority"
                                                     class="sr-only peer">
                                                 <div class="flex items-center gap-2">
                                                     <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
@@ -173,31 +194,36 @@
 
                                     <!-- End Time - Right -->
                                     <div>
-                                        <label for="end_time_input" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End Time</label>
+                                        <label for="end_time_input"
+                                            class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">End
+                                            Time</label>
                                         <div class="relative inline-block w-full sm:max-w-[180px]">
-                                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
-                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            <div
+                                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3">
+                                                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
                                             </div>
-                                            <input type="time" name="end_time_input" id="end_time_input"
-                                                x-model="endTime"
+                                            <input type="time" name="end_time_input" id="end_time_input" x-model="endTime"
                                                 :disabled="priority === 'free'"
                                                 class="block w-full rounded-lg sm:rounded-xl border border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 text-xs sm:text-sm py-2 sm:py-3 pr-3 sm:pr-4 pl-10 sm:pl-11 text-slate-800 bg-slate-50 transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400">
                                         </div>
-                                        @error('end_time_input') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                        @error('end_time_input') <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
 
                                 <!-- Add People Section -->
                                 <div>
-                                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Add People</label>
+                                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Add
+                                        People</label>
                                     <div class="flex items-center gap-2 flex-wrap">
                                         <!-- Selected Employees (Profile Photos) -->
                                         <template x-for="employee in selectedEmployees" :key="employee.id">
                                             <div class="relative group">
-                                                <img :src="getProfileImageUrl(employee)"
-                                                    :alt="employee.full_name"
+                                                <img :src="getProfileImageUrl(employee)" :alt="employee.full_name"
                                                     class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-sm object-cover cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
                                                     :title="employee.full_name">
                                                 <button type="button" @click="removeEmployee(employee.id)"
@@ -210,8 +236,10 @@
                                         <!-- Plus Button -->
                                         <button type="button" @click="openEmployeeModal()"
                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors shadow-sm">
-                                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 4v16m8-8H4"></path>
                                             </svg>
                                         </button>
                                     </div>
@@ -231,44 +259,43 @@
 
                                 <!-- Employee Selection Modal -->
                                 <template x-teleport="body">
-                                    <div x-show="showEmployeeModal" 
-                                        x-transition:enter="transition ease-out duration-200"
-                                        x-transition:enter-start="opacity-0"
-                                        x-transition:enter-end="opacity-100"
+                                    <div x-show="showEmployeeModal" x-transition:enter="transition ease-out duration-200"
+                                        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                                         x-transition:leave="transition ease-in duration-150"
-                                        x-transition:leave-start="opacity-100"
-                                        x-transition:leave-end="opacity-0"
+                                        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                                         class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm"
-                                        style="display: none;"
-                                        @click.self="cancelEmployeeModal()">
+                                        style="display: none;" @click.self="cancelEmployeeModal()">
                                         <div class="bg-white rounded-lg sm:rounded-xl shadow-2xl w-full max-w-md max-h-[85vh] sm:max-h-[80vh] overflow-hidden flex flex-col"
                                             @click.stop>
                                             <!-- Modal Header -->
-                                            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex items-center justify-center">
-                                                <h3 class="text-base sm:text-lg font-bold text-slate-800">Select Employees</h3>
+                                            <div
+                                                class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex items-center justify-center">
+                                                <h3 class="text-base sm:text-lg font-bold text-slate-800">Select Employees
+                                                </h3>
                                             </div>
 
                                             <!-- Employee List (check/uncheck to add or remove) -->
                                             <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
                                                 <template x-for="employee in availableEmployees" :key="employee.id">
-                                                    <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
+                                                    <label
+                                                        class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
                                                         :class="isEmployeeDraftSelected(employee.id) ? 'bg-blue-50' : 'hover:bg-slate-50'">
-                                                        <input type="checkbox" 
-                                                            :value="employee.id"
+                                                        <input type="checkbox" :value="employee.id"
                                                             :checked="isEmployeeDraftSelected(employee.id)"
                                                             @change="toggleEmployeeDraft(employee)"
                                                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded shrink-0">
-                                                        <img :src="getProfileImageUrl(employee)"
-                                                            :alt="employee.full_name"
+                                                        <img :src="getProfileImageUrl(employee)" :alt="employee.full_name"
                                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shrink-0">
-                                                        <span class="text-xs sm:text-sm font-medium text-slate-700 flex-1 min-w-0 truncate" 
+                                                        <span
+                                                            class="text-xs sm:text-sm font-medium text-slate-700 flex-1 min-w-0 truncate"
                                                             x-text="employee.full_name"></span>
                                                     </label>
                                                 </template>
                                             </div>
 
                                             <!-- Modal Footer -->
-                                            <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 flex justify-end gap-2 sm:gap-3">
+                                            <div
+                                                class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 flex justify-end gap-2 sm:gap-3">
                                                 <button type="button" @click="cancelEmployeeModal()"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
                                                     Cancel
@@ -284,7 +311,8 @@
 
                                 <!-- Comments Section -->
                                 <div>
-                                    <label for="comments" class="block text-sm font-semibold text-slate-700 mb-2">Comments</label>
+                                    <label for="comments"
+                                        class="block text-sm font-semibold text-slate-700 mb-2">Comments</label>
                                     <textarea name="comments" id="comments" rows="4" x-model="comments"
                                         class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:ring-opacity-50 sm:text-sm px-4 py-3 text-slate-800 bg-slate-50 placeholder:text-slate-400 transition-all duration-200"
                                         placeholder="Start writing here..."></textarea>
@@ -292,13 +320,14 @@
 
                                 <!-- Tagged People Section -->
                                 <div>
-                                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Tagged People</label>
+                                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-2 sm:mb-3">Tagged
+                                        People</label>
                                     <div class="flex items-center gap-2 flex-wrap">
                                         <!-- Tagged Employees (Profile Photos) -->
-                                        <template x-for="employee in taggedEmployees" :key="'display-tagged-' + employee.id">
+                                        <template x-for="employee in taggedEmployees"
+                                            :key="'display-tagged-' + employee.id">
                                             <div class="relative group">
-                                                <img :src="getProfileImageUrl(employee)"
-                                                    :alt="employee.full_name"
+                                                <img :src="getProfileImageUrl(employee)" :alt="employee.full_name"
                                                     class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-blue-200 shadow-sm object-cover cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all"
                                                     :title="employee.full_name">
                                                 <button type="button" @click="toggleTaggedEmployee(employee)"
@@ -312,8 +341,11 @@
                                         <button type="button" @click="openTagModal()"
                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors shadow-sm"
                                             title="Tag people (they will be notified)">
-                                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                                </path>
                                             </svg>
                                         </button>
                                     </div>
@@ -321,44 +353,42 @@
 
                                 <!-- Tag People Modal -->
                                 <template x-teleport="body">
-                                    <div x-show="showTagModal" 
-                                        x-transition:enter="transition ease-out duration-200"
-                                        x-transition:enter-start="opacity-0"
-                                        x-transition:enter-end="opacity-100"
+                                    <div x-show="showTagModal" x-transition:enter="transition ease-out duration-200"
+                                        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                                         x-transition:leave="transition ease-in duration-150"
-                                        x-transition:leave-start="opacity-100"
-                                        x-transition:leave-end="opacity-0"
+                                        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                                         class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm"
-                                        style="display: none;"
-                                        @click.self="cancelTagModal()">
+                                        style="display: none;" @click.self="cancelTagModal()">
                                         <div class="bg-white rounded-lg sm:rounded-xl shadow-2xl w-full max-w-md max-h-[85vh] sm:max-h-[80vh] overflow-hidden flex flex-col"
                                             @click.stop>
                                             <!-- Modal Header -->
-                                            <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex items-center justify-center">
+                                            <div
+                                                class="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 flex items-center justify-center">
                                                 <h3 class="text-base sm:text-lg font-bold text-slate-800">Tag People</h3>
                                             </div>
 
                                             <!-- Employee List (check/uncheck to tag or deselect) -->
                                             <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
                                                 <template x-for="employee in availableEmployees" :key="employee.id">
-                                                    <label class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
+                                                    <label
+                                                        class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg cursor-pointer transition-colors"
                                                         :class="isTaggedDraftSelected(employee.id) ? 'bg-blue-50' : 'hover:bg-slate-50'">
-                                                        <input type="checkbox" 
-                                                            :value="employee.id"
+                                                        <input type="checkbox" :value="employee.id"
                                                             :checked="isTaggedDraftSelected(employee.id)"
                                                             @change="toggleTaggedDraft(employee)"
                                                             class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded shrink-0">
-                                                        <img :src="getProfileImageUrl(employee)"
-                                                            :alt="employee.full_name"
+                                                        <img :src="getProfileImageUrl(employee)" :alt="employee.full_name"
                                                             class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shrink-0">
-                                                        <span class="text-xs sm:text-sm font-medium text-slate-700 flex-1 min-w-0 truncate" 
+                                                        <span
+                                                            class="text-xs sm:text-sm font-medium text-slate-700 flex-1 min-w-0 truncate"
                                                             x-text="employee.full_name"></span>
                                                     </label>
                                                 </template>
                                             </div>
 
                                             <!-- Modal Footer -->
-                                            <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 flex justify-end gap-2 sm:gap-3">
+                                            <div
+                                                class="px-4 sm:px-6 py-3 sm:py-4 border-t border-slate-200 flex justify-end gap-2 sm:gap-3">
                                                 <button type="button" @click="cancelTagModal()"
                                                     class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
                                                     Cancel
@@ -374,7 +404,8 @@
                             </div>
 
                             <!-- Modal Footer -->
-                            <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 border-t border-slate-100 bg-slate-50 flex justify-end">
+                            <div
+                                class="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 border-t border-slate-100 bg-slate-50 flex justify-end">
                                 <button type="submit"
                                     class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg shadow-lg transition-all transform hover:-translate-y-0.5 text-sm sm:text-base">
                                     Done
@@ -389,22 +420,22 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('taskForm', (projects, todayDate) => ({
+            Alpine.data('taskForm', (projects, todayDate, initialTask, initialComments) => ({
                 projects: projects,
-                selectedProjectId: '{{ old('project_id') }}',
-                priority: '{{ old('priority', 'medium') }}',
-                startDate: '{{ old('start_date') }}',
-                endDate: '{{ old('end_date_input') }}',
-                endTime: '{{ old('end_time_input', '23:59') }}',
+                selectedProjectId: '{{ old('project_id') }}' || (initialTask ? initialTask.project_id : ''),
+                priority: '{{ old('priority') }}' || (initialTask ? initialTask.priority : 'medium'),
+                startDate: '{{ old('start_date') }}' || (initialTask && initialTask.start_date ? initialTask.start_date.split(' ')[0] : ''),
+                endDate: '{{ old('end_date_input') }}' || (initialTask && initialTask.end_date ? initialTask.end_date.split('T')[0] : ''),
+                endTime: '{{ old('end_time_input') }}' || (initialTask && initialTask.end_date && initialTask.end_date.includes('T') ? initialTask.end_date.split('T')[1].substring(0, 5) : '23:59'),
                 todayDate: todayDate,
-                selectedEmployees: [],
-                taggedEmployees: [],
+                selectedEmployees: initialTask && initialTask.assignees ? [...initialTask.assignees] : [],
+                taggedEmployees: initialTask && initialTask.tagged_users ? [...initialTask.tagged_users] : [],
                 selectedEmployeesDraft: [],
                 taggedEmployeesDraft: [],
                 availableEmployees: [],
                 showEmployeeModal: false,
                 showTagModal: false,
-                comments: '',
+                comments: '{{ old('comments') }}' || initialComments || '',
 
                 get selectedProject() {
                     return this.projects.find(p => p.id == this.selectedProjectId);

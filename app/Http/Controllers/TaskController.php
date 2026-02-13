@@ -352,6 +352,43 @@ class TaskController extends Controller
     }
 
     /**
+     * Show the form for creating a new task, pre-filled with data from an existing task.
+     */
+    public function clone(Task $task)
+    {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Get all projects
+        $projects = Project::whereHas('creator', function ($query) {
+            $query->whereIn('role_id', [1, 2, 3]);
+        })
+            ->orderBy('name')
+            ->get();
+
+        $currentUser = Auth::user();
+        if ($currentUser->isAdmin()) {
+            $users = User::orderBy('full_name')->get();
+        } else {
+            $users = User::where('id', $currentUser->id)
+                ->orWhere('reporting_to', $currentUser->id)
+                ->orWhere('secondary_supervisor_id', $currentUser->id)
+                ->orderBy('full_name')
+                ->get();
+        }
+
+        // Load comments to pre-fill the comment field if desired
+        $task->load(['comments.user', 'assignees', 'taggedUsers']);
+
+        $initialComments = $task->comments->map(function ($c) {
+            return ($c->user->full_name ?? $c->user->name ?? 'User') . ": " . $c->comment;
+        })->reverse()->implode("\n\n");
+
+        return view('tasks.create', compact('projects', 'users', 'task', 'initialComments'));
+    }
+
+    /**
      * Get employees for task assignment (API endpoint).
      */
     public function getEmployees()
