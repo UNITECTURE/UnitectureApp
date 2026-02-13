@@ -37,6 +37,10 @@
                                 <span class="w-3 h-3 rounded-full bg-[#ef4444]"></span>
                                 <span class="text-slate-500 font-medium">Absent</span>
                             </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-purple-600" style="background-color: #a855f7;"></div>
+                                <span class="text-slate-500 font-medium">Onsite Visit</span>
+                            </div>
                         </div>
 
                         {{-- Filters (in upper row) --}}
@@ -167,6 +171,57 @@
             </div>
         </div>
         </template>
+
+        {{-- Calendar Note Modal --}}
+        <template x-teleport="body">
+        <div id="noteModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all flex flex-col max-h-[90vh]"
+                onclick="event.stopPropagation()">
+                {{-- Modal Header --}}
+                <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
+                    <h3 class="text-lg font-bold text-slate-800" id="noteModalTitle">Add Onsite Visit</h3>
+                    <button type="button" onclick="closeNoteModal()"
+                        class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Modal Body --}}
+                <div class="px-6 py-4 space-y-4 overflow-y-auto flex-1">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Date</label>
+                        <input type="date" id="noteDate" readonly
+                            class="w-full px-4 py-2 rounded-lg border border-slate-200 bg-gray-100 text-slate-700 cursor-not-allowed" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Onsite Visit Details</label>
+                        <textarea id="noteText" placeholder="e.g., Client visit at ABC Corp, Meeting with stakeholders..."
+                            class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-purple-500 focus:ring-purple-500 bg-white resize-none"
+                            rows="3"></textarea>
+                        <p class="text-xs text-slate-400 mt-1">Max 500 characters</p>
+                    </div>
+                </div>
+
+                {{-- Modal Footer --}}
+                <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 flex-shrink-0 bg-white">
+                    <button type="button" onclick="closeNoteModal()"
+                        class="px-6 py-3 rounded-lg border-2 border-slate-300 bg-white text-slate-700 font-bold hover:bg-slate-100 transition-colors text-base">
+                        Cancel
+                    </button>
+                    <button type="button" id="deleteNoteBtn" onclick="deleteNote()"
+                        class="hidden px-6 py-3 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition-colors text-base">
+                        Delete
+                    </button>
+                    <button type="button" onclick="saveNote()"
+                        class="px-6 py-3 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors text-base shadow-md">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+        </template>
     </div>
 
     {{-- FullCalendar CDN (no build step required) --}}
@@ -239,7 +294,7 @@
                 },
                 firstDay: 1, // Monday
                 navLinks: true,
-                selectable: false,
+                selectable: true,
                 dayMaxEvents: 3,
                 eventDisplay: 'block',
                 displayEventEnd: true,
@@ -280,6 +335,18 @@
                             failureCallback(error);
                         });
                 },
+                eventClick: function(info) {
+                    const { event } = info;
+                    // Only allow editing own notes
+                    if (event.extendedProps.type === 'note' && event.extendedProps.editable) {
+                        const noteId = event.id.replace('note-', '');
+                        showNoteModal(noteId, event.extendedProps.note, event.startStr);
+                    }
+                },
+                dateClick: function(info) {
+                    // Allow creating new notes by clicking on empty dates
+                    showNoteModal(null, '', info.dateStr);
+                },
                 eventDidMount: function (info) {
                     const { event, el } = info;
                     const props = event.extendedProps || {};
@@ -317,6 +384,137 @@
 
             calendarInstance.render();
             window.calendarInstance = calendarInstance;
+        });
+    </script>
+
+    {{-- Calendar Note Modal Functions --}}
+    <script>
+        let currentNoteId = null;
+        const API_BASE = '/api/calendar-notes';
+
+        function showNoteModal(noteId = null, noteText = '', dateStr = '') {
+            currentNoteId = noteId;
+            const modal = document.getElementById('noteModal');
+            const deleteBtn = document.getElementById('deleteNoteBtn');
+            const title = document.getElementById('noteModalTitle');
+            const dateInput = document.getElementById('noteDate');
+            const textInput = document.getElementById('noteText');
+
+            // Always set date as readonly (locked to clicked date)
+            dateInput.value = dateStr || new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('readonly', 'readonly');
+            dateInput.style.backgroundColor = '#f3f4f6';
+            dateInput.style.cursor = 'not-allowed';
+            dateInput.style.color = '#374151';
+            
+            if (noteId) {
+                // Editing existing note
+                title.textContent = 'Edit Onsite Visit';
+                deleteBtn.classList.remove('hidden');
+            } else {
+                // Creating new note
+                title.textContent = 'Add Onsite Visit';
+                deleteBtn.classList.add('hidden');
+            }
+            
+            textInput.value = noteText || '';
+            textInput.disabled = false;
+            modal.classList.remove('hidden');
+            textInput.focus();
+        }
+
+        function closeNoteModal() {
+            const modal = document.getElementById('noteModal');
+            modal.classList.add('hidden');
+            currentNoteId = null;
+        }
+
+        async function saveNote() {
+            const dateInput = document.getElementById('noteDate');
+            const textInput = document.getElementById('noteText');
+            const date = dateInput.value;
+            const note = textInput.value.trim();
+
+            if (!date || !note) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (note.length > 500) {
+                alert('Note is too long (max 500 characters)');
+                return;
+            }
+
+            try {
+                const method = currentNoteId ? 'PATCH' : 'POST';
+                const url = currentNoteId ? `${API_BASE}/${currentNoteId}` : API_BASE;
+                const body = currentNoteId ? { note } : { date, note };
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert(error.message || 'Error saving note');
+                    return;
+                }
+
+                // Refresh calendar
+                if (window.calendarInstance) {
+                    window.calendarInstance.refetchEvents();
+                }
+
+                closeNoteModal();
+            } catch (error) {
+                console.error('Error saving note:', error);
+                alert('Error saving note');
+            }
+        }
+
+        async function deleteNote() {
+            if (!currentNoteId || !confirm('Are you sure you want to delete this onsite visit?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/${currentNoteId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    alert('Error deleting note');
+                    return;
+                }
+
+                // Refresh calendar
+                if (window.calendarInstance) {
+                    window.calendarInstance.refetchEvents();
+                }
+
+                closeNoteModal();
+            } catch (error) {
+                console.error('Error deleting note:', error);
+                alert('Error deleting note');
+            }
+        }
+
+        // Close modal on backdrop click
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('noteModal');
+            if (e.target === modal) {
+                closeNoteModal();
+            }
         });
     </script>
 @endsection

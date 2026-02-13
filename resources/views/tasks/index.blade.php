@@ -4,10 +4,10 @@
     <div class="flex h-screen bg-[#F8F9FB] overflow-hidden"
         x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }}, {{ json_encode($scope ?? 'assigned') }}, {{ isset($showTeamToggle) && $showTeamToggle ? 'true' : 'false' }}, {{ isset($showAllToggle) && $showAllToggle ? 'true' : 'false' }})"
         x-init="
-                            @if(session('success'))
-                                showToast('{{ addslashes(session('success')) }}', 'success');
-                            @endif
-                         ">
+                                                @if(session('success'))
+                                                    showToast('{{ addslashes(session('success')) }}', 'success');
+                                                @endif
+                                             ">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -201,35 +201,46 @@
                 </div>
             </div>
 
-            <!-- Toast Notification - LARGE BANNER -->
-            <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
-                x-transition:leave="transition ease-in duration-200" class="fixed top-0 left-0 right-0 z-50 w-full">
-                <div class="w-full px-4 sm:px-6 py-4 sm:py-5 shadow-xl" :class="toast.type === 'success' 
-                                         ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
-                                         : 'bg-gradient-to-r from-red-500 to-red-600'">
-                    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                        <div class="flex items-center gap-3 flex-1">
-                            <div class="text-3xl sm:text-4xl font-bold text-white">
-                                <span x-text="toast.type === 'success' ? '✓' : '✕'"></span>
-                            </div>
-                            <div>
-                                <p class="text-white text-lg sm:text-xl font-bold" x-text="toast.message"></p>
-                                <p class="text-white/80 text-sm mt-1"
-                                    x-text="toast.type === 'success' ? 'Action completed successfully!' : 'Please try again or contact support'">
-                                </p>
-                            </div>
+            <!-- Toast Notification - PROFESSIONAL LARGE MODAL -->
+            <div x-show="toast.show" x-transition
+                class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-black/40 backdrop-blur-sm"
+                style="display: none;" @click.self="toast.show = false">
+                <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 max-w-lg border-l-8 transform transition-all"
+                    :class="toast.type === 'success' ? 'border-emerald-500' : 'border-red-500'">
+                    <div class="flex items-start justify-between gap-6">
+                        <!-- Message Content -->
+                        <div class="flex-1">
+                            <!-- Title -->
+                            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2"
+                                x-show="toast.type === 'success'">Success!</h2>
+                            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2" x-show="toast.type === 'error'">
+                                Error</h2>
+
+                            <!-- Message -->
+                            <p class="text-lg sm:text-xl text-slate-700 font-semibold leading-relaxed"
+                                x-text="toast.message"></p>
+
+                            <!-- Subtext -->
+                            <p class="text-sm sm:text-base text-slate-500 font-medium mt-3"
+                                x-show="toast.type === 'success'">Your action has been completed successfully</p>
+                            <p class="text-sm sm:text-base text-slate-500 font-medium mt-3" x-show="toast.type === 'error'">
+                                Please check your input and try again, or contact support</p>
                         </div>
-                        <button type="button" class="text-white hover:text-white/80 text-3xl font-bold shrink-0 p-2"
-                            @click="toast.show = false">
-                            ×
+
+                        <!-- Close Button -->
+                        <button type="button" @click="toast.show = false"
+                            class="flex-shrink-0 text-slate-400 hover:text-slate-600 transition-colors">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 transition-all duration-300"
-                :class="toast.show ? 'mt-32 sm:mt-36' : 'mt-0'">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50">
                 <!-- Overview: Task Cards Grid -->
                 <div x-show="view === 'overview' && filteredTasks.length > 0"
                     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -242,19 +253,19 @@
                                     x-text="task.project?.name || 'No Project'"></div>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold"
                                     :class="{
-                                                        'bg-red-100 text-red-700': task.priority === 'high',
-                                                        'bg-yellow-100 text-yellow-700': task.priority === 'medium',
-                                                        'bg-green-100 text-green-700': task.priority === 'low',
-                                                        'bg-purple-100 text-purple-700': task.priority === 'free'
-                                                    }"
+                                                                            'bg-red-100 text-red-700': task.priority === 'high',
+                                                                            'bg-yellow-100 text-yellow-700': task.priority === 'medium',
+                                                                            'bg-green-100 text-green-700': task.priority === 'low',
+                                                                            'bg-purple-100 text-purple-700': task.priority === 'free'
+                                                                        }"
                                     x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
                                 </span>
                             </div>
 
                             <!-- Description -->
                             <p class="mt-3 text-lg font-semibold leading-snug line-clamp-1" :class="task.status === 'closed'
-                                                    ? 'text-slate-400 line-through'
-                                                    : 'text-slate-900'" :title="task.description || ''"
+                                                                        ? 'text-slate-400 line-through'
+                                                                        : 'text-slate-900'" :title="task.description || ''"
                                 x-text="(task.description || '').length > 30 ? (task.description || '').substring(0, 30) + '...' : (task.description || '')">
                             </p>
 
@@ -282,8 +293,7 @@
                                         </template>
                                     </div>
                                     <div class="text-xs font-medium text-slate-500 truncate">
-                                        <span>Due </span>
-                                        <span x-text="formatDate(task.end_date)"></span>
+                                        <span x-text="formatDateTime(task.end_date)"></span>
                                     </div>
                                 </div>
 
@@ -321,11 +331,11 @@
                                     class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-lg sm:rounded-t-xl">
                                     <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
                                         <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0" :class="{
-                                                                'bg-red-500': stage === 'overdue',
-                                                                'bg-yellow-500': stage === 'pending',
-                                                                'bg-blue-500': stage === 'in_progress',
-                                                                'bg-green-500': stage === 'completed'
-                                                            }"></div>
+                                                                                    'bg-red-500': stage === 'overdue',
+                                                                                    'bg-yellow-500': stage === 'pending',
+                                                                                    'bg-blue-500': stage === 'in_progress',
+                                                                                    'bg-green-500': stage === 'completed'
+                                                                                }"></div>
                                         <span class="text-xs sm:text-sm font-bold text-slate-700 uppercase truncate"
                                             x-text="formatStage(stage)"></span>
                                         <span
@@ -348,18 +358,18 @@
                                                     <span
                                                         class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0"
                                                         :class="{
-                                                                        'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                                        'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
-                                                                        'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                                        'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
-                                                                    }"
+                                                                                            'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                                                            'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
+                                                                                            'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                                                            'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
+                                                                                        }"
                                                         x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
                                             <p class="text-xs sm:text-sm font-bold leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words"
                                                 :class="task.status === 'closed'
-                                                                   ? 'text-slate-400 line-through'
-                                                                   : 'text-slate-800'"
+                                                                                       ? 'text-slate-400 line-through'
+                                                                                       : 'text-slate-800'"
                                                 x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')">
                                             </p>
                                             <div
@@ -372,16 +382,7 @@
                                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                                                         </path>
                                                     </svg>
-                                                    <span>Due: <span x-text="formatDate(task.end_date)"></span></span>
-                                                </div>
-                                                <div class="flex items-center gap-1">
-                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none"
-                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                    <span>End: <span x-text="formatTime(task.end_date)"></span></span>
+                                                    <span x-text="formatDateTime(task.end_date)"></span>
                                                 </div>
                                             </div>
                                             <div
@@ -455,8 +456,8 @@
                                             x-text="task.project?.project_code || 'N/A'"></td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 min-w-[200px]">
                                             <div class="font-medium break-words line-clamp-2" :class="task.status === 'closed'
-                                                                     ? 'text-slate-400 line-through'
-                                                                     : 'text-slate-900'"
+                                                                                         ? 'text-slate-400 line-through'
+                                                                                         : 'text-slate-900'"
                                                 x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')">
                                             </div>
                                         </td>
@@ -497,7 +498,7 @@
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 text-slate-600 whitespace-nowrap"
                                             x-text="formatDate(task.start_date)"></td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 text-slate-600 whitespace-nowrap"
-                                            x-text="formatDate(task.end_date) + ' ' + formatTime(task.end_date)"></td>
+                                            x-text="formatDateTime(task.end_date)"></td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
                                             <span
                                                 class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold"
@@ -535,11 +536,11 @@
                                         <span
                                             class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                             :class="{
-                                                              'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
-                                                              'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
-                                                          }" x-text="selectedTask.priority"></span>
+                                                                                  'bg-red-50 text-red-600': selectedTask.priority === 'high',
+                                                                                  'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
+                                                                                  'bg-green-50 text-green-600': selectedTask.priority === 'low',
+                                                                                  'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
+                                                                              }" x-text="selectedTask.priority"></span>
                                         <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words"
                                             x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')">
                                         </h2>
@@ -596,16 +597,17 @@
                                                 Date</h3>
                                             <template x-if="!canEditDue">
                                                 <p class="text-xs sm:text-sm font-bold text-slate-700"
-                                                    x-text="formatDate(selectedTask.end_date, true)"></p>
+                                                    x-text="formatDateTime(selectedTask.end_date)"></p>
                                             </template>
                                             <template x-if="canEditDue">
                                                 <div class="space-y-2">
 
                                                     <div class="flex flex-col sm:flex-row gap-2">
                                                         <input type="date" x-model="editEndDate"
-                                                            class="flex-1 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500">
+                                                            :disabled="selectedTask.status === 'closed'"
+                                                            class="flex-1 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400">
                                                         <input type="time" x-model="editEndTime"
-                                                            :disabled="selectedTask.priority === 'free'"
+                                                            :disabled="selectedTask.status === 'closed' || selectedTask.priority === 'free'"
                                                             class="w-full sm:w-24 rounded-lg border-slate-200 text-xs px-2 py-1.5 bg-slate-50 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400">
                                                     </div>
                                                 </div>
@@ -624,13 +626,13 @@
                                                         <span
                                                             class="text-xs font-bold text-indigo-800 truncate max-w-[120px] sm:max-w-none"
                                                             x-text="assignee.full_name || assignee.name"></span>
-                                                        <template x-if="canEditDue">
+                                                        <template x-if="canEditDue && selectedTask.status !== 'closed'">
                                                             <button type="button" @click="removeEditAssignee(assignee.id)"
                                                                 class="text-slate-500 hover:text-red-600 -mr-0.5">×</button>
                                                         </template>
                                                     </div>
                                                 </template>
-                                                <template x-if="canEditDue">
+                                                <template x-if="canEditDue && selectedTask.status !== 'closed'">
                                                     <button type="button" @click="openAddPeopleModal()"
                                                         class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 text-lg leading-none">+</button>
                                                 </template>
@@ -649,13 +651,13 @@
                                                         <span
                                                             class="text-xs font-bold text-slate-700 truncate max-w-[120px] sm:max-w-none"
                                                             x-text="user.full_name || user.name"></span>
-                                                        <template x-if="canEditDue">
+                                                        <template x-if="canEditDue && selectedTask.status !== 'closed'">
                                                             <button type="button" @click="removeEditTagged(user.id)"
                                                                 class="text-slate-500 hover:text-red-600 -mr-0.5">×</button>
                                                         </template>
                                                     </div>
                                                 </template>
-                                                <template x-if="canEditDue">
+                                                <template x-if="canEditDue && selectedTask.status !== 'closed'">
                                                     <button type="button" @click="openTagModal()"
                                                         class="w-8 h-8 rounded-full bg-slate-500 text-white flex items-center justify-center hover:bg-slate-600 text-lg leading-none">+</button>
                                                 </template>
@@ -818,11 +820,19 @@
                                             class="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:underline">
                                             Delete task
                                         </button>
-                                        <button type="button" @click="saveAndClose()"
-                                            class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                            :disabled="saving">
-                                            Save & close
-                                        </button>
+                                        <div class="flex items-center gap-3">
+                                            <button x-show="canEditDue && selectedTask && selectedTask.status === 'closed'"
+                                                type="button"
+                                                @click="window.location.href = '/tasks/' + selectedTask.id + '/clone'"
+                                                class="px-4 py-2.5 rounded-lg border border-indigo-600 text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-all">
+                                                Clone Task
+                                            </button>
+                                            <button type="button" @click="saveAndClose()"
+                                                class="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                                :disabled="saving">
+                                                Save & close
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                         </template>
@@ -1216,7 +1226,35 @@
                 formatDate(dateString, full = false) {
                     if (!dateString) return '-';
                     const date = new Date(dateString);
-                    return full ? date.toLocaleString() : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                    if (full) return date.toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                    const now = new Date();
+                    const isThisYear = date.getFullYear() === now.getFullYear();
+
+                    return date.toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: isThisYear ? undefined : 'numeric'
+                    });
+                },
+
+                formatDateTime(dateString) {
+                    if (!dateString) return '-';
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const isThisYear = date.getFullYear() === now.getFullYear();
+
+                    const datePart = date.toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: isThisYear ? undefined : 'numeric'
+                    });
+                    const timePart = date.toLocaleTimeString(undefined, {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    return `${datePart}, ${timePart}`;
                 },
 
                 dueIn(task) {

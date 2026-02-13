@@ -135,6 +135,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects/{project}', [App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
     Route::get('/projects/{project}/edit', [App\Http\Controllers\ProjectController::class, 'edit'])->name('projects.edit');
     Route::put('/projects/{project}', [App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
+    Route::post('/projects/{project}/park', [App\Http\Controllers\ProjectController::class, 'park'])->name('projects.park');
+    Route::post('/projects/{id}/unpark', [App\Http\Controllers\ProjectController::class, 'unpark'])->name('projects.unpark');
 
     // Task Management
     Route::get('/tasks', [App\Http\Controllers\TaskController::class, 'index'])->name('tasks.index');
@@ -149,8 +151,16 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/tasks/{task}/people', [App\Http\Controllers\TaskController::class, 'updatePeople'])->name('tasks.updatePeople');
     Route::get('/tasks/{task}', [App\Http\Controllers\TaskController::class, 'show'])->name('tasks.show');
     Route::get('/api/tasks/employees', [App\Http\Controllers\TaskController::class, 'getEmployees'])->name('tasks.employees');
-    Route::get('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'comments'])->name('tasks.comments.index');
+    Route::get('/tasks/{task}/clone', [App\Http\Controllers\TaskController::class, 'clone'])->name('tasks.clone');
+    Route::get('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'getComments'])->name('tasks.comments.index');
     Route::post('/tasks/{task}/comments', [App\Http\Controllers\TaskController::class, 'addComment'])->name('tasks.comments.store');
+
+    // Calendar Notes
+    Route::get('/api/calendar-notes', [App\Http\Controllers\CalendarNoteController::class, 'index'])->name('calendar-notes.index');
+    Route::get('/api/calendar-notes/range', [App\Http\Controllers\CalendarNoteController::class, 'getByDateRange'])->name('calendar-notes.range');
+    Route::post('/api/calendar-notes', [App\Http\Controllers\CalendarNoteController::class, 'store'])->name('calendar-notes.store');
+    Route::patch('/api/calendar-notes/{calendarNote}', [App\Http\Controllers\CalendarNoteController::class, 'update'])->name('calendar-notes.update');
+    Route::delete('/api/calendar-notes/{calendarNote}', [App\Http\Controllers\CalendarNoteController::class, 'destroy'])->name('calendar-notes.destroy');
 });
 
 // Test Telegram Route

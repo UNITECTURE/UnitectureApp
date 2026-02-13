@@ -6,6 +6,35 @@
         <x-sidebar :role="auth()->user()->isAdmin() ? 'admin' : (auth()->user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
         <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+            <!-- Toast Notification - PROFESSIONAL LARGE MODAL -->
+            <div x-show="toast.show" x-transition class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-black/40 backdrop-blur-sm" style="display: none;" @click.self="toast.show = false">
+                <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 max-w-lg border-l-8 transform transition-all" 
+                     :class="toast.type === 'success' ? 'border-emerald-500' : 'border-red-500'">
+                    <div class="flex items-start justify-between gap-6">
+                        <!-- Message Content -->
+                        <div class="flex-1">
+                            <!-- Title -->
+                            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2" x-show="toast.type === 'success'">Success!</h2>
+                            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-2" x-show="toast.type === 'error'">Error</h2>
+                            
+                            <!-- Message -->
+                            <p class="text-lg sm:text-xl text-slate-700 font-semibold leading-relaxed" x-text="toast.message"></p>
+                            
+                            <!-- Subtext -->
+                            <p class="text-sm sm:text-base text-slate-500 font-medium mt-3" x-show="toast.type === 'success'">Your action has been completed successfully</p>
+                            <p class="text-sm sm:text-base text-slate-500 font-medium mt-3" x-show="toast.type === 'error'">Please check your input and try again, or contact support</p>
+                        </div>
+                        
+                        <!-- Close Button -->
+                        <button type="button" @click="toast.show = false" class="flex-shrink-0 text-slate-400 hover:text-slate-600 transition-colors">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Header -->
             <header class="bg-white border-b border-slate-200 py-5 px-6 shrink-0 z-10">
                 <div class="flex flex-col gap-4">
@@ -104,11 +133,11 @@
                                     class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-lg sm:rounded-t-xl">
                                     <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
                                         <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0" :class="{
-                                                            'bg-red-500': stage === 'overdue',
-                                                            'bg-yellow-500': stage === 'pending',
-                                                            'bg-blue-500': stage === 'in_progress',
-                                                            'bg-green-500': stage === 'completed'
-                                                        }"></div>
+                                                                    'bg-red-500': stage === 'overdue',
+                                                                    'bg-yellow-500': stage === 'pending',
+                                                                    'bg-blue-500': stage === 'in_progress',
+                                                                    'bg-green-500': stage === 'completed'
+                                                                }"></div>
                                         <span class="text-xs sm:text-sm font-bold text-slate-700 uppercase truncate"
                                             x-text="formatStage(stage)"></span>
                                         <span
@@ -135,11 +164,11 @@
                                                     <span
                                                         class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0"
                                                         :class="{
-                                                                      'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                                      'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
-                                                                      'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                                      'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
-                                                                  }"
+                                                                              'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                                              'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
+                                                                              'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                                              'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
+                                                                          }"
                                                         x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
@@ -147,8 +176,8 @@
                                             <!-- Description -->
                                             <p class="text-xs sm:text-sm font-bold leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words"
                                                 :class="task.status === 'closed'
-                                                               ? 'text-slate-400 line-through'
-                                                               : 'text-slate-800'"
+                                                                       ? 'text-slate-400 line-through'
+                                                                       : 'text-slate-800'"
                                                 x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')">
                                             </p>
 
@@ -163,16 +192,7 @@
                                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                                                         </path>
                                                     </svg>
-                                                    <span>Due: <span x-text="formatDate(task.end_date)"></span></span>
-                                                </div>
-                                                <div class="flex items-center gap-1">
-                                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0" fill="none"
-                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                    <span>End: <span x-text="formatTime(task.end_date)"></span></span>
+                                                    <span x-text="formatDateTime(task.end_date)"></span>
                                                 </div>
                                             </div>
 
@@ -250,8 +270,8 @@
                                                 x-text="task.project?.project_code || 'N/A'"></td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 min-w-[200px]">
                                                 <div class="font-medium break-words line-clamp-2" :class="task.status === 'closed'
-                                                                     ? 'text-slate-400 line-through'
-                                                                     : 'text-slate-900'"
+                                                                             ? 'text-slate-400 line-through'
+                                                                             : 'text-slate-900'"
                                                     x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')">
                                                 </div>
                                             </td>
@@ -294,7 +314,7 @@
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-slate-600 whitespace-nowrap"
                                                 x-text="formatDate(task.start_date)"></td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-slate-600 whitespace-nowrap"
-                                                x-text="formatDate(task.end_date) + ' ' + formatTime(task.end_date)"></td>
+                                                x-text="formatDateTime(task.end_date)"></td>
                                             <td class="px-3 sm:px-4 md:px-6 py-2 sm:py-3 whitespace-nowrap">
                                                 <span
                                                     class="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold"
@@ -336,11 +356,11 @@
                                     <span
                                         class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                         :class="{
-                                                      'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                                      'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
-                                                      'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                                      'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
-                                                  }" x-text="selectedTask.priority"></span>
+                                                              'bg-red-50 text-red-600': selectedTask.priority === 'high',
+                                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
+                                                              'bg-green-50 text-green-600': selectedTask.priority === 'low',
+                                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
+                                                          }" x-text="selectedTask.priority"></span>
                                     <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words"
                                         x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')">
                                     </h2>
@@ -397,7 +417,7 @@
                                         </h3>
                                         <template x-if="!canEditDue">
                                             <p class="text-xs sm:text-sm font-bold text-slate-700"
-                                                x-text="formatDate(selectedTask.end_date, true)"></p>
+                                                x-text="formatDateTime(selectedTask.end_date)"></p>
                                         </template>
                                         <template x-if="canEditDue">
                                             <div class="space-y-2">
@@ -650,6 +670,23 @@
                 showTagModal: false,
                 currentUserId: currentUserId,
 
+                toast: {
+                    show: false,
+                    message: '',
+                    type: 'success'
+                },
+                toastTimer: null,
+
+                showToast(message, type = 'success') {
+                    this.toast.message = message;
+                    this.toast.type = type;
+                    this.toast.show = true;
+                    clearTimeout(this.toastTimer);
+                    this.toastTimer = setTimeout(() => {
+                        this.toast.show = false;
+                    }, 4000);
+                },
+
                 get statusOptions() {
                     const allKeys = Object.keys(this.statuses);
                     // Supervisors/Admins (who can edit due dates) see all statuses
@@ -706,6 +743,7 @@
                         }
                         this.showDeleteConfirm = false;
                         this.taskToDelete = null;
+                        this.showToast('✅ Task deleted successfully', 'success');
                     } catch (e) {
                         console.error('Delete failed:', e);
                     } finally {
@@ -745,6 +783,7 @@
                             this.selectedTask.assignees = data.assignees || this.selectedTask.assignees;
                             this.selectedTask.taggedUsers = data.tagged_users || this.selectedTask.taggedUsers;
                         }
+                        this.showToast('✅ People assignments updated', 'success');
                     } catch (e) {
                         console.error('Failed to update people', e);
                     }
@@ -825,12 +864,37 @@
                 },
 
                 formatDate(dateString, full = false) {
-                    if (!dateString) return 'N/A';
+                    if (!dateString) return '-';
                     const date = new Date(dateString);
-                    if (full) {
-                        return date.toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                    }
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    if (full) return date.toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                    const now = new Date();
+                    const isThisYear = date.getFullYear() === now.getFullYear();
+
+                    return date.toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: isThisYear ? undefined : 'numeric'
+                    });
+                },
+
+                formatDateTime(dateString) {
+                    if (!dateString) return '-';
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const isThisYear = date.getFullYear() === now.getFullYear();
+
+                    const datePart = date.toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: isThisYear ? undefined : 'numeric'
+                    });
+                    const timePart = date.toLocaleTimeString(undefined, {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    return `${datePart}, ${timePart}`;
                 },
 
                 formatTime(dateString) {
@@ -939,12 +1003,13 @@
                                 this.selectedTask.stage = data.stage;
                             }
                         }
+                        this.showToast('✅ Task status updated', 'success');
                     } catch (e) {
                         task.status = oldStatus;
                         if (this.selectedTask && this.selectedTask.id === taskId) {
                             this.selectedTask.status = oldStatus;
                         }
-                        alert('Failed to update status');
+                        this.showToast('❌ Failed to update task status', 'error');
                     }
                 },
 
@@ -1006,6 +1071,7 @@
                                 this.selectedTask.stage = data.stage;
                             }
                         }
+                        this.showToast('✅ Due date updated successfully', 'success');
                     } catch (e) {
                         console.error('Failed to update due date', e);
                     }
@@ -1056,13 +1122,15 @@
                         if (data.comment) {
                             this.upsertComment(data.comment);
                             this.newComment = '';
+                            this.showToast('✅ Comment posted successfully', 'success');
                         } else {
                             await this.loadComments(taskId);
                             this.newComment = '';
+                            this.showToast('✅ Comment posted successfully', 'success');
                         }
                     } catch (e) {
                         console.error('Failed to post comment', e);
-                        alert('Failed to post comment. Check console for details.');
+                        this.showToast('❌ Failed to post comment', 'error');
                     } finally {
                         this.isPostingComment = false;
                     }

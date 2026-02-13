@@ -352,6 +352,42 @@ class TaskController extends Controller
     }
 
     /**
+     * Show the form for creating a new task, pre-filled with data from an existing task.
+     */
+    public function clone(Task $task)
+    {
+        if (!Auth::user()->isSupervisor() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Get all projects
+        $projects = Project::whereHas('creator', function ($query) {
+            $query->whereIn('role_id', [1, 2, 3]);
+        })
+            ->orderBy('name')
+            ->get();
+
+        $currentUser = Auth::user();
+        if ($currentUser->isAdmin()) {
+            $users = User::orderBy('full_name')->get();
+        } else {
+            $users = User::where('id', $currentUser->id)
+                ->orWhere('reporting_to', $currentUser->id)
+                ->orWhere('secondary_supervisor_id', $currentUser->id)
+                ->orderBy('full_name')
+                ->get();
+        }
+
+        // Load comments to pre-fill the comment field if desired
+        $task->load(['comments.user', 'assignees', 'taggedUsers']);
+
+        $initialComments = '';
+        $clonedFromId = $task->id;
+
+        return view('tasks.create', compact('projects', 'users', 'task', 'initialComments', 'clonedFromId'));
+    }
+
+    /**
      * Get employees for task assignment (API endpoint).
      */
     public function getEmployees()
@@ -427,6 +463,7 @@ class TaskController extends Controller
             'priority' => 'required|in:high,medium,low,free',
             // Optional initial comment from the creator when creating the task
             'comments' => 'nullable|string|max:2000',
+            'cloned_from_id' => 'nullable|exists:tasks,id',
         ]);
 
         if (in_array(auth()->user()->role->name ?? '', ['admin', 'supervisor'])) {
@@ -447,7 +484,7 @@ class TaskController extends Controller
         }
 
         // Prepare data for saving
-        $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged', 'comments']);
+        $data = $request->except(['end_date_input', 'end_time_input', 'assignees', 'tagged', 'comments', 'cloned_from_id']);
         $data['end_date'] = $endDate;
 
         $task = new Task($data);
@@ -455,6 +492,22 @@ class TaskController extends Controller
         // Stage is set automatically by Task::syncStageFromStatusAndDueDate (in saving callback)
         $task->created_by = Auth::id();
         $task->save();
+
+        // Copy comments from original task if cloning
+        if ($request->filled('cloned_from_id')) {
+            $originalTask = Task::find($request->cloned_from_id);
+            if ($originalTask) {
+                foreach ($originalTask->comments as $oldComment) {
+                    $newComment = new TaskComment([
+                        'task_id' => $task->id,
+                        'user_id' => $oldComment->user_id,
+                        'comment' => $oldComment->comment,
+                    ]);
+                    $newComment->created_at = $oldComment->created_at; // Preserve original timestamp
+                    $newComment->save();
+                }
+            }
+        }
 
         // Persist initial comment (if provided) as a TaskComment
         $initialCommentText = trim((string) $request->input('comments', ''));
@@ -955,6 +1008,33 @@ class TaskController extends Controller
     /**
      * Store a new comment on a task.
      */
+    public function getComments(Task $task)
+    {
+        $user = Auth::user();
+        if (!$this->canViewTask($user, $task)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $comments = TaskComment::with('user')
+            ->where('task_id', $task->id)
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($comment) {
+                return [
+                    'id' => $comment->id,
+                    'comment' => $comment->comment,
+                    'created_at' => $comment->created_at->toDateTimeString(),
+                    'created_at_human' => $comment->created_at->format('M j, Y g:i A'),
+                    'user' => [
+                        'id' => $comment->user->id,
+                        'name' => $comment->user->full_name ?? $comment->user->name,
+                    ],
+                ];
+            });
+
+        return response()->json($comments);
+    }
+
     public function addComment(Request $request, Task $task)
     {
         $user = Auth::user();

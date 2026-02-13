@@ -24,14 +24,36 @@
                             </div>
                         </div>
                         @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
-                            <a href="{{ route('projects.create') }}"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
-                                    </path>
-                                </svg>
-                                Create Project
-                            </a>
+                            <div class="flex items-center gap-3">
+                                <a href="{{ route('projects.index', ['view' => request('view') === 'parked' ? 'active' : 'parked']) }}"
+                                    class="text-slate-600 hover:text-indigo-600 font-bold py-2.5 px-6 rounded-lg border border-slate-200 bg-white shadow-sm transition-all flex items-center justify-center gap-2">
+                                    @if(request('view') === 'parked')
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
+                                        </svg>
+                                        Show Active
+                                    @else
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
+                                            </path>
+                                        </svg>
+                                        Show Parked
+                                    @endif
+                                </a>
+                                <a href="{{ route('projects.create') }}"
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Create Project
+                                </a>
+                            </div>
                         @endif
                     </div>
 
@@ -68,13 +90,46 @@
                                                 {{ $project->project_code }}
                                             </p>
                                         </div>
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold
-                                                                                {{ $project->status === 'active' ? 'bg-green-100 text-green-700' : '' }}
-                                                                                {{ $project->status === 'completed' ? 'bg-blue-100 text-blue-700' : '' }}
-                                                                                {{ $project->status === 'archived' ? 'bg-slate-100 text-slate-700' : '' }}">
-                                            {{ ucfirst($project->status) }}
-                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold
+                                                                                                {{ $project->status === 'active' ? 'bg-green-100 text-green-700' : '' }}
+                                                                                                {{ $project->status === 'completed' ? 'bg-blue-100 text-blue-700' : '' }}
+                                                                                                {{ $project->status === 'archived' ? 'bg-slate-100 text-slate-700' : '' }}">
+                                                {{ ucfirst($project->status) }}
+                                            </span>
+                                            @if(Auth::user()->isSupervisor() || Auth::user()->isAdmin())
+                                                @if(request('view') === 'parked')
+                                                    <form action="{{ route('projects.unpark', $project->id) }}" method="POST" class="inline"
+                                                        onsubmit="return confirm('Are you sure you want to unpark this project?');">
+                                                        @csrf
+                                                        <button type="submit" @click.stop
+                                                            class="p-1.5 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                                                            title="Unpark Project">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                    d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z">
+                                                                </path>
+                                                            </svg>
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <form action="{{ route('projects.park', $project) }}" method="POST" class="inline"
+                                                        onsubmit="return confirm('Are you sure you want to park this project? It will be hidden from all lists and views.');">
+                                                        @csrf
+                                                        <button type="submit" @click.stop
+                                                            class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                                                            title="Park Project">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
+                                                                </path>
+                                                            </svg>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            @endif
+                                        </div>
                                     </div>
 
                                     <!-- Details -->

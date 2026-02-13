@@ -45,13 +45,19 @@ class Task extends Model
             $task->syncPriorityFromDeadline();
             $task->syncStageFromStatusAndDueDate();
         });
+
+        static::addGlobalScope('active_project_tasks', function ($builder) {
+            $builder->whereHas('project', function ($query) {
+                $query->where('is_parked', false);
+            });
+        });
     }
 
     public function syncStageFromStatusAndDueDate(?Carbon $now = null): void
     {
         $now = $now ?? now();
 
-        if ($this->status === 'closed') {
+        if (in_array($this->status, ['closed', 'completed'], true)) {
             $this->stage = 'completed';
             return;
         }

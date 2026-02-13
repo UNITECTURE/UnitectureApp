@@ -197,6 +197,29 @@ class CalendarController extends Controller
             }
         }
 
+        // Calendar Notes (Onsite Visits)
+        // Show calendar notes for visible users (single day events)
+        $notes = \App\Models\CalendarNote::with('user')
+            ->whereIn('user_id', $visibleUserIds)
+            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->get();
+
+        foreach ($notes as $note) {
+            $events[] = [
+                'id' => 'note-' . $note->id,
+                'title' => ($note->user->name ?? 'User') . ' - ' . $note->note,
+                'start' => $note->date->toDateString(),
+                'allDay' => true,
+                'color' => '#8b5cf6', // purple
+                'type' => 'note',
+                'extendedProps' => [
+                    'note' => $note->note,
+                    'user' => $note->user->name ?? null,
+                    'editable' => $note->user_id === $authUser->id,
+                ],
+            ];
+        }
+
         return response()->json([
             'events' => $events,
         ]);
