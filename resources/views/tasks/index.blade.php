@@ -4,10 +4,10 @@
     <div class="flex h-screen bg-[#F8F9FB] overflow-hidden"
         x-data="taskManager({{ json_encode($tasks) }}, {{ json_encode($statuses) }}, {{ json_encode($stages) }}, {{ json_encode($counts) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ json_encode($employees ?? []) }}, {{ Auth::user()->isAdmin() || Auth::user()->isSupervisor() ? 'true' : 'false' }}, {{ Auth::id() }}, {{ json_encode($scope ?? 'assigned') }}, {{ isset($showTeamToggle) && $showTeamToggle ? 'true' : 'false' }}, {{ isset($showAllToggle) && $showAllToggle ? 'true' : 'false' }})"
         x-init="
-                                        @if(session('success'))
-                                            showToast('{{ addslashes(session('success')) }}', 'success');
-                                        @endif
-                                     ">
+                                            @if(session('success'))
+                                                showToast('{{ addslashes(session('success')) }}', 'success');
+                                            @endif
+                                         ">
         <!-- Sidebar -->
         @php
             $userRole = 'employee';
@@ -235,19 +235,19 @@
                                     x-text="task.project?.name || 'No Project'"></div>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold"
                                     :class="{
-                                                                    'bg-red-100 text-red-700': task.priority === 'high',
-                                                                    'bg-yellow-100 text-yellow-700': task.priority === 'medium',
-                                                                    'bg-green-100 text-green-700': task.priority === 'low',
-                                                                    'bg-purple-100 text-purple-700': task.priority === 'free'
-                                                                }"
+                                                                        'bg-red-100 text-red-700': task.priority === 'high',
+                                                                        'bg-yellow-100 text-yellow-700': task.priority === 'medium',
+                                                                        'bg-green-100 text-green-700': task.priority === 'low',
+                                                                        'bg-purple-100 text-purple-700': task.priority === 'free'
+                                                                    }"
                                     x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'">
                                 </span>
                             </div>
 
                             <!-- Description -->
                             <p class="mt-3 text-lg font-semibold leading-snug line-clamp-1" :class="task.status === 'closed'
-                                                                ? 'text-slate-400 line-through'
-                                                                : 'text-slate-900'" :title="task.description || ''"
+                                                                    ? 'text-slate-400 line-through'
+                                                                    : 'text-slate-900'" :title="task.description || ''"
                                 x-text="(task.description || '').length > 30 ? (task.description || '').substring(0, 30) + '...' : (task.description || '')">
                             </p>
 
@@ -313,11 +313,11 @@
                                     class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white rounded-t-lg sm:rounded-t-xl">
                                     <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
                                         <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0" :class="{
-                                                                            'bg-red-500': stage === 'overdue',
-                                                                            'bg-yellow-500': stage === 'pending',
-                                                                            'bg-blue-500': stage === 'in_progress',
-                                                                            'bg-green-500': stage === 'completed'
-                                                                        }"></div>
+                                                                                'bg-red-500': stage === 'overdue',
+                                                                                'bg-yellow-500': stage === 'pending',
+                                                                                'bg-blue-500': stage === 'in_progress',
+                                                                                'bg-green-500': stage === 'completed'
+                                                                            }"></div>
                                         <span class="text-xs sm:text-sm font-bold text-slate-700 uppercase truncate"
                                             x-text="formatStage(stage)"></span>
                                         <span
@@ -340,18 +340,18 @@
                                                     <span
                                                         class="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border shrink-0"
                                                         :class="{
-                                                                                    'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
-                                                                                    'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
-                                                                                    'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
-                                                                                    'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
-                                                                                }"
+                                                                                        'text-red-600 bg-red-50 border-red-100': task.priority === 'high',
+                                                                                        'text-yellow-600 bg-yellow-50 border-yellow-100': task.priority === 'medium',
+                                                                                        'text-green-600 bg-green-50 border-green-100': task.priority === 'low',
+                                                                                        'text-purple-600 bg-purple-50 border-purple-100': task.priority === 'free'
+                                                                                    }"
                                                         x-text="task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Normal'"></span>
                                                 </div>
                                             </div>
                                             <p class="text-xs sm:text-sm font-bold leading-tight mb-1.5 sm:mb-2 line-clamp-2 break-words"
                                                 :class="task.status === 'closed'
-                                                                               ? 'text-slate-400 line-through'
-                                                                               : 'text-slate-800'"
+                                                                                   ? 'text-slate-400 line-through'
+                                                                                   : 'text-slate-800'"
                                                 x-text="(task.description || '').substring(0, 60) + ((task.description || '').length > 60 ? '...' : '')">
                                             </p>
                                             <div
@@ -438,8 +438,8 @@
                                             x-text="task.project?.project_code || 'N/A'"></td>
                                         <td class="px-3 sm:px-4 py-2 sm:py-3 min-w-[200px]">
                                             <div class="font-medium break-words line-clamp-2" :class="task.status === 'closed'
-                                                                                 ? 'text-slate-400 line-through'
-                                                                                 : 'text-slate-900'"
+                                                                                     ? 'text-slate-400 line-through'
+                                                                                     : 'text-slate-900'"
                                                 x-text="(task.description || '').substring(0, 80) + ((task.description || '').length > 80 ? '...' : '')">
                                             </div>
                                         </td>
@@ -518,11 +518,11 @@
                                         <span
                                             class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2"
                                             :class="{
-                                                                          'bg-red-50 text-red-600': selectedTask.priority === 'high',
-                                                                          'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
-                                                                          'bg-green-50 text-green-600': selectedTask.priority === 'low',
-                                                                          'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
-                                                                      }" x-text="selectedTask.priority"></span>
+                                                                              'bg-red-50 text-red-600': selectedTask.priority === 'high',
+                                                                              'bg-yellow-50 text-yellow-600': selectedTask.priority === 'medium',
+                                                                              'bg-green-50 text-green-600': selectedTask.priority === 'low',
+                                                                              'bg-purple-50 text-purple-600': selectedTask.priority === 'free'
+                                                                          }" x-text="selectedTask.priority"></span>
                                         <h2 class="text-lg sm:text-xl font-bold text-slate-900 break-words"
                                             x-text="(selectedTask.description || '').substring(0, 120) + ((selectedTask.description || '').length > 120 ? '...' : '')">
                                         </h2>
@@ -803,7 +803,8 @@
                                             Delete task
                                         </button>
                                         <div class="flex items-center gap-3">
-                                            <button x-show="canEditDue && selectedTask" type="button"
+                                            <button x-show="canEditDue && selectedTask && selectedTask.status === 'closed'"
+                                                type="button"
                                                 @click="window.location.href = '/tasks/' + selectedTask.id + '/clone'"
                                                 class="px-4 py-2.5 rounded-lg border border-indigo-600 text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-all">
                                                 Clone Task
