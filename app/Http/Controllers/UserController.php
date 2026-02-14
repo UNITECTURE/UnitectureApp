@@ -19,11 +19,19 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        \Log::info('UserController::store called', ['request_all' => $request->except(['password', 'password_confirmation'])]);
+
         // Store uploaded image temporarily if present (before validation)
         $tempImagePath = null;
         if ($request->hasFile('profile_image')) {
-            $tempImagePath = $request->file('profile_image')->store('temp_uploads', 'public');
-            session(['temp_profile_image' => $tempImagePath]);
+            \Log::info('Processing temp image upload to public disk');
+            try {
+                $tempImagePath = $request->file('profile_image')->store('temp_uploads', 'public');
+                session(['temp_profile_image' => $tempImagePath]);
+                \Log::info('Temp image stored at: ' . $tempImagePath);
+            } catch (\Exception $e) {
+                \Log::error('Temp image upload failed', ['error' => $e->getMessage()]);
+            }
         } elseif (session('temp_profile_image') && Storage::disk('public')->exists(session('temp_profile_image'))) {
             // Use previously uploaded temp image
             $tempImagePath = session('temp_profile_image');
@@ -49,20 +57,22 @@ class UserController extends Controller
 
         $imageUrl = null;
         if ($request->hasFile('profile_image')) {
+            \Log::info('Starting Cloudinary upload from request file');
             $uploadedFile = $request->file('profile_image');
-            
+
             try {
                 // Upload to Cloudinary using Storage facade
                 $path = Storage::disk('cloudinary')
                     ->putFile('unitecture_users', $uploadedFile);
-                
+
                 // Get the full URL from Cloudinary
                 $imageUrl = Storage::disk('cloudinary')->url($path);
-                
+
                 if (!$imageUrl) {
                     throw new \Exception('Failed to get URL from Cloudinary');
                 }
             } catch (\Exception $e) {
+                \Log::error('Cloudinary upload failed (Direct)', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
                 \Log::error('Cloudinary upload failed: ' . $e->getMessage());
                 return back()->withErrors(['profile_image' => 'Failed to upload image to Cloudinary.'])->withInput();
             }
@@ -70,25 +80,27 @@ class UserController extends Controller
             // Upload the temp file to Cloudinary
             try {
                 $tempFile = Storage::disk('public')->path($tempImagePath);
+                \Log::info('Starting Cloudinary upload from temp file', ['tempPath' => $tempFile]);
                 $path = Storage::disk('cloudinary')
                     ->putFile('unitecture_users', new \Illuminate\Http\File($tempFile));
-                
+
                 $imageUrl = Storage::disk('cloudinary')->url($path);
-                
+
                 if (!$imageUrl) {
                     throw new \Exception('Failed to get URL from Cloudinary');
                 }
-                
+
                 // Delete temp file
                 Storage::disk('public')->delete($tempImagePath);
-                
+
                 if (!$imageUrl) {
                     throw new \Exception('Failed to get URL from Cloudinary');
                 }
-                
+
                 // Delete temp file
                 Storage::disk('public')->delete($tempImagePath);
             } catch (\Exception $e) {
+                \Log::error('Cloudinary upload failed (From Temp)', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
                 \Log::error('Cloudinary upload failed: ' . $e->getMessage());
                 return back()->withErrors(['profile_image' => 'Failed to upload image to Cloudinary.'])->withInput();
             }
@@ -119,7 +131,7 @@ class UserController extends Controller
             ->orWhere('secondary_supervisor_id', $user->id)
             ->with(['role', 'primarySupervisor', 'secondarySupervisor'])
             ->get();
-        
+
         return view('team.index', compact('team'));
     }
 
@@ -180,33 +192,35 @@ class UserController extends Controller
 
         $imageUrl = $user->profile_image;
         if ($request->hasFile('profile_image')) {
+            \Log::info('Uploading profile image (update) to Cloudinary for user: ' . $request->name);
             $uploadedFile = $request->file('profile_image');
 
             try {
                 // Upload to Cloudinary using Storage facade
                 $path = \Illuminate\Support\Facades\Storage::disk('cloudinary')
                     ->putFile('unitecture_users', $uploadedFile);
-                
+
                 // Get the full URL from Cloudinary
                 $imageUrl = \Illuminate\Support\Facades\Storage::disk('cloudinary')->url($path);
-                
+
                 if (!$imageUrl) {
                     throw new \Exception('Failed to get URL from Cloudinary');
                 }
+                \Log::info('Cloudinary upload successful for user update', ['url' => $imageUrl]);
             } catch (\Exception $e) {
-                \Log::error('Cloudinary upload failed: ' . $e->getMessage());
-                return back()->withErrors(['profile_image' => 'Failed to upload image to Cloudinary.'])->withInput();
+                \Log::error('Cloudinary upload failed (User Update)', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+                return back()->withErrors(['profile_image' => 'Failed to upload image to Cloudinary: ' . $e->getMessage()])->withInput();
             }
         }
 
         $user->full_name = $request->name;
         $user->email = $request->email;
-        
+
         // Only update password if provided
         if ($request->filled('password')) {
             $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
         }
-        
+
         $user->role_id = $request->role_id;
         $user->reporting_to = $request->reporting_to;
         $user->secondary_supervisor_id = $request->secondary_supervisor_id;
@@ -230,8 +244,8 @@ class UserController extends Controller
         }
         $supervisors = User::where('role_id', 1) // supervisor role
             ->with([
-                'subordinates' => fn ($q) => $q->with(['role', 'secondarySupervisor']),
-                'secondarySubordinates' => fn ($q) => $q->with(['role', 'primarySupervisor']),
+                'subordinates' => fn($q) => $q->with(['role', 'secondarySupervisor']),
+                'secondarySubordinates' => fn($q) => $q->with(['role', 'primarySupervisor']),
             ])
             ->orderBy('full_name')
             ->get();
@@ -275,14 +289,14 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        
+
         // Prevent deleting yourself
         if ($user->id === \Illuminate\Support\Facades\Auth::id()) {
             return redirect()->route('users.manage')->with('error', 'You cannot delete your own account.');
         }
-        
+
         $user->delete();
-        
+
         return redirect()->route('users.manage')->with('success', 'User deleted successfully.');
     }
 
@@ -295,15 +309,15 @@ class UserController extends Controller
     {
         $joiningDate = \Carbon\Carbon::parse($joiningDate);
         $today = now();
-        
+
         // Count complete calendar months (only months where the 1st has passed)
         $completedMonths = 0;
         $currentDate = $joiningDate->copy();
-        
+
         while ($currentDate->addMonth() <= $today) {
             $completedMonths++;
         }
-        
+
         // After 3 months probation, accrue 1.25 days per month
         $accrualMonths = max(0, $completedMonths - 3);
         return $accrualMonths * 1.25;

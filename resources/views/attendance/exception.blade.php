@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex h-screen bg-slate-50 overflow-hidden" x-data="{ sidebarOpen: true }">
+    <div class="flex h-screen bg-slate-50 overflow-hidden" >
         {{-- Sidebar --}}
         <x-sidebar :role="$role ?? 'admin'" />
 

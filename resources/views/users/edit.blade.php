@@ -7,7 +7,7 @@
             display: none;
         }
     </style>
-    <div class="flex h-screen bg-slate-50 overflow-hidden" x-data="{ sidebarOpen: true }">
+    <div class="flex h-screen bg-slate-50 overflow-hidden" >
         <x-sidebar :role="Auth::user()->isAdmin() ? 'admin' : (Auth::user()->isSupervisor() ? 'supervisor' : 'employee')" />
 
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">

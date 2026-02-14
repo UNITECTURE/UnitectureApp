@@ -6,7 +6,7 @@
         // $summary and $requests array are passed from controller
     @endphp
 
-    <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden bg-[#F8F9FB] font-sans">
+    <div  class="flex h-screen overflow-hidden bg-[#F8F9FB] font-sans">
 
         {{-- Sidebar Component --}}
         <x-sidebar :role="$role" />

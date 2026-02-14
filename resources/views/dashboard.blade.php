@@ -20,25 +20,25 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             <!-- Card 1: Task Dashboard -->
                             @if(!Auth::user()->isAdmin())
-                            <div
-                                class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-8 flex flex-col items-center text-center hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.05)] transition-shadow duration-300">
                                 <div
-                                    class="w-16 h-16 rounded-2xl bg-[#eff6ff] text-[#3b82f6] flex items-center justify-center mb-6">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                        </path>
-                                    </svg>
+                                    class="bg-white rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)] border border-slate-50 p-8 flex flex-col items-center text-center hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.05)] transition-shadow duration-300">
+                                    <div
+                                        class="w-16 h-16 rounded-2xl bg-[#eff6ff] text-[#3b82f6] flex items-center justify-center mb-6">
+                                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <h3 class="font-bold text-slate-900 text-lg mb-3">Task Dashboard</h3>
+                                    <p class="text-sm text-slate-500 mb-8 max-w-[220px] leading-relaxed font-medium">Clear view
+                                        of performance anytime.</p>
+                                    <a href="{{ route('tasks.index') }}"
+                                        class="w-full py-3 px-4 bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-sm shadow-blue-200 block">
+                                        Open
+                                    </a>
                                 </div>
-                                <h3 class="font-bold text-slate-900 text-lg mb-3">Task Dashboard</h3>
-                                <p class="text-sm text-slate-500 mb-8 max-w-[220px] leading-relaxed font-medium">Clear view
-                                    of performance anytime.</p>
-                                <a href="{{ route('tasks.index') }}"
-                                    class="w-full py-3 px-4 bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-sm shadow-blue-200 block">
-                                    Open
-                                </a>
-                            </div>
                             @endif
 
                             <!-- Card 2: Automate Leaves -->

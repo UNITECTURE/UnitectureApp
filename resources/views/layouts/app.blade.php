@@ -90,7 +90,7 @@
 </head>
 
 <body class="font-sans antialiased text-slate-800 bg-[#F8F9FB]">
-    <div id="app" class="relative">
+    <div id="app" class="relative" x-data="{ sidebarOpen: true }">
         @yield('content')
 
         <!-- Flash Messages / Alerts - LARGE BANNER STYLE -->

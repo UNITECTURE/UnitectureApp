@@ -160,9 +160,9 @@
             {{-- Approvals --}}
             @if($role === 'admin' || $role === 'superadmin' || $role === 'supervisor')
                 <div x-data="{ 
-                    open: localStorage.getItem('sidebar_approvals_open') === 'true', 
-                    init() { this.$watch('open', val => localStorage.setItem('sidebar_approvals_open', val)) } 
-                }" class="space-y-1">
+                                open: localStorage.getItem('sidebar_approvals_open') === 'true', 
+                                init() { this.$watch('open', val => localStorage.setItem('sidebar_approvals_open', val)) } 
+                            }" class="space-y-1">
                     <div @click="sidebarOpen ? (open = !open) : (sidebarOpen = true)"
                         class="flex items-center justify-between w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-md hover:bg-slate-800 hover:text-white group transition-colors duration-200 cursor-pointer relative"
                         :class="!sidebarOpen ? 'justify-center' : ''">
@@ -316,13 +316,20 @@
     <div class="p-4 border-t border-slate-700/50">
         <div class="flex items-center justify-between" :class="!sidebarOpen ? 'justify-center' : ''">
             <div class="flex items-center min-w-0">
-                <div
-                    class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-600 ring-2 ring-slate-700 text-white font-bold text-xs shrink-0">
-                    {{ substr(Auth::user()->name ?? 'SM', 0, 2) }}
-                </div>
+                @if(Auth::user()->profile_image)
+                    <img src="{{ Auth::user()->profile_image }}" alt="Profile"
+                        class="w-8 h-8 rounded-full ring-2 ring-slate-700 object-cover shrink-0">
+                @else
+                    <div
+                        class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-600 ring-2 ring-slate-700 text-white font-bold text-xs shrink-0">
+                        {{ substr(Auth::user()->name ?? 'SM', 0, 2) }}
+                    </div>
+                @endif
                 <div x-show="sidebarOpen" x-transition class="ml-3 overflow-hidden">
                     <p class="text-sm font-medium text-white truncate">{{ Auth::user()->name ?? 'User' }}</p>
-                    <p class="text-xs text-slate-400 truncate">{{ $role === 'superadmin' ? 'Super Admin' : ucfirst($role ?? 'Role') }}</p>
+                    <p class="text-xs text-slate-400 truncate">
+                        {{ $role === 'superadmin' ? 'Super Admin' : ucfirst($role ?? 'Role') }}
+                    </p>
                 </div>
             </div>
 
